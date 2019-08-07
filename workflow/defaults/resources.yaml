@@ -1,0 +1,86 @@
+# This file specifies the resource requirements for all jobs.  This
+# includes jobs from the full DA-cycled workflow, as well as the jobs
+# in the public release workflow.
+
+# Note on threads:
+#  max = use the largest number of threads possible for the platform,
+#        ranks, and processors per node
+#  null = do not specify threading settings.  The underlying scripts
+#        and batch system will fill in settings.
+#  a number = use this many threads per MPI rank
+
+godas_resource_table: !Select
+  select: !calc doc.settings.RESOLUTION
+  otherwise: !error "Unknown FV3 deterministic grid: {doc.fv3_gfs_settings.CASE}"
+  cases:
+    C192:
+      #              ranks   ppn wallclock            threads MB_per_rank
+      fcst_prep:    [  12,   12, !timedelta "00:15:00", null, null ]
+      fcst_run:     [ 144,    6, !timedelta "01:30:00", max, null  ]
+      da_prep:      [  72,   12, !timedelta "00:30:00", 1, null    ]
+      da_3dvar_run: [  72,   12, !timedelta "00:10:00", 1, null    ]
+      post:         [   1,    1, !timedelta "03:00:00", null, null ]
+
+default_resources: &default_resources
+
+  run_big_downstream: !JobRequest
+    - batch_memory: "3072M"
+      walltime: !timedelta "00:30:00"
+      max_ppn: 1
+      mpi_ranks: 2
+      exe: placeholder
+
+  run_small_downstream: !JobRequest
+    - batch_memory: "3072M"
+      walltime: !timedelta "00:02:00"
+      max_ppn: 2
+      mpi_ranks: 2
+      exe: placeholder
+       
+  run_make_next_cycles: !JobRequest
+    - memory: "600M"
+      exe: placeholder
+      walltime: !timedelta "00:15:00"
+      
+  run_one_hour_exclusive: !JobRequest # Placeholder for one node jobs
+    - memory: "300M"
+      exe: placeholder
+      mpi_ranks: 2
+      walltime: !timedelta "00:02:00"
+      exclusive: true
+  
+  run_nothing: !JobRequest # Special placeholder for "do nothing"
+    - memory: "300M"
+      exe: placeholder
+      walltime: !timedelta "00:02:00"
+      exclusive: false
+
+  run_arch: !JobRequest
+    - batch_memory: "3072M"
+      exclusive: false
+      mpi_ranks: 1
+      walltime: !timedelta "06:00:00"
+      exe: placeholder
+      max_ppn: 1
+
+  run_da_prep: !JobRequest
+    - memory: "64G"
+      mpi_ranks: 1
+      walltime: !timedelta "00:30:00"
+      exe: placeholder
+      max_ppn: 1
+
+  run_3dvar: !JobRequest
+    - memory: "64G"
+      mpi_ranks: 312
+      walltime: !timedelta "00:30:00"
+      max_ppn: 24
+
+  run_gdaspost: !JobRequest
+    - batch_memory: "3072M"
+      exe: placeholder
+      mpi_ranks: !calc doc.gfs_resource_table.gdaspost[0]
+      max_ppn: !calc doc.gfs_resource_table.gdaspost[1]
+      walltime: !calc doc.gfs_resource_table.gdaspost[2]
+      OMP_NUM_THREADS: !calc doc.gfs_resource_table.gdaspost[3]
+      memory_per_rank: !calc doc.gfs_resource_table.gdaspost[4]
