@@ -1,0 +1,65 @@
+#--------------------------------------------------------------------------------
+# Job submission
+#
+# EXP_NAME    : an (ideally) unique experiment name that is prepended to the 
+#               jobnames that are submitted
+# SCHED_ACCT  : the job scheduler account to run under
+# SCHED_QUEUE : The queue to use for the multi-node jobs. 
+#               TODO: Currently the single process jobs are hardcoded to use
+#                 "ldtn" on Gaea
+#--------------------------------------------------------------------------------
+experiment: &experiment
+  EXP_NAME: "EXP_GOGDAS"
+  SCHED_ACCT: "cpo_hyb_go"
+  SCHED_QUEUE: "batch"
+
+#--------------------------------------------------------------------------------
+# Timing
+#
+# CYCLE_START   : The date of the first ANALYSIS to generate. This is only needed
+#                 for the very first cycle, afterward this value is ignored and
+#                 the cycle time is determined by rocoto. Format is (YYYYMMDDHH)
+# CYCLE_END     : The date of the last ANALYSIS to generate. (YYYYMMDDHH)
+# CYCLE_LEN     : The period of a single cycle. (hours)
+# CYCLE_LEAPADJ : if =1 then the cycle is extended by 1 day whenever a leap day
+#                 is encountered. For example, a 5 day cycle producing "pentad"
+#                 averages should be run for 6 days if a leap day is encountered
+#                 so that the analysis days are the same for each year.
+#--------------------------------------------------------------------------------
+
+default_settings: &default_setting
+  CYCLE_START: 201905010000 
+  CYCLE_END: 201905030000
+  CYCLE_LEN: 120
+  CYCLE_LEAPADJ: 1
+  fcst_hours: 48
+  da_hours: 8
+  max_job_tries: 2
+  four_cycle_mode: False
+  nco_mode: False
+  rocoto_log_path: !calc ("<cyclestr>&LOG_DIR;/@Y@m@d@H/"+task_path_var+".log</cyclestr>")
+  rocoto_task_throttle: 4
+  rocoto_cycle_throttle: 2
+  ecf_log_path: !FirstTrue
+    - when: !calc doc.settings.four_cycle_mode
+      # in four cycle mode ,the log name is the last path component,
+      # with the leading "j" removed.
+      do: !calc ( '%COM%/output/%ENVIR%/today/' + task_path_list[-1][1:] + '_%CYC%.o%J' )
+    - otherwise: !calc ( '%COM%/logs/%PDY%%CYC%/'+ task_path_var + '.log.%J')
+  ecflow_rocoto_cdate_workaround: !FirstTrue
+    - when: !calc doc.settings.four_cycle_mode
+      take: |
+        # When sourcing config files, the $PDY must be set:
+        datedir=/tmp/date.$$.$RANDOM
+        mkdir -p "$datedir"
+        pushd "$datedir"
+        export cyc="%CYC%"
+        export cycle="t%CYC%z"
+        setpdy.sh
+        . ./PDY
+        set -u
+        export CDATE="$PDY$cyc"
+        set +u
+        popd
+        rm -rf "$datedir"
+    - otherwise: '# date variables will be set by header file.'
