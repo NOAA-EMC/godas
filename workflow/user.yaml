@@ -1,0 +1,12 @@
+user_places: &user_places
+  PROJECT_DIR: /scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/
+
+accounting: &accounting
+  user_email: none
+  cpu_project: marine-cpu
+  hpss_project: emc-marine
+  ecflow_header: envir-p3.h
+  shared_partition: !calc doc.platform.partitions.default_shared
+  exclusive_partition: !calc doc.platform.partitions.default_exclusive
+  bigmem_partition: !calc doc.platform.partitions.default_bigmem
+  service_partition: !calc doc.platform.partitions.default_service
