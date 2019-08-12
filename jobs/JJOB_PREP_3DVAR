@@ -3,18 +3,20 @@
 
 #================================================================================
 #================================================================================
-# Prep SOCA Static B
+# Prep SOCA Static B and grid
 
+module purge
 module use -a /contrib/da/modulefiles
 module load jedi
-module load nco
 
 SOCA_EXEC=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-bundle/build/bin/
 RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001/
 
 cd $RUNDIR
 
-echo $SOCA_EXEC
+# Generate ocean-ice grid
+srun -n 12 $SOCA_EXEC/soca_gridgen.x ./yaml/gridgen.yml
+
 # Create BUMP convolution operator
 mkdir -p bump
 srun -n 312 $SOCA_EXEC/soca_staticbinit.x ./yaml/static_SocaError_init.yml
