@@ -5,6 +5,16 @@
 #================================================================================
 # Prep SOCA-DA
 
+echo $ROOT_GODAS_DIR
+echo $SOCA_EXEC
+echo $SDATE
+echo $EDATE
+
+
+echo "CDATE=$CDATE"
+echo "CYCLE=$CYCLE"
+
+module purge
 module use -a /contrib/da/modulefiles
 module load jedi
 module load nco
@@ -21,6 +31,10 @@ cd $RUNDIR
 # Copy static files into RUNDIR
 #------------------------------
 cp -r $SOCA_STATIC/* .
+window_begin=$(date "+%Y%m%d" -d "$(dtz $CYCLE) + $DA_SLOT hours")
+echo $window_begin
+exit
+sed -i "s/WINDOW_BEGIN/${window_begin}/g" ./yaml/3dvar_godas.yml 
 
 # Prepare observations
 #---------------------
