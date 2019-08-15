@@ -19,12 +19,6 @@ module use -a /contrib/da/modulefiles
 module load jedi
 module load nco
 
-# HARDCODED !!!
-MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
-SOCA_STATIC=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-static/1440x1080x75/
-SOCA_OBS=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/staged-obs/
-RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001/
-
 mkdir -p $RUNDIR
 cd $RUNDIR
 

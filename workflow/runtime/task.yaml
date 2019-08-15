@@ -79,8 +79,6 @@ task_template: &task_template
     <envar><name>PDY</name><value><cyclestr>@Y@m@d</cyclestr></value></envar>
     <envar><name>cyc</name><value><cyclestr>@H</cyclestr></value></envar>
     <envar><name>EXPDIR</name><value>&EXPDIR;</value></envar>
-    <envar><name>CDUMP</name><value>{CDUMP}</value></envar>
-    <envar><name>RUN_ENVIR</name><value>emc</value></envar>
     <envar><name>job</name><value>{task_path_list[-1]}_<cyclestr>@H</cyclestr></value></envar>
     {rocoto_more_vars}
     {rocoto_platform_vars}
@@ -89,12 +87,6 @@ task_template: &task_template
   # (platforms/*.yaml) to add <native> tags to the Rocoto <task>
   # definition.
   rocoto_platform_vars: !calc " doc.platform.get('rocoto_platform_vars','') "
-
-  # RUN - Used in ecf files to specify whether the task is gfs or gdas
-  RUN: !calc task_path_list[0]
-
-  # CDUMP - alias for RUN expected by development scripts
-  CDUMP: !calc RUN
 
   # more_vars - Additional environment variables to pass to the j-job
   # through the Rocoto XML or ecFlow ecf files.  This variable is only used
@@ -154,10 +146,6 @@ task_template: &task_template
 
     {ecf_resource_more}
 
-    export model=%model:gfs%
-    export NET=%NET:gfs%
-    export RUN=%RUN%
-
     {ecf_model_include}
 
     ############################################################
@@ -206,7 +194,6 @@ task_template: &task_template
         module list
 
         # Synonyms expected by scripts:
-        export CDUMP="$RUN"
         export ROTDIR="$COMROOT"
     - when: !calc doc.settings.four_cycle_mode
       take: |
@@ -221,7 +208,6 @@ task_template: &task_template
         export COMROOT=/%COM%
 
         # Development synonyms
-        export CDUMP="$RUN"
         export ROTDIR="$COMROOT"
     - otherwise: !expand |
         module list
