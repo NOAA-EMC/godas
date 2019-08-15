@@ -12,6 +12,7 @@ suite: !Cycle
           resources: !calc partition.resources.run_da_prep
           config: [ base ]
           J_JOB: JJOB_DA_PREP
+          ENSGRP: !expand "{dimval.groupid:02d}"
           rocoto_command: !expand >-
             {rocoto_load_modules} ;
             /usr/bin/env ENSGRP={ENSGRP} ; &ROOT_GODAS_DIR/jobs/{J_JOB}
