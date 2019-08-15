@@ -47,12 +47,16 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_FCST_PREP
 
-      fcst_run: !Task
-        <<: *exclusive_task_template
+      fcst_run: !TaskArray
         Trigger: !Depend  fcst_prep
-        resources: !calc partition.resources.run_nothing
-        config: [ base ]
-        J_JOB: JJOB_FORECAST
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.settings.FCST_GROUPS,1)
+        fcst_run_hrs: !TaskElement
+          <<: *exclusive_task_template
+          Trigger: !Depend  fcst_prep
+          resources: !calc partition.resources.run_nothing
+          config: [ base ]
+          J_JOB: JJOB_FORECAST
 
       post: !Task
         <<: *shared_task_template
