@@ -29,8 +29,6 @@ suite_defaults: &suite_defaults
         <!ENTITY EXPDIR "{doc.places.EXPDIR}">
         <!ENTITY LOG_DIR "{doc.places.LOG_DIR}">
         <!ENTITY COM "{doc.places.ROTDIR}">
-        <!ENTITY ENS_LIST_DA "{doc.settings.fcst_hours}">
-        <!ENTITY ENS_LIST_DA "{doc.settings.da_hours}">
       ]>
       <workflow realtime="F"
                 cyclethrottle="&CYCLE_THROTTLE;"
