@@ -2,13 +2,14 @@ suite: !Cycle
       <<: *suite_defaults
       fcst_prep: !Task
         <<: *shared_task_template
+        Trigger: !Depend ( ~ suite.has_cycle('-24:00:00') | da_3dvar_run.at('-24:00:00'))
         resources: !calc partition.resources.run_nothing
         config: [ base ]
         J_JOB: JJOB_FCST_PREP
 
       fcst_run: !Task
         <<: *exclusive_task_template
-        Trigger: !Depend  fcst_prep & ( da_3dvar_run.at('-6:00:00') | ~ suite.has_cycle('-6:00:00') )
+        Trigger: !Depend  fcst_prep
         resources: !calc partition.resources.run_nothing
         config: [ base ]
         J_JOB: JJOB_FORECAST

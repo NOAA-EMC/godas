@@ -68,5 +68,6 @@ config_base:
     
     # DA cycle info
     export da_cyc={doc.settings.da_cyc}
-    
+    export GODAS_WINDOW={doc.settings.godas_window}
+
     echo "END: config.base"
