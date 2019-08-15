@@ -1,4 +1,11 @@
 #place holder for obs_prep job
 
-echo "J_JOB for post"
+echo "J_JOB for OBS_PREP"
 echo $CDATE
+
+module purge
+module use -a /home/Stylianos.Flampouris/modulefiles/anaconda
+module load anaconda/2019.08.07
+module list
+
+${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
