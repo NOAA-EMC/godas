@@ -9,9 +9,6 @@ module purge
 module use -a /contrib/da/modulefiles
 module load jedi
 
-SOCA_EXEC=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-bundle/build/bin/
-RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001/
-
 cd $RUNDIR
 
 # Run 3DVAR

@@ -5,20 +5,11 @@
 #================================================================================
 # Prep SOCA Static B and grid
 
-envar=()
-envar+=("ROOT_GODAS_DIR")
-envar+=("SOCA_EXEC")
-
-echo $SOCA_EXEC
-
-
 module purge
 module use -a /contrib/da/modulefiles
 module load jedi
 
-#SOCA_EXEC=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-bundle/build/bin/
-RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001/
-
+if [ ! -d $RUNDIR ]; then mkdir -p $RUNDIR; fi
 cd $RUNDIR
 
 # Generate ocean-ice grid

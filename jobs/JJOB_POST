@@ -1,2 +1,4 @@
 #!/bin/bash
 echo "J_JOB for post"
+echo $CDATE
+
