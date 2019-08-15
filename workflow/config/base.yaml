@@ -64,7 +64,6 @@ config_base:
     export EXPDIR="{doc.places.EXPDIR}"
     export ROTDIR="{doc.places.ROTDIR}"
     export RUNDIR="{doc.places.LONG_TERM_TEMP}/RUNDIR/{doc.names.experiment}"
-    export ICSDIR="{doc.places.ICSDIR}"
     
     # DA cycle info
     export godas_cyc={doc.settings.godas_cyc}

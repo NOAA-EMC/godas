@@ -20,7 +20,7 @@ default_places: &default_places
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp
 #  SHORT_TERM_TEMP: !error GOT HERE
 #  LONG_TERM_TEMP:  !error GOT HERE TOO
-  RUNDIR: !expand '{LONG_TERM_TEMP}/{tools.env('USER')}/{doc.names.experiment}'
+  RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/{doc.names.experiment}"
   YAMLDIR: !calc EXPDIR
   rocoto_workflow_xml: !expand '{YAMLDIR}/workflow.xml'
 
