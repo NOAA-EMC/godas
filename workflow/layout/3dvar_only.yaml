@@ -1,24 +1,19 @@
 suite: !Cycle
       <<: *suite_defaults
-      fcst_prep: !Task
-        <<: *shared_task_template
-        resources: !calc partition.resources.run_nothing
-        config: [ base ]
-        J_JOB: JJOB_FCST_PREP
-
-      fcst_run: !Task
-        <<: *exclusive_task_template
-        Trigger: !Depend  fcst_prep & ( da_3dvar_run.at('-6:00:00') | ~ suite.has_cycle('-6:00:00') )
-        resources: !calc partition.resources.run_nothing
-        config: [ base ]
-        J_JOB: JJOB_FORECAST
 
       da_prep: !Task
         <<: *bigmem_task_template
-        Trigger: !Depend  fcst_run
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
         resources: !calc partition.resources.run_da_prep
         config: [ base ]
         J_JOB: JJOB_DA_PREP
+
+      obs_prep: !Task
+        <<: *bigmem_task_template
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+        resources: !calc partition.resources.run_nothing
+        config: [ base ]
+        J_JOB: JJOB_OBS_PREP
 
       da_prep_3dvar: !Task
         <<: *bigmem_task_template
@@ -29,14 +24,28 @@ suite: !Cycle
 
       da_3dvar_run: !Task
         <<: *bigmem_task_template
-        Trigger: !Depend  da_prep_3dvar
+        Trigger: !Depend  ( da_prep_3dvar & obs_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_DA_3DVAR
 
+      fcst_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend da_3dvar_run
+        resources: !calc partition.resources.run_nothing
+        config: [ base ]
+        J_JOB: JJOB_FCST_PREP
+
+      fcst_run: !Task
+        <<: *exclusive_task_template
+        Trigger: !Depend  fcst_prep
+        resources: !calc partition.resources.run_nothing
+        config: [ base ]
+        J_JOB: JJOB_FORECAST
+
       post: !Task
         <<: *shared_task_template
-        Trigger: !Depend  da_3dvar_run
+        Trigger: !Depend  fcst_run
         resources: !calc partition.resources.run_nothing
 #        rocoto_command: "echo post"
         config: [ base ]

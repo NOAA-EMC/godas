@@ -5,7 +5,14 @@ suite_defaults: &suite_defaults
   Clock: !Clock
     start: !calc doc.settings.SDATE
     end: !calc doc.settings.EDATE
-    step: !timedelta "24:00:00"
+    step: !FirstTrue
+      - when: !calc doc.settings.godas_cyc == 1 
+        do: !timedelta "24:00:00"
+      - when: !calc doc.settings.godas_cyc == 2
+        do: !timedelta "12:00:00"
+      - when: !calc doc.settings.godas_cyc == 4
+        do: !timedelta "6:00:00"
+      - otherwise: !error Unknown gfs clock settings {doc.settings.godas_cyc}
 
   # Rocoto - contains settings specific to Rocoto workflow generation
   Rocoto: &Rocoto
@@ -24,7 +31,6 @@ suite_defaults: &suite_defaults
         <!ENTITY COM "{doc.places.ROTDIR}">
         <!ENTITY ENS_LIST_DA "{doc.settings.fcst_hours}">
         <!ENTITY ENS_LIST_DA "{doc.settings.da_hours}">
-        <!ENTITY COM "{doc.places.ROTDIR}">
       ]>
       <workflow realtime="F"
                 cyclethrottle="&CYCLE_THROTTLE;"
