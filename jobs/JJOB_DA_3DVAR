@@ -12,6 +12,6 @@ module load jedi
 cd $RUNDIR
 
 # Run 3DVAR
-#srun -n 312 $SOCA_EXEC/soca_3dvar.x ./yaml/3dvar_godas.yml
+srun -n 312 $SOCA_EXEC/soca_3dvar.x ./yaml/3dvar_godas.yml
 
 
