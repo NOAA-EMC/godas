@@ -37,8 +37,7 @@ default_settings: &default_setting
   max_job_tries: 2
   four_cycle_mode: False
   nco_mode: False
-  godas_cyc: 4
-  godas_window: 24
+  godas_cyc: 1        # selection of godas cycle: 1(default)- 24h; 2 - 12h; 4 - 6h              
   rocoto_log_path: !calc ("<cyclestr>&LOG_DIR;/@Y@m@d@H/"+task_path_var+".log</cyclestr>")
   rocoto_task_throttle: 4
   rocoto_cycle_throttle: 2

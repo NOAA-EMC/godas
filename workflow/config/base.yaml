@@ -67,7 +67,6 @@ config_base:
     export ICSDIR="{doc.places.ICSDIR}"
     
     # DA cycle info
-    export da_cyc={doc.settings.da_cyc}
-    export GODAS_WINDOW={doc.settings.godas_window}
+    export godas_cyc={doc.settings.godas_cyc}
 
     echo "END: config.base"
