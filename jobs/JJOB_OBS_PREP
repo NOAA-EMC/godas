@@ -1,0 +1,4 @@
+#place holder for obs_prep job
+
+echo "J_JOB for post"
+echo $CDATE
