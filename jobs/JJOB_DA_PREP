@@ -28,6 +28,9 @@ ln -s $SOCA_OBS/sst-2011100112.nc ./Data/sst.nc
 ln -s $SOCA_OBS/adt-2011100112.nc ./Data/adt.nc
 ln -s $SOCA_OBS/icec-2011100112.nc ./Data/icec.nc
 
+
+MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
+
 # Ocean bkg files
 #----------------
 ln -s $MODEL_SCRATCH/INPUT/MOM.res*.nc ./INPUT_MOM6/
