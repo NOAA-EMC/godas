@@ -1,14 +1,6 @@
 ##!/bin/bash
 #set -x
 # TO DELETE
-DCOMROOT='/scratch3/NCEPDEV/marine/noscrub/Stylianos.Flampouris/ocean_observations/data'
-ROTDIR='/scratch3/NCEPDEV/marine/noscrub/marineda/GodasOceanObs'
-RUNDIR=''
-CDATE=2011100112
-PDY=20111001
-cyc=12
-EXECROOT='/scratch4/NCEPDEV/ocean/noscrub/Stylianos.Flampouris/ioda-conv-dev/update_ioda_converters/ioda-converters/build/bin'
-module use -a /home/Stylianos.Flampouris/modulefiles/anaconda
 
 # END TO DELETE
 
