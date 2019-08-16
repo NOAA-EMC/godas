@@ -12,6 +12,8 @@ default_places: &default_places
   EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'
   LOG_DIR:     !expand "{EXPDIR}/log"
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"
+  DCOMROOT: '/scratch3/NCEPDEV/marine/noscrub/Stylianos.Flampouris/ocean_observations/data'
+  EXECROOT: '/scratch4/NCEPDEV/ocean/noscrub/Stylianos.Flampouris/ioda-conv-dev/update_ioda_converters/ioda-converters/build/bin'
   SOCA_EXEC:   "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-bundle/build-workflow/bin/"
   SOCA_STATIC: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-static/1440x1080x75/"
   SOCA_OBS: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/staged-obs/"
