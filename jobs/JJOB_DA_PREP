@@ -14,7 +14,6 @@ mkdir -p $RUNDIR
 cd $RUNDIR
 
 # Hard-coded stuff that needs to be moved/changed
-MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
 cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
 
@@ -45,6 +44,7 @@ fi
 echo "window_begin="$window_begin
 echo "window_length="$window_length
 echo "bkg_date="$bkg_date
+echo "SOCA_EXE="$SOCA_EXE
 
 # Set date for bump initialization
 sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/static_SocaError_init.yml 
