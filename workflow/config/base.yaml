@@ -44,7 +44,10 @@ config_base:
     export SOCA_EXEC="{doc.places.ROOT_GODAS_DIR}/build/bin/"
     export SOCA_STATIC="{doc.places.GODAS_RC}/soca-static/1440x1080x75/"
     export SOCA_OBS="{doc.places.SOCA_ROOT}/staged-obs/"
-    
+    export DCOMROOT="{doc.places.DCOMROOT}"
+    export IODA_EXEC="{doc.places.IODA_EXEC}"
+    export DA_SLOT_LEN="{doc.places.DA_SLOT_LEN}" #is defined at places.yaml, to be moved to da.yaml when it is activated. 
+
     ####################################################
     # DO NOT ADD MACHINE DEPENDENT STUFF BELOW THIS LINE
     # IF YOU HAVE TO MAKE MACHINE SPECIFIC CHANGES BELOW

@@ -14,8 +14,8 @@ default_places: &default_places
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"
   GODAS_RC:   "/scratch3/NCEPDEV/marine/noscrub/marineda/"
   SOCA_ROOT:   "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/"
-  DCOMROOT: '/scratch3/NCEPDEV/marine/noscrub/Stylianos.Flampouris/ocean_observations/data'
-  EXECROOT: '/scratch4/NCEPDEV/ocean/noscrub/Stylianos.Flampouris/ioda-conv-dev/update_ioda_converters/ioda-converters/build/bin'
+  DCOMROOT: '/scratch3/NCEPDEV/marine/noscrub/marineda/ocean_observations/data'
+  IODA_EXEC: '/scratch4/NCEPDEV/ocean/noscrub/Stylianos.Flampouris/ioda-conv-dev/update_ioda_converters/ioda-converters/build/bin'
   SOCA_STATIC: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-static/1440x1080x75/"
   SOCA_OBS: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/staged-obs/"
   MODEL_SCRATCH: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/"
@@ -26,7 +26,9 @@ default_places: &default_places
   RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/{doc.names.experiment}"
   YAMLDIR: !calc EXPDIR
   rocoto_workflow_xml: !expand '{YAMLDIR}/workflow.xml'
-
+# 
+# To be removed as soon as the da.yaml is activated.
+  DA_SLOT_LEN: 24
 ## initial_directory: location from which the setup script was run.
 ## HOMEgfs: top level of the installation area (directory above ush,
 ## jobs, ecf)

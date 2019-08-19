@@ -3,13 +3,13 @@
 echo "J_JOB for OBS_PREP"
 echo $CDATE
 
-#module purge
+module purge
 #module use -a /contrib/da/modulefiles
 #module load jedi
 #module load anaconda/anaconda3-5.3.1
 
-#module use -a /home/Stylianos.Flampouris/modulefiles/anaconda
-#module load anaconda/2019.08.07
-#module list
+module use -a /home/Stylianos.Flampouris/modulefiles/anaconda
+module load anaconda/2019.08.07
+module list
 
-#${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
+${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh

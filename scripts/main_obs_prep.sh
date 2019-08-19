@@ -1,7 +1,10 @@
 #!/bin/bash
-echo 'Hello From main_obs_prep'
+echo 'main_obs_prep.sh starts'
 echo ${ROOT_GODAS_DIR}
+echo CDATE is $CDATE
 
-${ROOT_GODAS_DIR}/scripts/adt_prep_obs.sh #&
+source ${ROOT_GODAS_DIR}/scripts/adt_prep_obs.sh 
 
-#exit
+#${ROOT_GODAS_DIR}/scripts/adt_prep_obs.sh
+
+echo main_obs_prep ends

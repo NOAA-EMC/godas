@@ -1,29 +1,31 @@
-##!/bin/bash
-#set -x
-# TO DELETE
-
-# END TO DELETE
+#!/bin/bash -l 
 
 cd $DCOMROOT
 
-ADTDCOM=$DCOMROOT/adt.nesdis/$PDY
-if [ -d "$ADTDCOM" ]; then
+OBSDCOM=$DCOMROOT/adt.nesdis/$PDY
+if [ -d "$OBSDCOM" ]; then
    
    OUTDIR=${ROTDIR}/${CDATE}
    mkdir -p ${OUTDIR}
    echo ${OUTDIR}
    
-   cd $ADTDCOM
+   cd $OBSDCOM
    echo ADT Observations for $PDY exist at `pwd`
    
-   s="${ROOT_GODAS_DIR}/rads_adt2ioda.py -i "
+   s="${IODA_EXEC}/rads_adt2ioda.py -i "
    for files in `ls *.nc`; do
-      s+=" $ADTDCOM/${files} "
+      s+=" $OBSDCOM/${files} "
    done
    
-   s+=" -o ${OUTDIR}/ioda.adt.nc -d ${CDATE}"
+   s+=" -o ${OUTDIR}/ioda.adt.${DA_SLOT_LEN}h.nc -d ${CDATE}"
+
+   eval ${s}
+
+else
+   
+   set -x
+   echo There are no ADT observations for ${CDATE}  
+   set +x
+
 fi
  
-eval $s
-
-exit 
