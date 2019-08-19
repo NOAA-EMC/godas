@@ -9,12 +9,15 @@ module purge
 module use -a /contrib/da/modulefiles
 module load jedi
 
+# TODO: Hardcod again ... rundir is not right
+RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001 
+
 if [ ! -d $RUNDIR ]; then mkdir -p $RUNDIR; fi
 cd $RUNDIR
 
 # Generate ocean-ice grid
-srun --nodes=1 --ntasks=12 $SOCA_EXEC/soca_gridgen.x ./yaml/gridgen.yml
+srun --nodes=1 --ntasks=12 ${ROOT_GODAS_DIR}/build/bin/soca_gridgen.x ./yaml/gridgen.yml
 
 # Create BUMP convolution operator
 mkdir -p bump
-srun -n 312 $SOCA_EXEC/soca_staticbinit.x ./yaml/static_SocaError_init.yml
+srun -n 312 ${ROOT_GODAS_DIR}/build/bin/soca_staticbinit.x ./yaml/static_SocaError_init.yml
