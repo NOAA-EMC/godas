@@ -64,6 +64,9 @@ config_base:
     export SDATE={tools.to_YMDH(doc.settings.SDATE)}
     export EDATE={tools.to_YMDH(doc.settings.EDATE)}
     export PSLOT="{doc.names.experiment}"
+
+    export NMEM={doc.settings.NMEM}
+
     export EXPDIR="{doc.places.EXPDIR}"
     export ROTDIR="{doc.places.ROTDIR}"
     export RUNDIR="{doc.places.LONG_TERM_TEMP}/RUNDIR/{doc.names.experiment}"
