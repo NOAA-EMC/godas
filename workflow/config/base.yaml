@@ -38,9 +38,12 @@ config_base:
     # GLOBAL static environment parameters
 
     export ROOT_GODAS_DIR="{doc.places.ROOT_GODAS_DIR}"
+    export GODAS_RC="{doc.places.GODAS_RC}"
     export STMP="{doc.places.SHORT_TERM_TEMP}/$USER"
     export PTMP="{doc.places.LONG_TERM_TEMP}/$USER"
-    export SOCA_EXEC="{doc.places.SOCA_EXEC}"
+    export SOCA_EXEC="{doc.places.ROOT_GODAS_DIR}/build/bin/"
+    export SOCA_STATIC="{doc.places.GODAS_RC}/soca-static/1440x1080x75/"
+    export SOCA_OBS="{doc.places.SOCA_ROOT}/staged-obs/"
     
     ####################################################
     # DO NOT ADD MACHINE DEPENDENT STUFF BELOW THIS LINE

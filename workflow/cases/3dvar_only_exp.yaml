@@ -6,5 +6,7 @@ case:
 
   places:
     workflow_file: layout/3dvar_only.yaml
+    ROTDIR: '/scratch3/NCEPDEV/marine/noscrub/marineda/GodasOceanObs'
+    #ROTDIR: /scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001/obsdatabase/
     RUNDIR: /scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001/
-    SOCA_EXEC: scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-bundle/build/bin/
+    MODEL_SCRATCH: /scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
