@@ -7,7 +7,6 @@ if [ -d "$OBSDCOM" ]; then
    
    OUTDIR=${ROTDIR}/${CDATE}
    mkdir -p ${OUTDIR}
-   echo ${OUTDIR}
    
    cd $OBSDCOM
    echo ADT Observations for $PDY exist at `pwd`
