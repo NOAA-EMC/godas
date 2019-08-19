@@ -5,23 +5,84 @@
 #================================================================================
 # Prep SOCA-DA
 
+module purge
 module use -a /contrib/da/modulefiles
 module load jedi
 module load nco
 
+echo "SOCA_STATIC="$SOCA_STATIC
+
+# TODO: Hardcoded again ... rundir is not right
+RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001 
 mkdir -p $RUNDIR
 cd $RUNDIR
+
+# TODO: Hard-coded stuff that needs to be moved/changed
+MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
+cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
+cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
+
+# Make sure CDATE is at 12z
+cdate_hh(){ echo  ${1:8:2}; }
+if [ $(cdate_hh $CDATE) -eq 12 ]; then
+    echo "Setting SOCA config for 24hr DA window"
+else
+    echo "Background date needs to be at 12Z"
+    echo "CDATE="$CDATE
+    exit 1
+fi
 
 # Copy static files into RUNDIR
 #------------------------------
 cp -r $SOCA_STATIC/* .
 
-# Prepare observations
-#---------------------
+# Prepare SOCA configuration
+#---------------------------
+window_begin=$(cdate2window_begin $CDATE)
+bkg_date=$(cdate2bkg_date $CDATE)
+
+if [ $godas_cyc -eq 1 ]; then
+    window_length=PT24H
+else
+    echo "godas_cyc not valid"
+    exit 1
+fi
+echo "window_begin="$window_begin
+echo "window_length="$window_length
+echo "bkg_date="$bkg_date
+echo "MODEL_SCRATCH="$MODEL_SCRATCH
+
+# Set date for bump initialization
+sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/static_SocaError_init.yml 
+
+# Set date for 3DVAR
+sed -i "s/WINDOW_BEGIN/${window_begin}/g" ./yaml/3dvar_godas.yml 
+sed -i "s/WINDOW_LENGTH/${window_length}/g" ./yaml/3dvar_godas.yml 
+sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/3dvar_godas.yml 
+
+# Set checkpoint date
+sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/checkpointmodel.yml
+
+# Setup Jo cost function
+#-----------------------
 mkdir -p Data
-ln -s $SOCA_OBS/sst-2011100112.nc ./Data/sst.nc
-ln -s $SOCA_OBS/adt-2011100112.nc ./Data/adt.nc
-ln -s $SOCA_OBS/icec-2011100112.nc ./Data/icec.nc
+obsdatabase=${ROTDIR}/${CDATE} # From obs_prep jjob
+
+  # Add adt obs to Jo
+  obsfile=$obsdatabase/ioda.adt.nc  # TODO: add da indow to filename
+  if [ -f $obsfile ]; then
+    echo "Adding ADT to Jo cost function"
+    ln -s $obsdatabase/ioda.adt.nc ./Data/adt.nc
+    # TODO: change in place doesn't work ... not sure why 
+    sed -e '/ADT_JO/{r ./yaml/adt.yml' -e 'd}' ./yaml/3dvar_godas.yml > 3dvartmp.yml 
+    cp 3dvartmp.yml ./yaml/3dvar_godas.yml
+    rm 3dvartmp.yml
+  else
+    echo "Not assimilating ADT"
+  fi
+
+#ln -s $SOCA_OBS/adt-2011100112.nc ./Data/adt.nc
+#ln -s $SOCA_OBS/icec-2011100112.nc ./Data/icec.nc
 
 # Ocean bkg files
 #----------------
@@ -29,7 +90,7 @@ ln -s $MODEL_SCRATCH/INPUT/MOM.res*.nc ./INPUT_MOM6/
 
 # Sea-ice bkg files
 #------------------
-# Get bkg sea-ice file. TODO: DATE IS HARDCODED!!!!
+# Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
 cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc ./INPUT_MOM6/cice_bkg.nc  
 # Make cice_bkg.nc fms compliant
 ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc ./INPUT_MOM6/cice_bkg.nc

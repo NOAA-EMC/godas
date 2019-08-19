@@ -5,11 +5,16 @@
 #================================================================================
 # Run SOCA 3DVAR
 
+module purge
 module use -a /contrib/da/modulefiles
 module load jedi
-module load nco
+
+# Hardcod again ... rundir is not right
+RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001 
 
 cd $RUNDIR
-srun -n 312 $SOCA_EXEC/soca_3dvar.x ./yaml/3dvar_godas.yml
+
+# Run 3DVAR
+srun -n 312 ${ROOT_GODAS_DIR}/build/bin/soca_3dvar.x ./yaml/3dvar_godas.yml
 
 
