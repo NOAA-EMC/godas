@@ -6,33 +6,16 @@
 ##--------------------------------------------------------------------------------
 #
 default_places: &default_places
-  PROJECT_DIR: !error Please select a project directory.
-  ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) ) 
-  HOMEcrow:    !calc tools.crow_install_dir()
-  EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'
-  LOG_DIR:     !expand "{EXPDIR}/log"
-  ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"
-  GODAS_RC:   "/scratch3/NCEPDEV/marine/noscrub/marineda/"
-  SOCA_ROOT:   "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/"
-  DCOMROOT: '/scratch3/NCEPDEV/marine/noscrub/Stylianos.Flampouris/ocean_observations/data'
-  EXECROOT: '/scratch4/NCEPDEV/ocean/noscrub/Stylianos.Flampouris/ioda-conv-dev/update_ioda_converters/ioda-converters/build/bin'
-  SOCA_STATIC: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-static/1440x1080x75/"
-  SOCA_OBS: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/staged-obs/"
+  PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
+  ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path
+  HOMEcrow:    !calc tools.crow_install_dir()                    # CROW repo top level
+  EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'    # EXPDIR location
+  LOG_DIR:     !expand "{EXPDIR}/log"                            # place to logs
+  ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
+  GODAS_RC:   "/scratch3/NCEPDEV/marine/noscrub/marineda/"        # Root path for external data 
+  SOCAEXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
+  DCOMROOT: !expand "{GODAS_RC}/ocean_observations/data'          # Observation root path
   MODEL_SCRATCH: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/"
-  SHORT_TERM_TEMP: !calc doc.platform.short_term_temp
-  LONG_TERM_TEMP:  !calc doc.platform.long_term_temp
-#  SHORT_TERM_TEMP: !error GOT HERE
-#  LONG_TERM_TEMP:  !error GOT HERE TOO
-  RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/{doc.names.experiment}"
-  YAMLDIR: !calc EXPDIR
-  rocoto_workflow_xml: !expand '{YAMLDIR}/workflow.xml'
-
-## initial_directory: location from which the setup script was run.
-## HOMEgfs: top level of the installation area (directory above ush,
-## jobs, ecf)
-
-static_locations:
-  HOMEgodas: !Immediate
-    - !calc ( tools.realpath(tools.abspath("../../")) )
-  initial_directory: !Immediate
-    - !calc ( tools.realpath(tools.abspath('.')) )
+  SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage
+  LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
+  RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory  
