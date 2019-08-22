@@ -43,7 +43,6 @@ config_base:
     export PTMP="{doc.places.LONG_TERM_TEMP}/$USER"
     export SOCA_EXEC="{doc.places.ROOT_GODAS_DIR}/build/bin/"
     export SOCA_STATIC="{doc.places.GODAS_RC}/soca-static/1440x1080x75/"
-    export SOCA_OBS="{doc.places.SOCA_ROOT}/staged-obs/"
     
     ####################################################
     # DO NOT ADD MACHINE DEPENDENT STUFF BELOW THIS LINE
@@ -69,7 +68,7 @@ config_base:
 
     export EXPDIR="{doc.places.EXPDIR}"
     export ROTDIR="{doc.places.ROTDIR}"
-    export RUNDIR="{doc.places.LONG_TERM_TEMP}/RUNDIR/{doc.names.experiment}"
+    export RUNDIR="{doc.places.RUNDIR}"
     
     # DA cycle info
     export godas_cyc={doc.settings.godas_cyc}

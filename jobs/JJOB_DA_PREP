@@ -11,9 +11,8 @@ module load jedi
 module load nco
 
 echo "SOCA_STATIC="$SOCA_STATIC
+echo $RUNDIR
 
-# TODO: Hardcoded again ... rundir is not right
-RUNDIR=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001 
 mkdir -p $RUNDIR
 cd $RUNDIR
 
@@ -67,13 +66,12 @@ sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/checkpointmodel.yml
 #-----------------------
 mkdir -p Data
 obsdatabase=${ROTDIR}/${CDATE} # From obs_prep jjob
-
+echo "obsdatabase="$obsdatabase
   # Add adt obs to Jo
-  obsfile=$obsdatabase/ioda.adt.nc  # TODO: add da indow to filename
+  obsfile=$obsdatabase/ioda.adt.24h.nc  # TODO: add da indow to filename
   if [ -f $obsfile ]; then
     echo "Adding ADT to Jo cost function"
-    ln -s $obsdatabase/ioda.adt.nc ./Data/adt.nc
-    # TODO: change in place doesn't work ... not sure why 
+    ln -s $obsdatabase/ioda.adt.24h.nc ./Data/adt.nc
     sed -e '/ADT_JO/{r ./yaml/adt.yml' -e 'd}' ./yaml/3dvar_godas.yml > 3dvartmp.yml 
     cp 3dvartmp.yml ./yaml/3dvar_godas.yml
     rm 3dvartmp.yml
@@ -81,8 +79,29 @@ obsdatabase=${ROTDIR}/${CDATE} # From obs_prep jjob
     echo "Not assimilating ADT"
   fi
 
-#ln -s $SOCA_OBS/adt-2011100112.nc ./Data/adt.nc
-#ln -s $SOCA_OBS/icec-2011100112.nc ./Data/icec.nc
+  # Add sst obs to Jo
+  obsfile=$obsdatabase/ioda.sst.24h.nc  # TODO: add da indow to filename
+  if [ -f $obsfile ]; then
+    echo "Adding SST to Jo cost function"
+    ln -s $obsdatabase/ioda.sst.24h.nc ./Data/sst.nc
+    sed -e '/SST_JO/{r ./yaml/sst.yml' -e 'd}' ./yaml/3dvar_godas.yml > 3dvartmp.yml 
+    cp 3dvartmp.yml ./yaml/3dvar_godas.yml
+    rm 3dvartmp.yml
+  else
+    echo "Not assimilating SST"
+  fi
+
+  # Add adt insitu profiles to Jo
+  obsfile=$obsdatabase/ioda.profile.24h.nc  # TODO: add da indow to filename
+  if [ -f $obsfile ]; then
+    echo "Adding Profiles to Jo cost function"
+    ln -s $obsdatabase/ioda.profile.24h.nc ./Data/prof.nc
+    sed -e '/INSITU_JO/{r ./yaml/profile.yml' -e 'd}' ./yaml/3dvar_godas.yml > 3dvartmp.yml 
+    cp 3dvartmp.yml ./yaml/3dvar_godas.yml
+    rm 3dvartmp.yml
+  else
+    echo "Not assimilating ADT"
+  fi
 
 # Ocean bkg files
 #----------------
