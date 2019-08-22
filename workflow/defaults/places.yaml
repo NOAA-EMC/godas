@@ -7,6 +7,15 @@
 #
 default_places: &default_places
 
+  IODA_EXEC: !expand "{ROOT_GODAS_DIR}/build/bin"
+
+# TODO!!
+# To be removed as soon as the da.yaml is activated.
+  DA_SLOT_LEN: 24
+## initial_directory: location from which the setup script was run.
+## HOMEgfs: top level of the installation area (directory above ush,
+## jobs, ecf)
+
   PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path
   HOMEcrow:    !calc tools.crow_install_dir()                    # CROW repo top level
