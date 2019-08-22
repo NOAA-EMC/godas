@@ -13,11 +13,9 @@ default_places: &default_places
   LOG_DIR:     !expand "{EXPDIR}/log"
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"
   GODAS_RC:   "/scratch3/NCEPDEV/marine/noscrub/marineda/"
-  SOCA_ROOT:   "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/"
-  DCOMROOT: '/scratch3/NCEPDEV/marine/noscrub/Stylianos.Flampouris/ocean_observations/data'
-  EXECROOT: '/scratch4/NCEPDEV/ocean/noscrub/Stylianos.Flampouris/ioda-conv-dev/update_ioda_converters/ioda-converters/build/bin'
-  SOCA_STATIC: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-static/1440x1080x75/"
-  SOCA_OBS: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/staged-obs/"
+  SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin}"
+  DCOMROOT: !expand "{GODAS_RC}/ocean_observations/data}"
+  SOCA_STATIC: !expand "{ROOT_GODAS_DIR}/soca-static/1440x1080x75"
   MODEL_SCRATCH: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/"
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp
