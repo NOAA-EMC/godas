@@ -1,8 +1,8 @@
 #!/bin/bash -l 
 
-cd $DCOMROOT
+cd $DCOM_ROOT
 
-OBSDCOM=$DCOMROOT/adt.nesdis/$PDY
+OBSDCOM=$DCOM_ROOT/adt.nesdis/$PDY
 if [ -d "$OBSDCOM" ]; then
    
    OUTDIR=${ROTDIR}/${CDATE}

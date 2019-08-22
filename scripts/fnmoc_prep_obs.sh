@@ -4,9 +4,9 @@ echo fnmoc_prep_obs.sh starts
 
 #set -x
 
-cd $DCOMROOT
+cd $DCOM_ROOT
 
-OBSDCOM=$DCOMROOT/insitu.fnmoc/$PDY
+OBSDCOM=$DCOM_ROOT/insitu.fnmoc/$PDY
    
 OUTDIR=${ROTDIR}/${CDATE}
 mkdir -p ${OUTDIR}
