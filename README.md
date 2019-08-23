@@ -1,17 +1,25 @@
 # Clone godas
-1. `git clone --recursive https://github.com/NOAA-EMC/godas.git` godas\
+1. `git clone --recursive https://github.com/NOAA-EMC/godas.git godas`
 2. `cd godas`
-2. `git submodule update --init --recursive` \
+3. `git submodule update --init --recursive` \
 
 # Preparing the workflow
 1. `cd godas/workflow` \
 2. Create/Edit `user.yaml` based on `user.yaml.default`
+   `cp user.yaml.default user.yaml`
+   `vi user.yaml`
+Update the following fields in the `user.yaml` and save the file
+   `PROJECT_DIR: !error Please select a project directory.
+   user_email: none
+   cpu_project: !error Please select your cpu project
+   hpss_project: !error Please select your hpss project`
 3. `cd CROW`
-4. `sh setup_case.sh -f ../cases/3dvar_only_exp.yaml workflowtest001`
-5. Read output and run suggested command. Should be similar to: \
-   `./make_rocoto_xml_for.sh /path/to/somewhere/workflowtest001` \
+4. Setup the workflow as follows; select a name for the workflow path, e.g. workflowtest001:
+   `sh setup_case.sh -f ../cases/3dvar_only_exp.yaml workflowtest001`
+5. Read output and run suggested command. Should be similar to:
+   `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` \
 6. Go into the test directory
-   `cd /path/to/somewhere/workflowtest001`
+   `cd PROJECT_DIR/workflowtest001`
 7. Start rocoto
    `rocotorun -w workflow.xml -d workflow.db`
 8. Check status
