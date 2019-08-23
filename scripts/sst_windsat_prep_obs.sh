@@ -1,8 +1,8 @@
 #!/bin/bash -l 
 
-cd $DCOMROOT
+cd $DCOM_ROOT
 
-OBSDCOM=$DCOMROOT/sst.windsat_l3u.ghrsst/$PDY
+OBSDCOM=$DCOM_ROOT/sst.windsat_l3u.ghrsst/$PDY
 if [ -d "$OBSDCOM" ]; then
    
    OUTDIR=${ROTDIR}/${CDATE}
