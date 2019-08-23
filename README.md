@@ -1,5 +1,6 @@
 # Clone godas
 1. `git clone --recursive https://github.com/NOAA-EMC/godas.git` godas\
+2. `cd godas`
 2. `git submodule update --init --recursive` \
 
 # Preparing the workflow
