@@ -4,7 +4,7 @@
 3. `git submodule update --init --recursive` \
 
 # Preparing the workflow
-1. `cd godas/workflow` \
+1. `cd workflow` \
 2. Create/Edit `user.yaml` based on `user.yaml.default`
    `cp user.yaml.default user.yaml`
    `vi user.yaml`
@@ -20,17 +20,21 @@ Update the following fields in the `user.yaml` and save the file
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` \
 6. Go into the test directory
    `cd PROJECT_DIR/workflowtest001`
-7. Start rocoto
+7. Load module rocoto
+   `module load rocoto`
+8. Start rocoto
    `rocotorun -w workflow.xml -d workflow.db`
-8. Check status
+9. Check status
    `rocotostat -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
 
-# Building the soca-bundle on Theia (should that be part of the workflow?)
+# Building the soca-bundle on Theia 
+(TODO: should that be part of the workflow?)
 
+0. `cd [...]/godas/src/soca-bundle`
 1. Load the JEDI modules \
-   `module use -a /contrib/da/modulefile` \
+   `module use -a /contrib/da/modulefiles` \
    `module load jedi`
-2. Building path TBD: `cd build`
+2. Building path TBD: `cd [...]/godas/build`
 3. Clone all the necessary repository to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DMPIEXEC_MAX_NUMPROCS=24 ../src/soca-bundle`
 4. `make -j<n>`
