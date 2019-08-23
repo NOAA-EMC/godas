@@ -18,13 +18,17 @@ Update the following fields in the `user.yaml` and save the file
    `sh setup_case.sh -f ../cases/3dvar_only_exp.yaml workflowtest001`
 5. Read output and run suggested command. Should be similar to:
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` \
-6. Go into the test directory
+ 
+# Running the workflow
+Assumption all the subsystems have been compiled
+
+1. Go into the test directory
    `cd PROJECT_DIR/workflowtest001`
-7. Load module rocoto
+2. Load module rocoto
    `module load rocoto`
-8. Start rocoto
+3. Start rocoto
    `rocotorun -w workflow.xml -d workflow.db`
-9. Check status
+4. Check status
    `rocotostat -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
 
 # Building the soca-bundle on Theia 
