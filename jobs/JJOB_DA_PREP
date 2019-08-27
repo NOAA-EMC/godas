@@ -17,7 +17,8 @@ mkdir -p $RUNDIR
 cd $RUNDIR
 
 # TODO: Hard-coded stuff that needs to be moved/changed
-MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
+export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
+
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
 cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
 
@@ -33,15 +34,15 @@ fi
 
 # Copy static files into RUNDIR
 #------------------------------
-cp -r $SOCA_STATIC/* .
+cp -r $SOCA_STATIC/* $RUNDIR
 
 # Prepare SOCA configuration
 #---------------------------
-window_begin=$(cdate2window_begin $CDATE)
-bkg_date=$(cdate2bkg_date $CDATE)
+export window_begin=$(cdate2window_begin $CDATE)
+export bkg_date=$(cdate2bkg_date $CDATE)
 
 if [ $godas_cyc -eq 1 ]; then
-    window_length=PT24H
+    export window_length=PT24H
 else
     echo "godas_cyc not valid"
     exit 1
@@ -51,69 +52,41 @@ echo "window_length="$window_length
 echo "bkg_date="$bkg_date
 echo "MODEL_SCRATCH="$MODEL_SCRATCH
 
-# Set date for bump initialization
-sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/static_SocaError_init.yml 
+## Prep yaml for bump initialization 
+#-----------------------------------
 
-# Set date for 3DVAR
-sed -i "s/WINDOW_BEGIN/${window_begin}/g" ./yaml/3dvar_godas.yml 
-sed -i "s/WINDOW_LENGTH/${window_length}/g" ./yaml/3dvar_godas.yml 
-sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/3dvar_godas.yml 
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNDIR/yaml/static_SocaError_init.yml    \
+      -d ${bkg_date}
 
-# Set checkpoint date
-sed -i "s/BKG_DATE/${bkg_date}/g" ./yaml/checkpointmodel.yml
+## Set checkpoint date
+#---------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNDIR/yaml/checkpointmodel.yml          \
+      -d ${bkg_date}
 
-# Setup Jo cost function
-#-----------------------
-mkdir -p Data
-obsdatabase=${ROTDIR}/${CDATE} # From obs_prep jjob
-echo "obsdatabase="$obsdatabase
-  # Add adt obs to Jo
-  obsfile=$obsdatabase/ioda.adt.24h.nc  # TODO: add da indow to filename
-  if [ -f $obsfile ]; then
-    echo "Adding ADT to Jo cost function"
-    ln -s $obsdatabase/ioda.adt.24h.nc ./Data/adt.nc
-    sed -e '/ADT_JO/{r ./yaml/adt.yml' -e 'd}' ./yaml/3dvar_godas.yml > 3dvartmp.yml 
-    cp 3dvartmp.yml ./yaml/3dvar_godas.yml
-    rm 3dvartmp.yml
-  else
-    echo "Not assimilating ADT"
-  fi
+# Prep yaml for 3dvar 
+#----------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
+      -i $RUNDIR/yaml/3dvar_godas.yml
 
-  # Add sst obs to Jo
-  obsfile=$obsdatabase/ioda.sst.24h.nc  # TODO: add da indow to filename
-  if [ -f $obsfile ]; then
-    echo "Adding SST to Jo cost function"
-    ln -s $obsdatabase/ioda.sst.24h.nc ./Data/sst.nc
-    sed -e '/SST_JO/{r ./yaml/sst.yml' -e 'd}' ./yaml/3dvar_godas.yml > 3dvartmp.yml 
-    cp 3dvartmp.yml ./yaml/3dvar_godas.yml
-    rm 3dvartmp.yml
-  else
-    echo "Not assimilating SST"
-  fi
+# TODO: Prep yaml for HoFx 
+#----------------------------------
 
-  # Add adt insitu profiles to Jo
-  obsfile=$obsdatabase/ioda.profile.24h.nc  # TODO: add da indow to filename
-  if [ -f $obsfile ]; then
-    echo "Adding Profiles to Jo cost function"
-    ln -s $obsdatabase/ioda.profile.24h.nc ./Data/prof.nc
-    sed -e '/INSITU_JO/{r ./yaml/profile.yml' -e 'd}' ./yaml/3dvar_godas.yml > 3dvartmp.yml 
-    cp 3dvartmp.yml ./yaml/3dvar_godas.yml
-    rm 3dvartmp.yml
-  else
-    echo "Not assimilating ADT"
-  fi
+# TODO: Prep yaml for letkf 
+#----------------------------------
 
 # Ocean bkg files
 #----------------
-ln -s $MODEL_SCRATCH/INPUT/MOM.res*.nc ./INPUT_MOM6/
+ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNDIR/INPUT_MOM6/
 
 # Sea-ice bkg files
 #------------------
 # Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
-cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc ./INPUT_MOM6/cice_bkg.nc  
+cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
 # Make cice_bkg.nc fms compliant
-ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc ./INPUT_MOM6/cice_bkg.nc
-ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 ./INPUT_MOM6/cice_bkg.nc
-ncecat -O -v aicen,vicen,vsnon -u Time ./INPUT_MOM6/cice_bkg.nc ./INPUT_MOM6/cice_bkg.nc
-ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 ./INPUT_MOM6/ice_model.res.nc ./INPUT_MOM6/cice_bkg.nc
+ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
+ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNDIR/INPUT_MOM6/cice_bkg.nc
+ncecat -O -v aicen,vicen,vsnon -u Time $RUNDIR/INPUT_MOM6/cice_bkg.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
+ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNDIR/INPUT_MOM6/ice_model.res.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
 
