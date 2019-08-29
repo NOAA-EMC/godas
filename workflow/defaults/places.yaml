@@ -12,6 +12,10 @@ default_places: &default_places
 # TODO!!
 # To be removed as soon as the da.yaml is activated.
   DA_SLOT_LEN: 24
+# To be removed as soon as there is an ensemble yaml file
+# Number of ensemble members
+  NO_ENS_MBR: 5   
+
 ## initial_directory: location from which the setup script was run.
 ## HOMEgfs: top level of the installation area (directory above ush,
 ## jobs, ecf)

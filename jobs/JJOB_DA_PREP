@@ -65,13 +65,24 @@ ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNDIR/yaml/checkpointmodel.yml          \
       -d ${bkg_date}
 
+## Prep yaml for the soca_enspert 
+#-----------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNDIR/yaml/genenspert.yml               \
+      -d ${bkg_date}
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNDIR/yaml/genenspert.yml               \
+      -k NO_ENS_MBR                                \
+      -v ${NO_ENS_MBR}
+
 # Prep yaml for 3dvar 
 #----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
       -i $RUNDIR/yaml/3dvar_godas.yml              \
       -d $RUNDIR
 
-# TODO: Prep yaml for HoFx 
+# TODO: yaml for HoFx, add the ensemble member 
 #----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh       \
       -i $RUNDIR/yaml/hofx3d.yml
@@ -83,6 +94,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh       \
 # Ocean bkg files
 #----------------
 ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNDIR/INPUT_MOM6/
+
 
 # Sea-ice bkg files
 #------------------
