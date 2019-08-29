@@ -13,10 +13,10 @@
 #
 # History Log        :
 #
+# TODO               : Optimize the two inputs
+#
 # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
-set -x
-
-echo #@@#@#@@#@@#@#@@#@#@#@#@#@#@ Setup
+# set -x
 
 while getopts "i:d:" opt; do
    case $opt in
@@ -70,6 +70,3 @@ if [ -f $obsfile ]; then
 else
    echo "Not assimilating profiles"
 fi
-
-echo #@@#@#@@#@@#@#@@#@#@#@#@#@#@ Setup
-
