@@ -68,13 +68,17 @@ ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
 # Prep yaml for 3dvar 
 #----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
-      -i $RUNDIR/yaml/3dvar_godas.yml
+      -i $RUNDIR/yaml/3dvar_godas.yml              \
+      -d $RUNDIR
 
 # TODO: Prep yaml for HoFx 
 #----------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh       \
+      -i $RUNDIR/yaml/hofx3d.yml
 
 # TODO: Prep yaml for letkf 
 #----------------------------------
+
 
 # Ocean bkg files
 #----------------
