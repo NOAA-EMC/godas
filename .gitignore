@@ -1,0 +1,7 @@
+**/build
+**/src/soca-bundle
+# Do not ignore the following files
+!.gitignore
+!README.md
+
+#!*/

@@ -84,17 +84,15 @@ ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
 
 # TODO: yaml for HoFx, add the ensemble member 
 #----------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh       \
+${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh      \
       -i $RUNDIR/yaml/hofx3d.yml
 
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
-
 # Ocean bkg files
 #----------------
 ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNDIR/INPUT_MOM6/
-
 
 # Sea-ice bkg files
 #------------------
