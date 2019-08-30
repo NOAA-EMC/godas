@@ -1,0 +1,20 @@
+#!/bin/bash
+#set -e
+
+#================================================================================
+#================================================================================
+# Generate the ensemble
+
+module purge
+module use -a /contrib/da/modulefiles
+module load jedi
+
+echo $RUNDIR
+
+if [ ! -d $RUNDIR ]; then mkdir -p $RUNDIR; fi
+cd $RUNDIR
+
+# Generate the ensemble using soca_enspert
+
+srun -n 24 ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
+
