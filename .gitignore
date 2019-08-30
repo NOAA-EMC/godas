@@ -1,0 +1,8 @@
+**/build
+**/src/soca-bundle
+workflow/user.yaml
+# Do not ignore the following files
+!.gitignore
+!README.md
+
+#!*/
