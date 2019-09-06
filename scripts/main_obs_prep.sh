@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -l
 echo 'main_obs_prep.sh starts'
 echo ${ROOT_GODAS_DIR}
 echo CDATE is $CDATE
