@@ -26,7 +26,7 @@ default_places: &default_places
   EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'    # EXPDIR location
   LOG_DIR:     !expand "{EXPDIR}/log"                            # place to logs
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
-  GODAS_RC:   "/scratch3/NCEPDEV/marine/noscrub/marineda/"        # Root path for external data 
+  GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda/"        # Root path for external data 
   SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
   SOCA_STATIC: !expand "{GODAS_RC}/soca-staticUPD/1440x1080x75"
   DCOM_ROOT: !expand "{GODAS_RC}/ocean_observations/data"          # Observation root path
