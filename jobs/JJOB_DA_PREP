@@ -11,14 +11,19 @@ module load jedi
 module load nco
 
 echo "SOCA_STATIC="$SOCA_STATIC
-echo $RUNDIR
-
+echo  
+echo "The system runs at $RUNDIR"
+echo
+echo "Root GODAS " ${ROOT_GODAS_DIR}
+echo
 mkdir -p $RUNDIR
 cd $RUNDIR
 
 # TODO: Hard-coded stuff that needs to be moved/changed
 export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
-
+export case='3dvar' #options 3dvar or en
+# TODO Put the job files for the ensemble to a temporary job-dir
+#
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
 cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
 
@@ -82,11 +87,25 @@ ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
       -i $RUNDIR/yaml/3dvar_godas.yml              \
       -d $RUNDIR
 
-# TODO: yaml for HoFx, add the ensemble member 
+# TODO: yaml for HoFx, add the ensemble member
 #----------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh      \
-      -i $RUNDIR/yaml/hofx3d.yml
-
+if [ $case = 'en' ]; then 
+   for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
+      #yaml for each member of the Ensemble
+      yaml_tmp=$RUNDIR/yaml/hofx3d${mbr}.yml 
+      cp -r $RUNDIR/yaml/hofx3d.yml ${yaml_tmp}
+   
+      ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
+         -i ${yaml_tmp}                               \
+         -d ${RUNDIR}                                 \
+         -n ${mbr}
+   #
+   #JJOB_for H(x) for each member
+      jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
+      cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
+      sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
+   done
+fi
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
