@@ -6,7 +6,8 @@ echo $CDATE
 module purge
 #module use -a /contrib/da/modulefiles
 #module load jedi
-#module load anaconda/anaconda3-5.3.1
+#module load contrib
+#module load anaconda/latest
 
 module use -a /home/Stylianos.Flampouris/modulefiles
 module load anaconda/2019.08.07
