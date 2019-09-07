@@ -11,7 +11,7 @@ suite: !Cycle
       obs_prep: !Task
         <<: *bigmem_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
-        resources: !calc partition.resources.run_obs_prep
+        resources: !calc partition.resources.run_nothing
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
 

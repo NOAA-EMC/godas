@@ -18,7 +18,6 @@ godas_resource_table: !Select
       fcst_prep:    [  12,   12, !timedelta "00:15:00", null, null ]
       fcst_run:     [ 144,    6, !timedelta "01:30:00", max, null  ]
       da_prep:      [  72,   12, !timedelta "00:30:00", 1, null    ]
-      obs_prep:     [  12,   12, !timedelta "01:00:00", 1, null    ]
       da_3dvar_run: [  72,   12, !timedelta "00:10:00", 1, null    ]
       post:         [   1,    1, !timedelta "03:00:00", null, null ]
 
@@ -63,13 +62,6 @@ default_resources: &default_resources
       walltime: !timedelta "06:00:00"
       exe: placeholder
       max_ppn: 1
-
-  run_obs_prep: !JobRequest
-    - memory: "64G"
-      mpi_ranks: 12
-      walltime: !timedelta "01:00:00"
-      exe: placeholder
-      max_ppn: 12
 
   run_da_prep: !JobRequest
     - memory: "64G"
