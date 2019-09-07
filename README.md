@@ -19,7 +19,7 @@ Update the following fields in the `user.yaml` and save the file
    `sh setup_case.sh -f ../cases/3dvar_only_exp.yaml workflowtest001`
    
    Note for Hera: 
-   `setup_case.sh -f ../cases/3dvar_only_exp.yaml workflowtest001`
+   `./setup_case.sh -f ../cases/3dvar_only_exp.yaml workflowtest001`
    
 5. Read output and run suggested command. Should be similar to:
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
@@ -34,7 +34,7 @@ Assumption all the subsystems have been compiled
 3. Start rocoto
    `rocotorun -w workflow.xml -d workflow.db`
 4. Check status
-   `rocotostat -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
+   `rocotostat -v 10 -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
 
 # Building the soca-bundle on Theia 
 (TODO: should that be part of the workflow?)
