@@ -17,9 +17,10 @@ if [ -d "$OBSDCOM" ]; then
    done
    
    s+=" -o ${OUTDIR}/ioda.adt.${DA_SLOT_LEN}h.nc -d ${CDATE}"
-
+   
+   set -x
    eval ${s}
-
+   set +x
 else
    
    set -x
