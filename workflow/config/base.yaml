@@ -48,7 +48,7 @@ config_base:
     export IODA_EXEC="{doc.places.IODA_EXEC}"
     export DA_SLOT_LEN="{doc.places.DA_SLOT_LEN}" #is defined at places.yaml, to be moved to da.yaml when it is activated. 
     export NO_ENS_MBR="{doc.places.NO_ENS_MBR}" #is defined at places.yaml, to be moved to the appropriate yaml file when it is activated. 
-    
+
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"
     export DCOM_ROOT="{doc.places.DCOM_ROOT}"
 

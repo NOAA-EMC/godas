@@ -6,6 +6,8 @@
 ##--------------------------------------------------------------------------------
 #
 default_places: &default_places
+<<<<<<< HEAD
+=======
 
   IODA_EXEC: !expand "{ROOT_GODAS_DIR}/build/bin"
 
@@ -15,10 +17,6 @@ default_places: &default_places
 # To be removed as soon as there is an ensemble yaml file
 # Number of ensemble members
   NO_ENS_MBR: 5   
-
-## initial_directory: location from which the setup script was run.
-## HOMEgfs: top level of the installation area (directory above ush,
-## jobs, ecf)
 
   PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path
