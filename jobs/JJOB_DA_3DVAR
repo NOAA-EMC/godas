@@ -7,7 +7,7 @@
 
 module purge
 module use -a /contrib/da/modulefiles
-module load jedi
+module load jedi/jedim
 
 echo $RUNDIR
 cd $RUNDIR
