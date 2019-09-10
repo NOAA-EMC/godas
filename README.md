@@ -1,7 +1,7 @@
 # Clone godas
 1. `git clone --recursive https://github.com/NOAA-EMC/godas.git godas`
 2. `cd godas`
-3. `git submodule update --init --recursive` \
+3. `git submodule update --init --recursive`
 
 # Preparing the workflow
 1. `cd workflow` 
@@ -40,9 +40,9 @@ Assumption all the subsystems have been compiled
 (TODO: should that be part of the workflow?)
 
 0. `cd [...]/godas/src/soca-bundle`
-1. Load the JEDI modules 
-   `module purge`
-   ` module use -a /contrib/da/modulefiles`
+1. Load the JEDI modules \
+   `module purge` \
+   `module use -a /contrib/da/modulefiles` \
    `module load jedi/jedim` 
 2. Building path TBD: `cd [...]/godas/build`
 3. Clone all the necessary repository to build soca 
