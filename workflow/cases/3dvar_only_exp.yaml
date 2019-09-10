@@ -6,4 +6,3 @@ case:
 
   places:
     workflow_file: layout/3dvar_only.yaml
-    ROTDIR: /scratch2/NCEPDEV/marine/marineda/GodasOceanObs001

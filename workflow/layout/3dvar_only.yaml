@@ -2,28 +2,28 @@ suite: !Cycle
       <<: *suite_defaults
 
       da_prep: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
         resources: !calc partition.resources.run_da_prep
         config: [ base ]
         J_JOB: JJOB_DA_PREP
 
       obs_prep: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
         resources: !calc partition.resources.run_obs_prep
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
 
       da_prep_soca: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  da_prep
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_PREP_SOCA
 
       da_3dvar_run: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  ( da_prep_soca & obs_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
