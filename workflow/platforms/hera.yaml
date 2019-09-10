@@ -22,6 +22,12 @@ platform: !Platform
     {metasched.defvar(doc.schedvar.service_queue, doc.accounting.service_partition.service_queue)}
     {metasched.defvar(doc.schedvar.cpu_project, doc.accounting.cpu_project)}
 
+  # CHGRP_RSTPROD_COMMAND - this specifies the command to use to
+  # restrict access to NOAA "rstprod" data restriction class.
+  # This only used for observation processing, data assimilation, and
+  # data assimilation archiving, which are not in the public release.
+  CHGRP_RSTPROD_COMMAND: "chgrp rstprod"
+
   partitions:
     Evaluate: false
     default_shared: !calc doc.platform.partitions.hera
