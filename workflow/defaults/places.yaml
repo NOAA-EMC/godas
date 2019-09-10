@@ -6,8 +6,6 @@
 ##--------------------------------------------------------------------------------
 #
 default_places: &default_places
-<<<<<<< HEAD
-=======
 
   IODA_EXEC: !expand "{ROOT_GODAS_DIR}/build/bin"
 
