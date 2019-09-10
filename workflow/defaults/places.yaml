@@ -24,7 +24,7 @@ default_places: &default_places
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
   GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda/"        # Root path for external data 
   SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
-  SOCA_STATIC: !expand "{GODAS_RC}/soca-staticUPD/1440x1080x75"
+  SOCA_STATIC: !expand "{GODAS_RC}/soca-static/1440x1080x75"
   DCOM_ROOT: !expand "{GODAS_RC}/ocean_observations/data"          # Observation root path
 
   MODEL_SCRATCH: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/"
