@@ -33,10 +33,10 @@ DATADIR=${RUNDIR}/Data
 
 mkdir -p ${DATADIR}
 
-obsdatabase=${ROTDIR}/${CDATE} 
+obsdatabase=${DATADIR}/${CDATE} 
 echo "obsdatabase="$obsdatabase
 # Add adt obs to Jo
-obsfile=$obsdatabase/ioda.adt.${DA_SLOT_LEN}h.nc 
+obsfile=$obsdatabase/ioda.adt.${DA_SLOT_LEN}h.nc
 if [ -f $obsfile ]; then
    echo "Adding ADT to Jo cost function"
    ln -sf ${obsfile} ${DATADIR}/adt.nc
