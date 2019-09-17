@@ -16,7 +16,7 @@ Update the following fields in the `user.yaml` and save the file \
 3. `cd CROW`
 4. Setup the workflow: \
    Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar_only_exp: \
-   `sh setup_case.sh -p HERA -f ../cases/3dvar_only_exp.yaml workflowtest001`
+   `./setup_case.sh -p HERA -f ../cases/3dvar_only_exp.yaml workflowtest001`
    
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
    
