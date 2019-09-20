@@ -78,7 +78,8 @@ config_base:
     export EXPDIR="{doc.places.EXPDIR}"
     export ROTDIR="{doc.places.ROTDIR}"
     export RUNDIR="{doc.places.RUNDIR}"
-    
+    export RUNCDATE="{doc.places.RUNDIR}/$CDATE"
+
     # DA cycle info
     export godas_cyc={doc.settings.godas_cyc}
 
