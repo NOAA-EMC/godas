@@ -47,19 +47,24 @@ else
    echo "Not assimilating ADT"
 fi
 
-# Add sst obs to Jo
-obsfile=$obsdatabase/ioda.sst.${DA_SLOT_LEN}h.nc 
-if [ -f $obsfile ]; then
-   echo "Adding SST to Jo cost function"
-   ln -sf ${obsfile} ${DATADIR}/sst.nc
-   sed -e '/SST_JO/{r '${RUNDIR}'/yaml/sst.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
-   cp 3dvartmp.yml ${yamlfile}
-   rm 3dvartmp.yml
-else
-  echo "Not assimilating SST"
-fi
+# Add ghrsst to Jo.
+ListOfGHRSST="windsat gmi amsr2"
+for inst in $ListOfGHRSST; do
+   obsfile=$obsdatabase/ioda.sst.${inst}_l3u.ghrsst.${DA_SLOT_LEN}h.nc 
+   if [ -f $obsfile ]; then
+      echo "Adding $inst SST to Jo cost function"
+      ln -sf ${obsfile} ${DATADIR}/ioda.sst.${inst}_l3u.ghrsst.nc
+      echo SST_${inst}_JO
+      echo sst.${inst}_l3u.ghrsst.yml
+      sed -e '/SST_'${inst}'_JO/{r '${RUNDIR}'/yaml/sst.'${inst}'_l3u.ghrsst.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
+      cp 3dvartmp.yml ${yamlfile}
+      rm 3dvartmp.yml
+   else
+     echo "Not assimilating $inst SST"
+   fi
+done
 
-# Add adt insitu profiles to Jo
+# Add insitu profiles to Jo
 obsfile=$obsdatabase/ioda.profile.${DA_SLOT_LEN}h.nc 
 if [ -f $obsfile ]; then
    echo "Adding Profiles to Jo cost function"

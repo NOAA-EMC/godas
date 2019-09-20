@@ -6,13 +6,18 @@
 # Run SOCA 3DVAR
 
 module purge
-module use -a /contrib/da/modulefiles
-module load jedi/jedim
+module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
+module load jedi-intel-17.0.5.239
 
-echo $RUNDIR
-cd $RUNDIR
+echo $RUNCDATE
+cd $RUNCDATE
 
 # Run 3DVAR
+export OOPS_TRACE=1
 srun -n 312 ${SOCA_EXEC}/soca_3dvar.x ./yaml/3dvar_godas.yml
+
+# Checkpoint 3DVAR analysis
+if [ ! -d RESTART ]; then mkdir -p RESTART; fi
+#srun -n 312 ${SOCA_EXEC}/soca_checkpoint_model.x ./yaml/checkpointmodel.yml
 
 
