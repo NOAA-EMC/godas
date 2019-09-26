@@ -12,7 +12,7 @@ Update the following fields in the `user.yaml` and save the file \
    `PROJECT_DIR: !error Please select a project directory.` \
    `user_email: none` \
    `cpu_project: !error Please select your cpu project` \
-   `hpss_project: !error Please select your hpss project` \
+   `hpss_project: !error Please select your hpss project` 
 3. `cd CROW`
 4. Setup the workflow: \
    Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar_only_exp: \
