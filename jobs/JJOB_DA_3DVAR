@@ -14,10 +14,10 @@ cd $RUNCDATE
 
 # Run 3DVAR
 export OOPS_TRACE=1
-srun -n 312 ${SOCA_EXEC}/soca_3dvar.x ./yaml/3dvar_godas.yml
+srun -n 200 ${SOCA_EXEC}/soca_3dvar.x ./yaml/3dvar_godas.yml
 
 # Checkpoint 3DVAR analysis
-if [ ! -d RESTART ]; then mkdir -p RESTART; fi
+if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 #srun -n 312 ${SOCA_EXEC}/soca_checkpoint_model.x ./yaml/checkpointmodel.yml
 
 

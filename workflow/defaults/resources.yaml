@@ -20,7 +20,7 @@ godas_resource_table: !Select
       obs_prep:     [  12,   12, !timedelta "01:00:00", 1, null    ]
       da_prep:      [  72,   12, !timedelta "00:30:00", 1, null    ]
       obs_prep:     [  12,   12, !timedelta "01:00:00", 1, null    ]
-      da_3dvar_run: [  624,   24, !timedelta "00:55:00", 1, null    ]
+      da_3dvar_run: [  200,  20, !timedelta "00:55:00", 1, null    ]
       post:         [   1,    1, !timedelta "03:00:00", null, null ]
 
 default_resources: &default_resources
