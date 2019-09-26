@@ -32,9 +32,14 @@ else
     exit 1
 fi
 
-# Copy static files into RUNDIR
-#------------------------------
+# Copy SOCA static files into RUNDIR
+#-----------------------------------
 cp -r $SOCA_STATIC/* $RUNCDATE
+
+# Copy SOCA config files into RUNDIR
+#-----------------------------------
+mkdir -p $RUNCDATE/yaml
+cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
 
 # Prepare SOCA configuration
 #---------------------------
@@ -53,13 +58,13 @@ echo "bkg_date="$bkg_date
 echo "MODEL_SCRATCH="$MODEL_SCRATCH
 
 ## Prep yaml for bump initialization 
-#-----------------------------------
+#----------------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/static_SocaError_init.yml    \
       -d ${bkg_date}
 
 ## Prep yaml for checkpointing 3DVAR analysis
-#--------------------------------------------
+#----------------------------------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/checkpointmodel.yml          \
       -d ${bkg_date}
