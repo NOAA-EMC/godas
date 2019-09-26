@@ -35,7 +35,7 @@ Assumption all the subsystems have been compiled
 4. Check status \
    `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
 
-# Building the soca-bundle on Theia 
+# Building the soca-bundle 
 (TODO: should that be part of the workflow?)
 
 0. `cd [...]/godas/src/soca-bundle`
