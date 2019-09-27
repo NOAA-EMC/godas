@@ -3,8 +3,8 @@
 # directory.  This file is NOT copied to the experiment directory;
 # there, _expdir_main.yaml is used in its place.
 include:
-  - 'static*yaml'
   - user.yaml
+  - resources_sum.yaml
+  - schema/
   - defaults/
   - runtime/
-

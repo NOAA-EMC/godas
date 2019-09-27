@@ -6,6 +6,3 @@ case:
 
   places:
     workflow_file: layout/3dvar_only.yaml
-    ROTDIR: '/scratch3/NCEPDEV/marine/noscrub/marineda/GodasOceanObs'
-    RUNDIR: '/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/workflowrun/test001/'
-    SOCA_EXEC: 'scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/soca/soca-bundle/build/bin/'
