@@ -6,15 +6,15 @@
 # Prep SOCA-DA
 
 module purge
-module use -a /contrib/da/modulefiles
-module load jedi/jedim
+module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
+module load jedi-intel-17.0.5.239
 module load nco
 
 echo "SOCA_STATIC="$SOCA_STATIC
-echo $RUNDIR
+echo $RUNCDATE
 
-mkdir -p $RUNDIR
-cd $RUNDIR
+mkdir -p $RUNCDATE
+cd $RUNCDATE
 
 # TODO: Hard-coded stuff that needs to be moved/changed
 export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
@@ -32,9 +32,14 @@ else
     exit 1
 fi
 
-# Copy static files into RUNDIR
-#------------------------------
-cp -r $SOCA_STATIC/* $RUNDIR
+# Copy SOCA static files into RUNDIR
+#-----------------------------------
+cp -r $SOCA_STATIC/* $RUNCDATE
+
+# Copy SOCA config files into RUNDIR
+#-----------------------------------
+mkdir -p $RUNCDATE/yaml
+cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
 
 # Prepare SOCA configuration
 #---------------------------
@@ -53,54 +58,53 @@ echo "bkg_date="$bkg_date
 echo "MODEL_SCRATCH="$MODEL_SCRATCH
 
 ## Prep yaml for bump initialization 
-#-----------------------------------
-
+#----------------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $RUNDIR/yaml/static_SocaError_init.yml    \
+      -i $RUNCDATE/yaml/static_SocaError_init.yml    \
       -d ${bkg_date}
 
-## Set checkpoint date
-#---------------------
+## Prep yaml for checkpointing 3DVAR analysis
+#----------------------------------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $RUNDIR/yaml/checkpointmodel.yml          \
+      -i $RUNCDATE/yaml/checkpointmodel.yml          \
       -d ${bkg_date}
 
 ## Prep yaml for the soca_enspert 
 #-----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $RUNDIR/yaml/genenspert.yml               \
+      -i $RUNCDATE/yaml/genenspert.yml               \
       -d ${bkg_date}
 
 ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
-      -i $RUNDIR/yaml/genenspert.yml               \
+      -i $RUNCDATE/yaml/genenspert.yml               \
       -k NO_ENS_MBR                                \
       -v ${NO_ENS_MBR}
 
 # Prep yaml for 3dvar 
 #----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
-      -i $RUNDIR/yaml/3dvar_godas.yml              \
-      -d $RUNDIR
+      -i $RUNCDATE/yaml/3dvar_godas.yml              \
+      -d $RUNCDATE
 
 # TODO: yaml for HoFx, add the ensemble member 
 #----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh      \
-      -i $RUNDIR/yaml/hofx3d.yml
+      -i $RUNCDATE/yaml/hofx3d.yml
 
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
 # Ocean bkg files
 #----------------
-ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNDIR/INPUT_MOM6/
+ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNCDATE/INPUT_MOM6/
 
 # Sea-ice bkg files
 #------------------
 # Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
-cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
+cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
 # Make cice_bkg.nc fms compliant
-ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
-ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNDIR/INPUT_MOM6/cice_bkg.nc
-ncecat -O -v aicen,vicen,vsnon -u Time $RUNDIR/INPUT_MOM6/cice_bkg.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
-ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNDIR/INPUT_MOM6/ice_model.res.nc $RUNDIR/INPUT_MOM6/cice_bkg.nc
+ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
 
