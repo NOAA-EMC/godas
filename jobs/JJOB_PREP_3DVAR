@@ -6,18 +6,29 @@
 # Prep SOCA Static B and grid
 
 module purge
-module use -a /contrib/da/modulefiles
-module load jed/jedim
-module listi
+module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
+module load jedi-intel-17.0.5.239
 
-echo $RUNDIR
+echo $RUNCDATE
 
-if [ ! -d $RUNDIR ]; then mkdir -p $RUNDIR; fi
-cd $RUNDIR
+if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
+cd $RUNCDATE
 
 # Generate ocean-ice grid
-srun --nodes=1 --ntasks=12 ${SOCA_EXEC}/soca_gridgen.x ./yaml/gridgen.yml
+if [ -f "${RUNCDATE}/soca_gridspec.nc" ]; then
+    echo
+    echo 'SOCA grid exist, by-passing grid generation.'
+    echo
+else
+    echo
+    echo 'No grid found. Generating SOCA grid.'
+    echo
+    srun --nodes=1 --ntasks=12 ${SOCA_EXEC}/soca_gridgen.x ./yaml/gridgen.yml
+fi
 
 # Create BUMP convolution operator
+echo
+echo 'Initializing BUMP.'
+echo
 mkdir -p bump
-srun -n 312 ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
+srun -n 100 ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
