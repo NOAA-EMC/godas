@@ -19,6 +19,8 @@ Update the following fields in the `user.yaml` and save the file \
    `hpss_project: !error Please select your hpss project` 
 3. `cd CROW`
 4. Setup the workflow: \
+   Create the workflow directory (PROJECT_DIR)
+   `mkdir -p PROJECT_DIR` \
    Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar_only_exp: \
    `./setup_case.sh -p HERA -f ../cases/3dvar_only_exp.yaml workflowtest001`
    
