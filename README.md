@@ -30,14 +30,14 @@ Update the following fields in the `user.yaml` and save the file \
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
 # Building the soca-bundle 
 
-0. `cd [...]/godas/src/soca-bundle` \
+0. `cd [...]/godas/src/soca-bundle`
 1. Load the JEDI modules \
    `module purge` \
    `module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles` \
-   `module load jedi-intel-17.0.5.239` \
-2. Create out of source build directory \ 
-   `cd [...]/godas`
-   `mkdir build`
+   `module load jedi-intel-17.0.5.239`
+2. Create out of source build directory \
+   `cd [...]/godas` \
+   `mkdir build` \
    `cd build`
 3. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
@@ -58,5 +58,5 @@ The workflow can interactively as shown at step 3. below or as cronjob.
    `rocotorun -w workflow.xml -d workflow.db`
 4. Check status \
    `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
-
+5. Repeat step 4 until all jobs are completed. 
 
