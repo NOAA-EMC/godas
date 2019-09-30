@@ -5,7 +5,7 @@
 
 # Clone the soca-bundle (bundle of repositories necessary to build soca)
 4. `cd ./src`
-5. `git clone --branch release/master_candidate https://github.com/JCSDA/soca-bundle.git`
+5. `git clone --branch master https://github.com/JCSDA/soca-bundle.git`
 
 # Preparing the workflow
 1. `cd workflow` 
@@ -40,16 +40,18 @@ Assumption all the subsystems have been compiled
    `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
 
 # Building the soca-bundle 
-(TODO: should that be part of the workflow?)
 
 0. `cd [...]/godas/src/soca-bundle`
 1. Load the JEDI modules \
-   `module purge` \
-   `module use -a /contrib/da/modulefiles` \
-   `module load jedi/jedim` 
-2. Building path TBD: `cd [...]/godas/build`
-3. Clone all the necessary repository to build soca \
-   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DMPIEXEC_MAX_NUMPROCS=24 ../src/soca-bundle`
-4. `make -j<n>`
+   `module purge`
+   `module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/`
+   `module load jedi-intel-17.0.5.239`
+2. Create out of source build directory \ 
+   `cd [...]/godas`
+   `mkdir build`
+   `cd build`
+3. Clone all the necessary repositories to build soca \
+   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC ../src/soca-bundle`
+4. `make -j12`
 5. Unit test the build \
    `ctest`
