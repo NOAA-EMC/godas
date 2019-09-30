@@ -3,6 +3,10 @@
 2. `cd godas`
 3. `git submodule update --init --recursive`
 
+# Clone the soca-bundle (bundle of repositories necessary to build soca)
+4. `cd ./src`
+5. `git clone --branch release/master_candidate https://github.com/JCSDA/soca-bundle.git`
+
 # Preparing the workflow
 1. `cd workflow` 
 2. Create/Edit `user.yaml` based on `user.yaml.default` \
