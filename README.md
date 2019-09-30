@@ -43,18 +43,18 @@ Assumption all the subsystems have been compiled
 
 # Building the soca-bundle 
 
-0. `cd [...]/godas/src/soca-bundle`
+0. `cd [...]/godas/src/soca-bundle` \
 1. Load the JEDI modules \
-   `module purge`
-   `module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/`
-   `module load jedi-intel-17.0.5.239`
+   `module purge` \
+   `module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles` \
+   `module load jedi-intel-17.0.5.239` \
 2. Create out of source build directory \ 
    `cd [...]/godas`
    `mkdir build`
    `cd build`
 3. Clone all the necessary repositories to build soca \
-   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC ../src/soca-bundle`
-4. `make -j12` 
+   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
+4. `make -j12`
 5. Unit test the build \
    `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
    `ctest`
