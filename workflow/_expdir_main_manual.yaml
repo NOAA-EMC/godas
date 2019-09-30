@@ -9,6 +9,7 @@
 include:
   - names.yaml
   - platform.yaml
+  - resources_sum.yaml
   - case.yaml
   - runtime/
   - workflow.yaml
