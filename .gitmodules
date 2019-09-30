@@ -1,7 +1,4 @@
 [submodule "workflow/CROW"]
 	path = workflow/CROW
 	url = https://github.com/NOAA-EMC/CROW.git
-[submodule "src/soca-bundle"]
-	path = src/soca-bundle
-	url = https://github.com/JCSDA/soca-bundle.git
-	branch = release/stable-nightly
+
