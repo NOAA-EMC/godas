@@ -4,8 +4,8 @@
 3. `git submodule update --init --recursive`
 
 # Clone the soca-bundle (bundle of repositories necessary to build soca)
-4. `cd ./src`
-5. `git clone --branch release/master_candidate https://github.com/JCSDA/soca-bundle.git`
+1. `cd ./src`
+2. `git clone --branch master https://github.com/JCSDA/soca-bundle.git`
 
 # Preparing the workflow
 1. `cd workflow` 
@@ -19,6 +19,8 @@ Update the following fields in the `user.yaml` and save the file \
    `hpss_project: !error Please select your hpss project` 
 3. `cd CROW`
 4. Setup the workflow: \
+   Create the workflow directory (PROJECT_DIR) \
+   `mkdir -p PROJECT_DIR` \
    Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar_only_exp: \
    `./setup_case.sh -p HERA -f ../cases/3dvar_only_exp.yaml workflowtest001`
    
@@ -26,9 +28,27 @@ Update the following fields in the `user.yaml` and save the file \
    
 5. Read output and run suggested command. Should be similar to: \
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
+# Building the soca-bundle 
+
+0. `cd [...]/godas/src/soca-bundle`
+1. Load the JEDI modules \
+   `module purge` \
+   `module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles` \
+   `module load jedi-intel-17.0.5.239`
+2. Create out of source build directory \
+   `cd [...]/godas` \
+   `mkdir build` \
+   `cd build`
+3. Clone all the necessary repositories to build soca \
+   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
+4. `make -j12`
+5. Unit test the build \
+   `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
+   `ctest`
  
 # Running the workflow
-Assumption all the subsystems have been compiled
+Assumption all the subsystems have been compiled.
+The workflow can interactively as shown at step 3. below or as cronjob.
 
 1. Go into the test directory \
    `cd PROJECT_DIR/workflowtest001`
@@ -38,18 +58,5 @@ Assumption all the subsystems have been compiled
    `rocotorun -w workflow.xml -d workflow.db`
 4. Check status \
    `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
+5. Repeat step 4 until all jobs are completed. 
 
-# Building the soca-bundle 
-(TODO: should that be part of the workflow?)
-
-0. `cd [...]/godas/src/soca-bundle`
-1. Load the JEDI modules \
-   `module purge` \
-   `module use -a /contrib/da/modulefiles` \
-   `module load jedi/jedim` 
-2. Building path TBD: `cd [...]/godas/build`
-3. Clone all the necessary repository to build soca \
-   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DMPIEXEC_MAX_NUMPROCS=24 ../src/soca-bundle`
-4. `make -j<n>`
-5. Unit test the build \
-   `ctest`
