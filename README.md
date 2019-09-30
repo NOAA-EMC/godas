@@ -52,6 +52,7 @@ Assumption all the subsystems have been compiled
    `cd build`
 3. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC ../src/soca-bundle`
-4. `make -j12`
+4. `make -j12` 
 5. Unit test the build \
+   `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
    `ctest`
