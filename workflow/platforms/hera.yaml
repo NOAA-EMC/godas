@@ -130,8 +130,8 @@ platform: !Platform
   least_used_temp: !Immediate 
     - !FirstTrue
       - do: !expand "{doc.user_places.SCRUB}"
-        when: !calc doc.settings.FIX_SCRUB
-      - otherwise: - !FirstMax
+        when: !calc doc.user_places.FIX_SCRUB
+      - otherwise: !FirstMax
         - do: /scratch1/NCEPDEV/stmp2
           when: !calc ( int(tools.can_write(do)) and tools.panasas_gb(do) )
         - do: /scratch1/NCEPDEV/stmp4
