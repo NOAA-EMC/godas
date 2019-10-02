@@ -19,6 +19,7 @@ default_resources: &default_resources
 
   run_nothing: !JobRequest # Special placeholder for "do nothing"
     - memory: "300M"
+      mpi_ranks: 1
       walltime: !timedelta "00:02:00"
 
   run_obs_prep: !JobRequest
