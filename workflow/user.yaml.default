@@ -1,5 +1,7 @@
 user_places: &user_places
   PROJECT_DIR: !error Please select a project directory.
+  FIX_SCRUB: False
+  SCRUB: none # Please select a scrub space when FIX_SCRUB is True
 
 accounting: &accounting
   user_email: none
