@@ -22,7 +22,7 @@ During this process, three directories will be created:
 
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
-   `mkdir -p PROJECT_DIR` \
+   `mkdir -p PROJECT_DIR`
 1. `cd $CLONE_DIR/workflow` 
 2. Create/Edit `user.yaml` based on `user.yaml.default` \
    `cp user.yaml.default user.yaml` \
@@ -30,7 +30,7 @@ During this process, three directories will be created:
 Update the following fields in the `user.yaml` and save the file \
    `PROJECT_DIR: !error Please select a project directory.` \
    `FIX_SCRUB: False` \
-   `SCRUB: none # Please select a scrub space when FIX_SCRUB is True` \ 
+   `SCRUB: none # Please select a scrub space when FIX_SCRUB is True` \
    `user_email: none` \
    `cpu_project: !error Please select your cpu project` \
    `hpss_project: !error Please select your hpss project`
@@ -77,5 +77,7 @@ The workflow can interactively as shown at step 3. below or as cronjob.
 5. Repeat step 4 until all jobs are completed. 
 
 # Check the run and the results
-`cd ${RUNCDATE}` \
-Check the content of the directory.
+0. The log files of your experiment are at 
+`PROJECT_DIR/workflowtest001/log/`
+1. The the setup files and outputs of the experiment are at
+`${RUNCDATE}` 
