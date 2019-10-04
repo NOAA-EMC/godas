@@ -11,7 +11,7 @@ During this process, three directories will be created:
 
 
 # Clone godas
-0. `set CLONE_DIR=PATH/OF/YOUR/CHOICE` 
+0. `set CLONE_DIR=PATH/OF/YOUR/CHOICE`
 1. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
 2. `cd $CLONE_DIR`
 3. `git submodule update --init --recursive`
@@ -61,7 +61,13 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 4. Unit test the build \
    `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
    `ctest`
- 
+ 5. Change the soca-config branch \
+The yaml files that configure the DA experiments live inside of the soca-config repository.
+Checkout the feature branch for the 3DVAR, \ 
+   `cd $CLONE_DIR/soca-bundle/soca-config` \
+   `git checkout feature/emc-3dvar` \
+    or alternatively, checkout your own branch or the branch you need to test with.
+
 # Running the workflow
 Assumption all the subsystems have been compiled.
 The workflow can interactively as shown at step 3. below or as cronjob.
