@@ -16,9 +16,19 @@ echo
 echo "Root GODAS " ${ROOT_GODAS_DIR}
 echo
 echo "SOCA_STATIC="$SOCA_STATIC
+<<<<<<< HEAD
 
 mkdir -p $RUNCDATE
 cd $RUNCDATE
+=======
+echo  
+echo "The system runs at $RUNDIR"
+echo
+echo "Root GODAS " ${ROOT_GODAS_DIR}
+echo
+mkdir -p $RUNDIR
+cd $RUNDIR
+>>>>>>> 7b77d493cfbfb5fd90606c9fadab629c48fa6188
 
 # TODO: Hard-coded stuff that needs to be moved/changed
 export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
@@ -93,10 +103,9 @@ ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
       -d $RUNCDATE
 
 #----------------------------------
-
 if [ $case = 'en' ]; then 
    for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
-      #yaml for each member of the Ensemble
+      
       yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml 
       cp -r $RUNCDATE/yaml/hofx3d.yml ${yaml_tmp}
    
@@ -104,14 +113,12 @@ if [ $case = 'en' ]; then
          -i ${yaml_tmp}                               \
          -d ${RUNCDATE}                                 \
          -n ${mbr}
-   #
-   #JJOB_for H(x) for each member
+      
       jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
       cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
       sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
    done
 fi
-
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
