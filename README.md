@@ -62,8 +62,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
    `ctest`
  5. Change the soca-config branch \
-The yaml files that configure the DA experiments live inside of the soca-config repository.
-Checkout the feature branch for the 3DVAR, \ 
+    The yaml files that configure the DA experiments live inside of the soca-config repository. For example, to checkout the feature branch for the 3DVAR: \
    `cd $CLONE_DIR/soca-bundle/soca-config` \
    `git checkout feature/emc-3dvar` \
     or alternatively, checkout your own branch or the branch you need to test with.
