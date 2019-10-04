@@ -24,7 +24,6 @@ for SSTsource in $ListOfSST;do
                      -i ${SSTsource}
 done
 
-
 # Testing the following
 #${ROOT_GODAS_DIR}/scripts/adt_prep_obs.sh
 #source ${ROOT_GODAS_DIR}/scripts/sst_windsat_prep_obs.sh

@@ -48,16 +48,23 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_GEN_ENSEMBLE
 
-      da_3dvar_run: !Task
+      da_letkf_prep: !Task
         <<: *bigmem_task_template
         Trigger: !Depend  ( da_prep_soca & obs_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
-        J_JOB: JJOB_DA_3DVAR
+        J_JOB: JJOB_PREP_LEKTF
+
+      da_letkf_run: !Task
+        <<: *bigmem_task_template
+        Trigger: !Depend  ( da_letkf_prep )
+        resources: !calc partition.resources.run_3dvar
+        config: [ base ]
+        J_JOB: JJOB_DA_LEKTF
 
       fcst_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend da_3dvar_run
+        Trigger: !Depend da_letkf_run
         resources: !calc partition.resources.run_nothing
         config: [ base ]
         J_JOB: JJOB_FCST_PREP
