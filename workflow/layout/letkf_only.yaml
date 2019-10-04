@@ -15,7 +15,7 @@ suite: !Cycle
           ENSGRP: !expand "{dimval.groupid:02d}"
           rocoto_command: !expand >-
             {rocoto_load_modules} ;
-            /usr/bin/env ENSGRP={ENSGRP} ; &ROOT_GODAS_DIR/jobs/{J_JOB}
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
           ecflow_command: !expand |
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
@@ -83,7 +83,7 @@ suite: !Cycle
           ENSGRP: !expand "{dimval.groupid:02d}"
           rocoto_command: !expand >-
             {rocoto_load_modules} ;
-            /usr/bin/env ENSGRP={ENSGRP} ; &ROOT_GODAS_DIR/jobs/{J_JOB}
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
           ecflow_command: !expand |
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
