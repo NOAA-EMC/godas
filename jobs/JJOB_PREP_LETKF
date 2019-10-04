@@ -11,8 +11,8 @@ echo 'Date of Analysis: ' $CDATE
 echo ''
 
 module purge
-module use -a /contrib/da/modulefiles
-module load jedi
+module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
+module load jedi-intel-17.0.5.239
 
 # Change of the coordinates
 # TODO

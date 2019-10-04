@@ -16,19 +16,10 @@ echo
 echo "Root GODAS " ${ROOT_GODAS_DIR}
 echo
 echo "SOCA_STATIC="$SOCA_STATIC
-<<<<<<< HEAD
 
 mkdir -p $RUNCDATE
+
 cd $RUNCDATE
-=======
-echo  
-echo "The system runs at $RUNDIR"
-echo
-echo "Root GODAS " ${ROOT_GODAS_DIR}
-echo
-mkdir -p $RUNDIR
-cd $RUNDIR
->>>>>>> 7b77d493cfbfb5fd90606c9fadab629c48fa6188
 
 # TODO: Hard-coded stuff that needs to be moved/changed
 export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/

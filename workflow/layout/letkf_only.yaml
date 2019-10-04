@@ -6,7 +6,7 @@ suite: !Cycle
         Dimensions:
           groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
         da_prep_grp: !TaskElement
-          <<: *bigmem_task_template
+          <<: *shared_task_template
           Foreach: [ groupid ]
           Name: !expand "da_prep_grp{dimval.groupid}"
           resources: !calc partition.resources.run_da_prep
@@ -21,42 +21,42 @@ suite: !Cycle
             $ROOT_GODAS_DIR/jobs/{J_JOB}
 
       obs_prep: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
         resources: !calc partition.resources.run_nothing
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
 
 #      da_prep_3dvar: !Task
-#        <<: *bigmem_task_template
+#        <<: *shared_task_template
 #        Trigger: !Depend  da_prep
 #        resources: !calc partition.resources.run_3dvar
 #        config: [ base ]
 #        J_JOB: JJOB_PREP_3DVAR
 
       da_prep_soca: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  da_prep
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_PREP_SOCA
 
       gen_ens_run: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  ( da_prep_soca )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_GEN_ENSEMBLE
 
       da_letkf_prep: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  ( da_prep_soca & obs_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_PREP_LEKTF
 
       da_letkf_run: !Task
-        <<: *bigmem_task_template
+        <<: *shared_task_template
         Trigger: !Depend  ( da_letkf_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
