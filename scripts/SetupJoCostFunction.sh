@@ -49,24 +49,22 @@ else
    echo "Not assimilating ADT"
 fi
 
-# Add icec obs to Jo
-obsfile=$obsdatabase/ioda.icec.emcice.${DA_SLOT_LEN}h.nc
+# Add icec obs to Jo (f285-f286 SSMI/SSMIS)
+obsfile=$obsdatabase/ioda.icec.cat_l2.emc.${DA_SLOT_LEN}h.nc
 echo $obsfile
 if [ -f $obsfile ]; then
    echo "Adding ice concentration to Jo cost function"
-
-
    # TODO: Subsample elsewhere
-   cp ${obsfile} ${obsdatabase}/ioda.icec.emcice_LARGE.nc
+   cp ${obsfile} ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc
    module load nco
    # Create record dim
-   ncks --mk_rec_dmn nlocs ${obsdatabase}/ioda.icec.emcice_LARGE.nc ${obsdatabase}/icec-tmp.nc
+   ncks --mk_rec_dmn nlocs ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc ${obsdatabase}/icec-tmp.nc
    # Subsample
-   ncks -F -d nlocs,1,,50 ${obsdatabase}/icec-tmp.nc ${DATADIR}/ioda.icec.emcice.nc
+   ncks -F -d nlocs,1,,50 ${obsdatabase}/icec-tmp.nc ${DATADIR}/ioda.icec.cat_l2.emc.nc
    rm ${obsdatabase}/sst-tmp.nc
    rm ${obsdatabase}/ioda.sst.${sst_source}_LARGE.nc
 
-   sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.emcice.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
+   sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.cat_l2.emc.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
    cp 3dvartmp.yml ${yamlfile}
    rm 3dvartmp.yml
 else
