@@ -13,7 +13,7 @@ echo $RUNCDATE
 cd $RUNCDATE
 
 # Run 3DVAR
-export OOPS_TRACE=1
+export OOPS_TRACE=0
 srun -n 200 ${SOCA_EXEC}/soca_3dvar.x ./yaml/3dvar_godas.yml
 
 # Checkpoint 3DVAR analysis
