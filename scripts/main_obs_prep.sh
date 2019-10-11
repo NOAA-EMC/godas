@@ -4,6 +4,8 @@ echo 'main_obs_prep.sh starts'
 echo ${ROOT_GODAS_DIR}
 echo CDATE is $CDATE
 
+ObsRunDir=$RUNCDATE/Data/${CDATE}    #Path for observations to be ingested by DA
+
 # Prep absolute dynamic topography obs
 source ${ROOT_GODAS_DIR}/scripts/adt_prep_obs.sh 
 echo "ADT done"
@@ -46,9 +48,7 @@ for sat in AVHRR19 AVHRRMTA; do
    cd $OUTDIR
    y=ioda.sst.${sat}_l3u.nesdis.${DA_SLOT_LEN}h.nc 
    lc=`echo $y  | tr '[A-Z]' '[a-z]'`
-   if [ $lc != $y ]; then
-      mv $y $lc
-   fi
+   mv $y $lc
    echo $lc
 #
    echo $sat done
