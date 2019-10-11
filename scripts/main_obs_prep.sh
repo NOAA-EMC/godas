@@ -48,8 +48,9 @@ for sat in AVHRR19 AVHRRMTA; do
    cd $OUTDIR
    y=ioda.sst.${sat}_l3u.nesdis.${DA_SLOT_LEN}h.nc 
    lc=`echo $y  | tr '[A-Z]' '[a-z]'`
-   mv $y $lc
-   echo $lc
+   if [ $lc != $y ]; then
+      mv $y $lc
+   fi
 #
    echo $sat done
 done
