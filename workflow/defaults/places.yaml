@@ -14,7 +14,13 @@ default_places: &default_places
   DA_SLOT_LEN: 24
 # To be removed as soon as there is an ensemble yaml file
 # Number of ensemble members
-  NO_ENS_MBR: 5   
+  NO_ENS_MBR: 5
+# Model resolution
+  NI: 1440 #360 #1440   
+  NJ: 1080 #210 #1080
+  NK: 75
+# Ice model file format
+  ICE_FMT: notfms #fms # notfms
 
   PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path
@@ -24,12 +30,12 @@ default_places: &default_places
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
   GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda"        # Root path for external data 
   SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
-  SOCA_STATIC: !expand "{GODAS_RC}/soca-static/1440x1080x75"
+  SOCA_STATIC: !expand "{GODAS_RC}/soca-static/{NI}x{NJ}x{NK}"
   SOCA_CONFIG:   !expand "{ROOT_GODAS_DIR}/src/soca-bundle/soca-config/emc"             # soca-config path
   DCOM_ROOT: !expand "{GODAS_RC}/ocean_observations/data"         # Observation root path for raw obs
   IODA_ROOT: !expand "{GODAS_RC}/ioda_observations"               # Processed observations
 
-  MODEL_SCRATCH: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/"
+  MODEL_SCRATCH: "/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/{NI}x{NJ}x{NK}"
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
   RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory  

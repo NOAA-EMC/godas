@@ -17,7 +17,7 @@ mkdir -p $RUNCDATE
 cd $RUNCDATE
 
 # TODO: Hard-coded stuff that needs to be moved/changed
-export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/test-initcice5
+export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/${NI}x${NJ}x${NK}
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
 cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
 
@@ -93,17 +93,28 @@ ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh      \
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
+# IC for first cycle
+#-------------------
+
 # Ocean bkg files
 #----------------
 ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNCDATE/INPUT_MOM6/
 
 # Sea-ice bkg files
 #------------------
-# Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
-cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-# Make cice_bkg.nc fms compliant
-ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+if [ ${ICE_FMT} -eq notfms ]; then
+    # Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
+    cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    # Make cice_bkg.nc fms compliant
+    ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+fi
+if [ ${ICE_FMT} -eq fms ]; then
+    cp $MODEL_SCRATCH/INPUT/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+fi
 
+# IC from previous cycle
+#-----------------------
+# TODO
