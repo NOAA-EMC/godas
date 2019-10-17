@@ -1,24 +1,31 @@
 suite: !Cycle
       <<: *suite_defaults
 
-      da_prep: !TaskArray
+      da_prep: !Task
+        <<: *shared_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
-        Dimensions:
-          groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
-        da_prep_grp: !TaskElement
-          <<: *shared_task_template
-          Foreach: [ groupid ]
-          Name: !expand "da_prep_grp{dimval.groupid}"
-          resources: !calc partition.resources.run_da_prep
-          config: [ base ]
-          J_JOB: JJOB_DA_PREP
-          ENSGRP: !expand "{dimval.groupid:02d}"
-          rocoto_command: !expand >-
-            {rocoto_load_modules} ;
-            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
-          ecflow_command: !expand |
-            export ENSGRP={ENSGRP}
-            $ROOT_GODAS_DIR/jobs/{J_JOB}
+        resources: !calc partition.resources.run_da_prep
+        config: [ base ]
+        J_JOB: JJOB_DA_PREP
+
+#      da_prep: !TaskArray
+#        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+#        Dimensions:
+#          groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
+#        da_prep_grp: !TaskElement
+#          <<: *shared_task_template
+#          Foreach: [ groupid ]
+#          Name: !expand "da_prep_grp{dimval.groupid}"
+#          resources: !calc partition.resources.run_da_prep
+#          config: [ base ]
+#          J_JOB: JJOB_DA_PREP
+#          ENSGRP: !expand "{dimval.groupid:02d}"
+#          rocoto_command: !expand >-
+#            {rocoto_load_modules} ;
+#            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+#          ecflow_command: !expand |
+#            export ENSGRP={ENSGRP}
+#            $ROOT_GODAS_DIR/jobs/{J_JOB}
 
       obs_prep: !Task
         <<: *shared_task_template
@@ -53,7 +60,7 @@ suite: !Cycle
         Trigger: !Depend  ( da_prep_soca & obs_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
-        J_JOB: JJOB_PREP_LEKTF
+        J_JOB: JJOB_PREP_LETKF1
 
       da_letkf_run: !Task
         <<: *shared_task_template
