@@ -22,6 +22,7 @@ mkdir -p $RUNCDATE
 cd $RUNCDATE
 
 # TODO: Hard-coded stuff that needs to be moved/changed
+
 export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
 export case='3dvar' #options 3dvar or en
 # TODO Put the job files for the ensemble to a temporary job-dir
