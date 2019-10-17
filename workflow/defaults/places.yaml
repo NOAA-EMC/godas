@@ -16,11 +16,13 @@ default_places: &default_places
 # Number of ensemble members
   NO_ENS_MBR: 5
 # Model resolution
-  NI: 1440 #360 #1440   
-  NJ: 1080 #210 #1080
+  NI: 360 #1440   
+  NJ: 210 #1080
   NK: 75
 # Ice model file format
-  ICE_FMT: notfms #fms # notfms
+  ICE_FMT: fms # notfms
+# Number of procs for DA
+  NPE: 40
 
   PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path
