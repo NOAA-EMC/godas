@@ -13,7 +13,7 @@ godas_resource_table:
       #              ranks   ppn wallclock            threads MB
   r3dvar:        [ 200,   20, !timedelta "01:00:00", 12,  "3072" ]
   obs_prep:     [  12,   12, !timedelta "01:00:00", 1,   "3072"  ]
-  da_prep:      [  72,   12, !timedelta "00:30:00", 1,   "3072" ]
+  da_prep:      [  1,   1, !timedelta "00:30:00", 1,   "3072" ]
 
 default_resources: &default_resources
 
