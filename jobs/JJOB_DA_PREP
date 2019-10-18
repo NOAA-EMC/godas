@@ -1,6 +1,5 @@
 #!/bin/bash
 #set -e
-
 #================================================================================
 #================================================================================
 # Prep SOCA-DA
@@ -10,14 +9,23 @@ module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
 module load jedi-intel-17.0.5.239
 module load nco
 
+echo  
+echo "The system runs at $RUNCDATE"
+echo
+echo "Root GODAS " ${ROOT_GODAS_DIR}
+echo
 echo "SOCA_STATIC="$SOCA_STATIC
-echo $RUNCDATE
 
 mkdir -p $RUNCDATE
+
 cd $RUNCDATE
 
 # TODO: Hard-coded stuff that needs to be moved/changed
-export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/test-initcice5
+
+export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
+export case='3dvar' #options 3dvar or en
+# TODO Put the job files for the ensemble to a temporary job-dir
+#
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
 cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
 
@@ -31,11 +39,11 @@ else
     exit 1
 fi
 
-# Copy SOCA static files into RUNDIR
+# Copy SOCA static files into RUNCDATE
 #-----------------------------------
 cp -r $SOCA_STATIC/* $RUNCDATE
 
-# Copy SOCA config files into RUNDIR
+# Copy SOCA config files into RUNCDATE
 #-----------------------------------
 mkdir -p $RUNCDATE/yaml
 cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
@@ -45,7 +53,7 @@ cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
 export window_begin=$(cdate2window_begin $CDATE)
 export bkg_date=$(cdate2bkg_date $CDATE)
 
-if [ $godas_cyc -eq 1 ]; then
+if [ $godas_cyc = "1" ]; then
     export window_length=PT24H
 else
     echo "godas_cyc not valid"
@@ -85,11 +93,23 @@ ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
       -i $RUNCDATE/yaml/3dvar_godas.yml              \
       -d $RUNCDATE
 
-# TODO: yaml for HoFx, add the ensemble member 
 #----------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh      \
-      -i $RUNCDATE/yaml/hofx3d.yml
-
+if [ $case = 'en' ]; then 
+   for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
+      
+      yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml 
+      cp -r $RUNCDATE/yaml/hofx3d.yml ${yaml_tmp}
+   
+      ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
+         -i ${yaml_tmp}                               \
+         -d ${RUNCDATE}                                 \
+         -n ${mbr}
+      
+      jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
+      cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
+      sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
+   done
+fi
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
