@@ -23,7 +23,7 @@ cd $RUNCDATE
 # TODO: Hard-coded stuff that needs to be moved/changed
 
 export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
-export case='en' #options 3dvar or en
+export case='3dvar' #options 3dvar or en
 # TODO Put the job files for the ensemble to a temporary job-dir
 #
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
