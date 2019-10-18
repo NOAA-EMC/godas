@@ -3,7 +3,7 @@
 
 #================================================================================
 #================================================================================
-# Run prep for the HoFx
+# 
 
 echo ''
 echo 'Running the JJOB for PREP_LETKF, aka SOCA HoFx'
@@ -11,32 +11,12 @@ echo 'Date of Analysis: ' $CDATE
 echo ''
 
 module purge
-module use -a /contrib/da/modulefiles
-module load jedi
+module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
+module load jedi-intel-17.0.5.239
 
+# Change of the coordinates
+# TODO
 
-#!/bin/bash
-#set -e
+# Run H(x)
 
-#================================================================================
-#================================================================================
-# Prep SOCA Static B and grid
-
-module purge
-module use -a /contrib/da/modulefiles
-module load jedi
-
-echo $RUNDIR
-
-if [ ! -d $RUNDIR ]; then mkdir -p $RUNDIR; fi
-cd $RUNDIR
-
-# Generate ocean-ice grid
-srun --nodes=1 --ntasks=12 ${SOCA_EXEC}/soca_gridgen.x ./yaml/gridgen.yml
-
-# Create BUMP convolution operator
-mkdir -p bump
-srun -n 312 ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
-
-
-#${ROOT_GODAS_DIR}/scripts/exgodas_prep_letkf.sh
+srun -n 24 ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml

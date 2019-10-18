@@ -6,14 +6,13 @@
 # Generate the ensemble
 
 module purge
-module use -a /contrib/da/modulefiles
-module load jedi/jedim
-module list
+module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
+module load jedi-intel-17.0.5.239
 
-echo $RUNDIR
+echo $RUNCDATE
 
-if [ ! -d $RUNDIR ]; then mkdir -p $RUNDIR; fi
-cd $RUNDIR
+if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
+cd $RUNCDATE
 
 # Generate the ensemble using soca_enspert
 

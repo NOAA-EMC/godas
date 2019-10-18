@@ -29,3 +29,4 @@ for SSTsource in $ListOfSST;do
 done
 
 echo main_obs_prep ends
+
