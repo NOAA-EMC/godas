@@ -71,8 +71,7 @@
   , tr_pond_topo = .false.
   , restart_pond_topo = .false.
   , tr_pond_lvl  = TR_POND_LVL
-  , tr_pond_lvl  = .true.
-  , restart_pond_lvl  = .false.
+  , restart_pond_lvl  = RESTART_POND_LVL
   , tr_aero      = .false.
   , restart_aero = .false.
 /

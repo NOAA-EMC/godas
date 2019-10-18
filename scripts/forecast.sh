@@ -258,6 +258,9 @@ npt=$((FHMAX*$stepsperhr))      # Need this in order for dump_last to work
 
 
 FRAZIL_FWSALT=${FRAZIL_FWSALT:-".false."}
+tr_pond_lvl=${tr_pond_lvl:-".true."}
+restart_pond_lvl=${restart_pond_lvl:".false."}
+
 
 
 histfreq_n=${histfreq_n:-6}
@@ -291,8 +294,6 @@ else:
  DUMPFREQ_N = str("@[DUMPFREQ_N]")
  DUMPFREQ = str("@[DUMPFREQ]")
 #
-  , tr_pond_lvl  = .true.
-  , restart_pond_lvl  = .false.
 
 
 # Copy the ice template into run directory
@@ -309,6 +310,8 @@ sed -i -e "s;USE_RESTART_TIME;${USE_RESTART_TIME};g" tmp1
 sed -i -e "s;DUMPFREQ_N;${DUMPFREQ_N};g" tmp1
 sed -i -e "s;DUMPFREQ;${DUMPFREQ};g" tmp1
 sed -i -e "s;FRAZIL_FWSALT;${FRAZIL_FWSALT};g" tmp1
+sed -i -e "s;TR_POND_LVL;${tr_pond_lvl};g" tmp1
+sed -i -e "s;RESTART_POND_LVL;${restart_pond_lvl};g" tmp1
 
 # Rename to proper input ice input name
 mv tmp1 ice_in 

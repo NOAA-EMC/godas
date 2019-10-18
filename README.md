@@ -19,7 +19,7 @@ During this process, three directories will be created:
 # Clone model and soca-bundle (bundle of repositories necessary to build soca)
 
 0. `sh $CLONE_DIR/src`
-1. `sh checkout.sh goads`
+1. `sh checkout.sh godas`
 
 # Build the model: 
 0. `sh $CLONE_DIR/src`

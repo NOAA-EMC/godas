@@ -9,5 +9,7 @@ all source code required by hybrid-GODAS. This includes git submodules that pull
 | `MOM6-changes` | Overrides to the default MOM6 code from GFDL, currently just a change to the bulk formula code |
 | `obsop`        | Observation operator and observation preparation executables |
 | `util`         | other utilites needed for DA cycles (background error variance, restart update, and vertical localization executables) |
+| `ufs_godas.fd` | Coupled DATM-MOM6-CICE5 application (forecast model) |
 
-all code can be compiled using the makefile in the parent directory. Just type `make` to see a description of your options.
+most code can be compiled using the makefile in the parent directory. Just type `make` to see a description of your options.
+--- for ufs_godas there is a build script.  Not sure this is true for any of these? 
