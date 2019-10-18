@@ -16,9 +16,14 @@ During this process, three directories will be created:
 2. `cd $CLONE_DIR`
 3. `git submodule update --init --recursive`
 
-# Clone the soca-bundle (bundle of repositories necessary to build soca)
+# Clone model and soca-bundle (bundle of repositories necessary to build soca)
 
-1. `git clone --branch master https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src`
+0. `sh $CLONE_DIR/src`
+1. `sh checkout.sh goads`
+
+# Build the model: 
+0. `sh $CLONE_DIR/src`
+1. `sh build_ufs_godas.sh`
 
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
