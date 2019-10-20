@@ -3,7 +3,7 @@
 
 #================================================================================
 #================================================================================
-# Run SOCA 3DVAR
+# Run SOCA 3DVAR, checkpoint, forecast
 
 module purge
 module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
@@ -16,7 +16,7 @@ cd $RUNCDATE
 export OOPS_TRACE=0
 srun -n $NPE ${SOCA_EXEC}/soca_3dvar.x ./yaml/3dvar_godas.yml
 
-# Checkpoint 3DVAR analysi
+# Checkpoint 3DVAR analysis
 if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 srun -n $NPE ${SOCA_EXEC}/soca_checkpoint_model.x ./yaml/checkpointmodel.yml
 

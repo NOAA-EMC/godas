@@ -22,7 +22,7 @@ default_places: &default_places
 # Ice model file format
   ICE_FMT: fms # notfms
 # Number of procs for DA
-  NPE: 40
+  NPE: 100
 
   PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path

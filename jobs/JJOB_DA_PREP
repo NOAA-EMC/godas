@@ -116,12 +116,12 @@ if [ $case = 'en' ]; then
       sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
    done
 fi
+
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
-# IC for first cycle
-#-------------------
-
+# Get IC
+#-------
 # Check if there was a previous cycle
 if [ -d ../NEXT_IC ]; then
     # Get IC from previous cycle
@@ -154,7 +154,3 @@ fi
 if [ "${ICE_FMT}" = fms ]; then
     cp $MODEL_SCRATCH/INPUT/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
 fi
-
-# IC from previous cycle
-#-----------------------
-# TODO
