@@ -39,11 +39,11 @@ else
     exit 1
 fi
 
-# Copy SOCA static files into RUNDIR
+# Copy SOCA static files into RUNCDATE
 #---------------------------------------------------
 cp -r $SOCA_STATIC/* $RUNCDATE
 
-# Copy SOCA config files into RUNDIR
+# Copy SOCA config files into RUNCDATE
 #----------------------------------------------------
 mkdir -p $RUNCDATE/yaml
 cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
