@@ -1,75 +1,106 @@
 #! /bin/sh
 
-
 #Variables which need to be defined: 
 
-
-CDATE=${CDATE:-2011100100}
+#Generic variables 
+CDATE=${CDATE:-2011100100}   #YYYYMMDDHH --  start time
 ROTDIR
 DATA
 
-#Defined Varaibles: 
+runtyp=${runtp:-'initial'}  # run type=  'continue' 'initial'
+inistep=${inistep:-"cold"}  # inistep=cold for mediator cold start 
+CDUMP
+PDY
+cyc
+
+SCRIPTDIR  # this script directory path 
+
+NTASKS_TOT
+FHMAX=${FHMAX:-9}
+
+cplflx=${cplflx:-".true."}  #couple with ocean/ice model 
+cplice=${cplice:-$cplflx}   #couple with ice model 
+
+restart_interval=${restart_interval:-86400}  # number of seconds for writing restarts (for non-cold start) default to 1 day interval
+
+#Calculated Varaibles: 
 SYEAR=$(echo  $CDATE | cut -c1-4)
 SMONTH=$(echo $CDATE | cut -c5-6)
 SDAY=$(echo   $CDATE | cut -c7-8)
 SHOUR=$(echo  $CDATE | cut -c9-10)
 
-
 #Variables that need to be defined list 
-DIAG_TABLE=${DIAG_TABLE:-$PARM_FV3DIAG/diag_table}
-MOM6_RESTART_SETTING
 
+#DATM Variables: 
+#resources/basics:
+atmmod=${atmmod:-"datm"} 
+ATMPETS=${ATMPETS:-"72"}   #Number of ATM Pets
+# model_configure variables 
+DT_ATMOS=${DT_ATMOS:-900}  #DATM time step [seconds]
+coupling_interval_fast_sec=${coupling_interval_fast_sec:-$DT_ATMOS} #likely can be depricated from DATM
+DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-'cfsr'} #The prefix of the forcing files for the DATM
+#for cfsr:  (will be different for gefs)
+NFHOUT=${NFHOUT:-6}  #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs    
+IATM=${IATM:-1760}  #dimension of DATM input files, lon     
+JATM=${JATM:-880}   #dimension of DATM input files, lat
 
-runtyp  'continue' 'initial'
-ROTDIR
-CDUMP
-PDY
-cyc
+# MOM6 Ocean Variables 
 
-SCRIPTDIR
+#resource/basic
+ocnmod=${ocnmod:-"mom6"}
+OCNPETS=${OCNPETS:-"120"}  #number of ocean pets
+#MOM_input 
+DT_THERM_MOM6=${DT_THERM_MOM6:-"1800"}  #MOM6 thermodynamic time step  [seconds]
+DT_DYNAM_MOM6=${DT_DYNAM_MOM6:-"900"}   #MOM6 dynamic time step   [seconds]
+#diag table (FMS) 
+DIAG_TABLE=${DIAG_TABLE:-$SCRIPTDIR/diag_table_template}
+#input.nml (FMS) 
+MOM6_RESTART_SETTING=${MOM6_RESTART_SETTING:-"r"}  #MOM6 restart setting 'r' or 'n'
 
-NTASKS_TOT
-FHMAX=${FHMAX:-9}
+# CICE5 Ice Variables 
 
-DT_ATMOS
-coupling_interval_fast_sec=${coupling_interval_fast_sec:-$DT_ATMOS}
-FHOUT #nfhout
-iatm: ${IATM}
-jatm: ${JATM}
-cdate0: ${CDATE}
-nfhout: ${FHOUT} 
-filename_base: ${FILENAME_BASE}
-# 1.4 nems_configure 
-ATMPETS=${ATMPETS:-"40"}   #Number of ATM Pets
+#resource/basic
+icemode=${icemod:-"cice"}
+ICEPETS=${ICEPETS:-"48"}   #number of ice pets 
+
+#ice_input 
+ceic=cice5_model.res_${CDATE}.nc  #name of file ice restart file gets renamed to
+DT_CICE=${DT_CICE:-$DT_ATMOS}     #CICE time step [seconds]  
+
+#Mediator/NEMS variables
+
+#resource/basic 
+medmod=${medmod:-"nems"}
 MEDPETS=${MEDPETS:-$ATMPETS}  #Number of MED Pets
-OCNPETS   #number of ocean pets
-ICEPETS   #number of ice pets 
-SCRIPTDIR  
-confignamevarfornems  
-cplflx=${cplflx:-".true."}
-cplice=${cplice:-$cplflx}
-DumpFields=${NEMSDumpFields:-false}
 
-CPL_SLOW
-CPL_FAST
-restart_interval
-inistep   #if [[ $inistep = "cold" ]] --- mediator coldstart not sure if this logic is totally right
-
+#nems.configure 
+DumpFields=${NEMSDumpFields:-false}   #Dump diagnostic netcdf fields from component model caps
+CPL_SLOW=${CPL_SLOW:-$DT_THERM_MOM6}  #slow coupling time step
+CPL_FAST=${CPL_FAST:-$DT_ATMOS}       #fast coupling time step 
+restart_interval   ## need to name it something else and then use this as time interval to write restarts in s
+inistep   #if [[ $inistep = "cold" ]] --- mediator coldstart or not// not sure if this logic is totally right
 
 
 ######################################################################
-
-# Overview: 
-#0. Set up directories 
-#1. Create input files 
-#2. Copy fix files and IC files over 
-#   Run forecast 
-#   Copy output 
+######################################################################
+#                                                                    #
+# Overview of forecast.sh:                                           #
+#                                                                    #
+# 0. Set up directories                                              #
+# 1. Create input files                                              #
+# 2. Copy fix files and IC files over                                #
+#    Run forecast                                                    #
+#    Copy output                                                     #
+#                                                                    #
+######################################################################
+######################################################################
 
 
 ######################################################################
-
-#0.  Set up directories 
+######################################################################
+#0.  Set up directories                                              #
+######################################################################
+######################################################################
         
 if [ ! -d $ROTDIR ]; then mkdir -p $ROTDIR; fi        
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
@@ -80,26 +111,28 @@ if [ ! -d $DATA/history ]; then mkdir -p $DATA/history; fi
 if [ ! -d $DATA/OUTPUT ]; then mkdir -p $DATA/OUTPUT; fi
 if [ ! -d $DATA/MOM6_OUTPUT ]; then mkdir -p $DATA/MOM6_OUTPUT; fi
 if [ ! -d $DATA/MOM6_RESTART ]; then mkdir -p $DATA/MOM6_RESTART; fi
-
-
+if [ ! -d $DATA/DATM_INPUT ]; then mkdir -p $DATA/DATM_INPUT; fi
 # Go to Run Directory (DATA)         
 cd $DATA 
 
 ######################################################################
 ######################################################################
 #1. Inputs:                                                          #
-# 1.1 input.nml                                                      # 
-# 1.2 diag_table 
-# 1.3 model_configure 
-# 1.4 nems_configure 
-# 1.5 MOM_input 
-# 1.6 CICE input 
+# 1.1 input.nml                                                      #
+# 1.2 diag_table                                                     #
+# 1.3 model_configure                                                # 
+# 1.4 nems_configure                                                 #
+# 1.5 MOM_input                                                      #
+# 1.6 CICE input                                                     #
+# 1.7 DATM datm_data_table                                           #
+#                                                                    #
+#  DATM input variable documentation:                                #
+# https://vlab.ncep.noaa.gov/redmine/projects/emc_nemsdatacomps/wiki/Input_File_Descriptions                               
 ######################################################################
 ######################################################################
 
-
 ######################################################################
-# 1.1 input.nml 
+# 1.1 input.nml                                                      #
 ######################################################################
 
 #Input.nml is an FMS file used by both FV3 and MOM6 
@@ -123,36 +156,20 @@ cat > input.nml << EOF
 EOF
 
 ######################################################################
-# 1.2 diag_table 
+# 1.2 diag_table                                                     #
 ######################################################################
 
 # diag_table is an FMS (FV3, MOM6) input file that determines outputs 
 
-DIAG_TABLE=${DIAG_TABLE:-$PARM_FV3DIAG/diag_table}
-
 # build the diag_table with the experiment name and date stamp
 cat > diag_table << EOF
-FV3 Forecast
+MOM6 Forecast
 $SYEAR $SMONTH $SDAY $SHOUR 0 0
 EOF
 cat $DIAG_TABLE >> diag_table
 
-
-#diag_table
-with open("diag_table_template",'rt') as inf:
- with open("diag_table",'wf') as outf:
-   for x in inf.readlines():
-    newline=x.replace('YMD',ymd) \
-             .replace('SYEAR',str(year).zfill(4)) \
-             .replace('SMONTH',str(month).zfill(2)) \
-             .replace('SDAY',str(day).zfill(2))
-    outf.write(newline)
-EOT
-
-
-
 ######################################################################
-# 1.3 model_configure 
+# 1.3 model_configure                                                #
 ######################################################################
 
 #Model_configure is used by the NEMS driver, FV3 and DATM to get inputs
@@ -177,124 +194,102 @@ atm_coupling_interval_sec: ${coupling_interval_fast_sec}
 iatm:                      ${IATM}
 jatm:                      ${JATM}
 cdate0:                    ${CDATE}
-nfhout:                    ${FHOUT} 
-filename_base:             ${FILENAME_BASE}
+nfhout:                    ${NFHOUT} 
+filename_base:             ${DATM_FILENAME_BASE}
 EOF
 
 ######################################################################
-# 1.4 nems_configure 
+# 1.4 nems_configure                                                 #
 ######################################################################
 
+# nems.configure is used by NEMS driver  
 
-#nems.configure is used by NEMS driver so any model (including standalone FV3) 
-# will need some version of this file 
-
-rm -f $DATA/nems.configure
-
-if [[ $inistep = "cold" ]]; then
-  restart_interval=0
-  coldstart=true     # this is the correct setting
+#Determine values of variables based one if mediator cold start or not
+if [[ $inistep = "medcold" ]]; then
+  #cold mediator restart 
+  restart_interval_write=0
+  confignamevarfornems="medcold_atm_ocn_ice"
+  medcoldstart=true    
 else
-  restart_interval=${restart_interval:-1296000}    # Interval in seconds to write restarts
-  coldstart=false
+  restart_interval_write=${restart_interval:-1296000}    # Interval in seconds to write restarts
+  confignamevarfornems="med_atm_ocn_ice"
+  medcoldstart=false
 fi
 
+#Caulculate bounds based on resource PETS
 med_petlist_bounds=${med_petlist_bounds:-"0 $(( $MEDPETS-1 ))"}
 atm_petlist_bounds=${atm_petlist_bounds:-"0 $(( $ATMPETS-1 ))"}
-ocn_petlist_bounds=${ocn_petlist_bounds:-"$ATMPETS $(( $ATMPETS+$OCNPETS-1 ))"}  #120
-ice_petlist_bounds=${ice_petlist_bounds:-"$(( $ATMPETS+$OCNPETS )) $(( $ATMPETS+$OCNPETS+$ICEPETS-1 ))"}  #48
-wav_petlist_bounds=${wav_petlist_bounds:="$(( $ATMPETS+$OCNPETS+$ICEPETS )) $(( $ATMPETS+$OCNPETS+$ICEPETS+$WAVPETS-1 ))"}
-
-medmod=${medmod:-"nems"}
-atmmod=${atmmod:-"datm"}
-ocnmod=${ocnmod:-"mom6"}
-icemode=${icemod:-"cice"}
+ocn_petlist_bounds=${ocn_petlist_bounds:-"$ATMPETS $(( $ATMPETS+$OCNPETS-1 ))"} 
+ice_petlist_bounds=${ice_petlist_bounds:-"$(( $ATMPETS+$OCNPETS )) $(( $ATMPETS+$OCNPETS+$ICEPETS-1 ))"} 
 
 # Copy the selected template into run directory
+rm -f $DATA/nems.configure
 cp $SCRIPTDIR/nems.configure.${confignamevarfornems}.IN tmp1
+# Replace values in template
 sed -i -e "s;@\[med_model\];$medmod;g" tmp1
 sed -i -e "s;@\[atm_model\];$atmmod;g" tmp1
 sed -i -e "s;@\[med_petlist_bounds\];$med_petlist_bounds;g" tmp1
 sed -i -e "s;@\[atm_petlist_bounds\];$atm_petlist_bounds;g" tmp1
-
 if [ $cplflx = .true. ]; then
-        sed -i -e "s;@\[ocn_model\];$ocnmod;g" tmp1
-        sed -i -e "s;@\[ocn_petlist_bounds\];$ocn_petlist_bounds;g" tmp1
-        sed -i -e "s;@\[DumpFields\];$DumpFields;g" tmp1
-        sed -i -e "s;@\[coldstart\];$coldstart;g" tmp1
-        sed -i -e "s;@\[restart_interval\];$restart_interval;g" tmp1
-        sed -i -e "s;@\[CPL_SLOW\];$CPL_SLOW;g" tmp1
-        sed -i -e "s;@\[CPL_FAST\];$CPL_FAST;g" tmp1
+   sed -i -e "s;@\[ocn_model\];$ocnmod;g"  tmp1
+   sed -i -e "s;@\[ocn_petlist_bounds\];$ocn_petlist_bounds;g" tmp1
+   sed -i -e "s;@\[DumpFields\];$DumpFields;g" tmp1
+   sed -i -e "s;@\[coldstart\];$medcoldstart;g"   tmp1
+   sed -i -e "s;@\[restart_interval\];$restart_interval_write;g" tmp1
+   sed -i -e "s;@\[CPL_SLOW\];$CPL_SLOW;g" tmp1
+   sed -i -e "s;@\[CPL_FAST\];$CPL_FAST;g" tmp1
 fi
 if [ $cplice = .true. ]; then
-        sed -i -e "s;@\[ice_model\];$icemod;g" tmp1
-        sed -i -e "s;@\[ice_petlist_bounds\];$ice_petlist_bounds;g" tmp1
+   sed -i -e "s;@\[ice_model\];$icemod;g" tmp1
+   sed -i -e "s;@\[ice_petlist_bounds\];$ice_petlist_bounds;g" tmp1
 fi
-
+# Rename and move to nems.configure 
 mv tmp1 nems.configure
 
+######################################################################
+# 1.5 MOM_input                                                      #
+######################################################################
+
+# Copy the ice template into run directory
+cp $SCRIPTDIR/MOM_input_template tmp1
+# Replace values in template
+sed -i -e "s;DT_THERM_MOM6;${DT_THERM_MOM6};g" tmp1
+sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
+# Rename to proper input ice input name
+mv tmp1 $DATA/INPUT/MOM_input
 
 ######################################################################
-# 1.5 MOM_input 
-######################################################################
-
-
-
-######################################################################
-# 1.6 CICE input 
+# 1.6 CICE input                                                     #
 ######################################################################
 
 # parsing namelist of CICE (ice_in) 
 
-#info on restarting CICE model is here: https://vlab.ncep.noaa.gov/redmine/projects/emc_fv3-mom6-cice5/wiki/Restarting_the_coupled_model#CICE5
+# info on restarting CICE model is here: 
+#  https://vlab.ncep.noaa.gov/redmine/projects/emc_fv3-mom6-cice5/wiki/Restarting_the_coupled_model#CICE5
 
-#Variables needed: 
-iceic=cice5_model.res_${CDATE}.nc  #name of file ice restart file gets renamed to
-DT_CICE=900
+FRAZIL_FWSALT=${FRAZIL_FWSALT:-".false."}
+tr_pond_lvl=${tr_pond_lvl:-".true."} # Use level melt ponds tr_pond_lvl=true
+restart_pond_lvl=${restart_pond_lvl:-".false."}  
+# restart_pond_lvl (if tr_pond_lvl=true):
+#   -- if true, initialize the level ponds from restart (if runtype=continue) 
+#   -- if false, re-initialize level ponds to zero (if runtype=initial or continue)  
+    
+RUNTYPE='initial'
+USE_RESTART_TIME='.false.'
+
+dumpfreq_n=${dumpfreq_n:-"restart_interval"} 
+dumpfreq=${dumpfreq:-"s"} #  "s" or "d" or "m" for restarts at intervals of "seconds", "days" or "months"
+
+iceres=${iceres:-"mx025"}
+ice_grid_file=${ice_grid_file:-"grid_cice_NEMS_${iceres}.nc"}
+ice_kmt_file=${ice_kmt_file:-"kmtu_cice_NEMS_${iceres}.nc"}
+
+
+# Calculated variables for ice_in: 
 stepsperhr=$((3600/${DT_CICE}))
 nhours=$(${NHOUR} ${CDATE} ${SYEAR}010100)
 istep0=$((nhours*stepsperhr))
 npt=$((FHMAX*$stepsperhr))      # Need this in order for dump_last to work
-
-
-FRAZIL_FWSALT=${FRAZIL_FWSALT:-".false."}
-tr_pond_lvl=${tr_pond_lvl:-".true."}
-restart_pond_lvl=${restart_pond_lvl:".false."}
-
-
-
-histfreq_n=${histfreq_n:-6}
-restart_interval=${restart_interval:-1296000}    # restart write interval in seconds, default 15 days
-dumpfreq_n=$restart_interval                     # restart write interval in seconds
-
-    #For CICE5 ice_in coldstart
-    RUNTYPE='initial'
-    # to dump a restart at the end of coldstart
-    DUMPFREQ_N='3600'
-    DUMPFREQ='s'
-    USE_RESTART_TIME='.false.'
-
-    #For CICE5 ice_in
-    RUNTYPE='initial'
-    # to dump a restart at the end of coldstart
-    DUMPFREQ_N='5'
-    DUMPFREQ='d'
-    USE_RESTART_TIME='.false.'
-
-
-# ice_calendar subroutine does not allow for writing restarts 
-# at hour frequencies
-# if DUMPFREQ is set as "h", then convert DUMPFREQ_N to seconds and
-# reset DUMPFREQ to "s"
-if("@[DUMPFREQ]" == "h"):
- dumpn = int("@[DUMPFREQ_N]")
- DUMPFREQ_N = str(dumpn*3600)
- DUMPFREQ = "s"
-else:
- DUMPFREQ_N = str("@[DUMPFREQ_N]")
- DUMPFREQ = str("@[DUMPFREQ]")
-#
-
 
 # Copy the ice template into run directory
 cp $SCRIPTDIR/ice_in_template tmp1
@@ -307,102 +302,116 @@ sed -i -e "s;DT_CICE;${DT_CICE};g" tmp1
 sed -i -e "s;NPROC_ICE;${ICEPETS};g" tmp1
 sed -i -e "s;RUNTYPE;${RUNTYPE};g" tmp1
 sed -i -e "s;USE_RESTART_TIME;${USE_RESTART_TIME};g" tmp1
-sed -i -e "s;DUMPFREQ_N;${DUMPFREQ_N};g" tmp1
-sed -i -e "s;DUMPFREQ;${DUMPFREQ};g" tmp1
+sed -i -e "s;DUMPFREQ_N;${dumpfreq_n};g" tmp1
+sed -i -e "s;DUMPFREQ;${dumpfreq};g" tmp1
 sed -i -e "s;FRAZIL_FWSALT;${FRAZIL_FWSALT};g" tmp1
 sed -i -e "s;TR_POND_LVL;${tr_pond_lvl};g" tmp1
 sed -i -e "s;RESTART_POND_LVL;${restart_pond_lvl};g" tmp1
+sed -i -e "s;ICE_GRID_FILE;${ice_grid_file};g" tmp1
+sed -i -e "s;ICE_KMT_FILE;${ice_kmt_file};g" tmp1
 
 # Rename to proper input ice input name
 mv tmp1 ice_in 
 
+######################################################################
+# 1.7 datm_data_table (DATM)                                         #
+######################################################################
 
+# Copy the ice template into run directory
+cp $SCRIPTDIR/datm_data_table.IN tmp1
+# Replace values in template
+#sed -i -e "s;SOMEVAR;${SOMEVAR};g" tmp1
+
+# Rename to proper input ice input name
+mv tmp1 $DATA/datm_data_table
 
 ######################################################################
 ######################################################################
-# 2. Copy inputs 
-
-#2.1 Copy DATM  inputs and fix files
-#2.2 Copy MOM6 inputs and fix files
-#2.3  Copy Mediator inputs 
-#2.4 Copy CICE5 inputs and fix files 
-
+# 2. Copy inputs                                                     #
+#                                                                    #
+#2.1 Copy DATM inputs and fix files                                  #
+#2.2 Copy MOM6 ICs, inputs and fix files                             #
+#2.3 Copy CICE5 ICs, inputs and fix files                            #
+#2.4 Copy Mediator inputs                                            #
+#                                                                    #
 ######################################################################
 ######################################################################
 
-
 ######################################################################
-#2.1 Copy DATM  inputs and fix files
-######################################################################
-
-
-######################################################################
-#2.2 Copy MOM6 inputs and fix files
+#2.1 Copy DATM  inputs (ie forcing files)                            #
 ######################################################################
 
-        
-# Copy MOM6 ICs (from CFSv2 file)        
+#This should be some loop through CDATE-> CDATE+ FORECAST length 
+#and get input from either CFSR or GEFS or Whatever... 
+#But for now we assume everyone is running sometime in 2011-10 and 
+#using cfsr... 
+
+# DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
+
+DATMINPUTDIR="/scratch1/NCEPDEV/nems/emc.nemspara/RT/DATM-MOM6-CICE5/master-20191018/DATM/CFSR_v0/201110"
+ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}.*.nc $DATA/DATM_INPUT/
+
+######################################################################
+#2.2 Copy MOM6 IC, inputs and fix files                              #
+######################################################################
+
+# Copy MOM6 ICs       
 cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
         
 # Copy MOM6 fixed files        
 cp -pf $FIXmom/INPUT/* $DATA/INPUT/
 
-# Copy grid_spec and mosaic files
-cp -pf $FIXgrid/$CASE/${CASE}_mosaic* $DATA/INPUT/
-cp -pf $FIXgrid/$CASE/grid_spec.nc $DATA/INPUT/
-cp -pf $FIXgrid/$CASE/ocean_mask.nc $DATA/INPUT/
-cp -pf $FIXgrid/$CASE/land_mask* $DATA/INPUT/
+######################################################################
+#2.3 Copy CICE5 ICs  and fix files                                   #          
+######################################################################
+        
+if [ $CDATE = '2011100100' ]; then
+  #first IC: generated from CFSv2
+  cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
+  #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
+else 
+  #copy from ROTDIR from cycled exp --- need coordinate name  
+  cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/$iceic
+fi
 
+# Copy CICE fixed files:
+cp -p $FIXcice/${ice_grid_file} $DATA/
+cp -p $FIXcice/${ice_kmt_file} $DATA/
 
 ######################################################################
-#2.3  Copy Mediator inputs 
+#2.4  Copy Mediator inputs                                           #
 ######################################################################
 
 # Copy mediator restart files to RUNDIR       
-if [ $runtyp = 'continue' ]; then             
+if [ $inistep = 'cold' ]; then
+  echo "mediator cold start run sequence"
+else 
   cp $ROTDIR/$CDUMP.$PDY/$cyc/mediator_* $DATA/
 fi
 
-
-######################################################################
-#2.4 Copy CICE5 inputs and fix files 
-######################################################################
-
-
-        
-# Copy CICE5 IC - pre-generated from CFSv2
-cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
-#cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
-
-# Copy CICE5 fixed files, and namelists
-cp -p $FIXcice/kmtu_cice_NEMS_mx025.nc $DATA/
-cp -p $FIXcice/grid_cice_NEMS_mx025.nc $DATA/
-
-# Copy grid_spec and mosaic files
-cp -pf $FIXgrid/$CASE/${CASE}_mosaic* $DATA/INPUT/
-cp -pf $FIXgrid/$CASE/grid_spec.nc $DATA/INPUT/
-cp -pf $FIXgrid/$CASE/ocean_mask.nc $DATA/INPUT/
-cp -pf $FIXgrid/$CASE/land_mask* $DATA/INPUT/
-
-
-
-
 ######################################################################
 ######################################################################
-# Run forecast 
+# Run forecast                                                       #
 ######################################################################
 ######################################################################
 
 
 ######################################################################
 ######################################################################
-# Copy outputs: 
+# Copy outputs:                                                      #
 ######################################################################
 ######################################################################
 
 #If a cold mediator start, copy the mediator files: 
-if [ $runtyp = 'initial' ]; then
+if [ $inistep = 'cold' ]; then
   cp $DATA/mediator_* $ROTDIR/$CDUMP.$PDY/$cyc/
-fi
+else 
+  #copy data from run 
+ 
+  #restart file from each component 
 
+
+  #any CICE/MOM6 output 
+
+fi
 

@@ -42,8 +42,8 @@
 &grid_nml
     grid_format  = 'nc'
   , grid_type    = 'displaced_pole'
-  , grid_file    = 'grid_cice_NEMS_mx025.nc'
-  , kmt_file     = 'kmtu_cice_NEMS_mx025.nc'
+  , grid_file    = 'ICE_GRID_FILE'
+  , kmt_file     = 'ICE_KMT_FILE'
   , kcatbound    = 0
 /
 

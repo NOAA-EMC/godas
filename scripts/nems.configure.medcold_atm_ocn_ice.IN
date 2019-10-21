@@ -15,8 +15,9 @@ MED_attributes::
   Verbosity = 0
   DumpFields = @[DumpFields]
   DumpRHs = false
+  ProfileMemory = false
   coldstart = @[coldstart]
-  restart_interval = 0
+  restart_interval = @[restart_interval]
 ::
 
 # ATM #
@@ -25,6 +26,7 @@ ATM_petlist_bounds:             @[atm_petlist_bounds]
 ATM_attributes::
   Verbosity = 0
   DumpFields = @[DumpFields]
+  ProfileMemory = false
 ::
 
 # OCN #
@@ -33,7 +35,8 @@ OCN_petlist_bounds:             @[ocn_petlist_bounds]
 OCN_attributes::
   Verbosity = 0
   DumpFields = @[DumpFields]
-  restart_interval = 0
+  restart_interval = @[restart_interval]
+  ProfileMemory = false
 ::
 
 # ICE #
@@ -42,6 +45,7 @@ ICE_petlist_bounds:             @[ice_petlist_bounds]
 ICE_attributes::
   Verbosity = 0
   DumpFields = @[DumpFields]
+  ProfileMemory = false
 ::
 
 # Coldstart Run Sequence #
