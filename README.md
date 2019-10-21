@@ -40,11 +40,17 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 
 3. `cd $CLONE_DIR/workflow/CROW`
 4. Setup the workflow: \
-   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar_only_exp: \
-   `./setup_case.sh -p HERA -f ../cases/3dvar_only_exp.yaml workflowtest001`
-   
+   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar: \
+   `./setup_case.sh -p HERA -f ../cases/3dvar.yaml workflowtest001`
+ 
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
-   
+ 
+   Available cases:
+   1. 3dvar.yaml
+   2. letkf_only_exp.yaml
+
+   Note: Each case files point to a corresponding layout file at $CLONE_DIR/workflow/layout. 
+
 5. Read output and run suggested command. Should be similar to: \
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
 # Building the soca-bundle 
