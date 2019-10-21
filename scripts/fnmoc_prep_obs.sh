@@ -49,8 +49,8 @@ do
       s+=" ${RawFileName}"
       s+=" -o ${PROCobs} -d ${CDATE}"
      
+      echo ${s}
       eval ${s}
-
    else
 
       echo There are no $RawFileName observations for ${CDATE}  

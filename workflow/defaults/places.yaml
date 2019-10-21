@@ -22,12 +22,12 @@ default_places: &default_places
   EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'    # EXPDIR location
   LOG_DIR:     !expand "{EXPDIR}/log"                            # place to logs
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
-  GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda"        # Root path for external data 
+  GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda"                  # Root path for external data 
   SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
   SOCA_STATIC: !expand "{GODAS_RC}/soca-static/1440x1080x75"
   SOCA_CONFIG:   !expand "{ROOT_GODAS_DIR}/src/soca-bundle/soca-config/emc"             # soca-config path
   DCOM_ROOT: !expand "{GODAS_RC}/ocean_observations/data"         # Observation root path for raw obs
-  IODA_ROOT: !expand "{GODAS_RC}/ioda_observations"               # Processed observations
+  IODA_ROOT: !expand "/scratch2/NCEPDEV/marine/Shastri.Paturi/ioda_observations"               # Processed observations
 
   MODEL_SCRATCH: "/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/"
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage

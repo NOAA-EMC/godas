@@ -9,11 +9,15 @@ module load jedi-intel-17.0.5.239
 #module load contrib
 #module load anaconda/latest
 
-module use -a /home/Stylianos.Flampouris/modulefiles
-module load anaconda/2019.08.07
-module list
+#module use -a /home/Stylianos.Flampouris/modulefiles
+#module load anaconda/2019.08.07
+#module list
 
 #module use -a /scratch3/NCEPDEV/marine/save/Todd.Spindler/modulefiles
 #module load ananconda3/1.0.0
+
+module use -a /scratch2/NCEPDEV/marine/Todd.Spindler/save/modulefiles/
+module load anaconda/1.0.0 
+module list
 
 ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
