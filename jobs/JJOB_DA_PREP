@@ -21,13 +21,13 @@ mkdir -p $RUNCDATE
 cd $RUNCDATE
 
 # TODO: Hard-coded stuff that needs to be moved/changed
-
-export MODEL_SCRATCH=/scratch4/NCEPDEV/ocean/scrub/Guillaume.Vernieres/JEDI/mom6-cice5-fv3/test-initcice5/
+export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/${NI}x${NJ}x${NK}
 export case='3dvar' #options 3dvar or en
 # TODO Put the job files for the ensemble to a temporary job-dir
 #
+
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
-cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
+cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }          # make generic.
 
 # Make sure CDATE is at 12z
 cdate_hh(){ echo  ${1:8:2}; }
@@ -40,16 +40,16 @@ else
 fi
 
 # Copy SOCA static files into RUNCDATE
-#-----------------------------------
+#---------------------------------------------------
 cp -r $SOCA_STATIC/* $RUNCDATE
 
 # Copy SOCA config files into RUNCDATE
-#-----------------------------------
+#----------------------------------------------------
 mkdir -p $RUNCDATE/yaml
 cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
 
 # Prepare SOCA configuration
-#---------------------------
+#-----------------------------------------
 export window_begin=$(cdate2window_begin $CDATE)
 export bkg_date=$(cdate2bkg_date $CDATE)
 
@@ -65,15 +65,21 @@ echo "bkg_date="$bkg_date
 echo "MODEL_SCRATCH="$MODEL_SCRATCH
 
 ## Prep yaml for bump initialization 
-#----------------------------------------------------
+#-----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/static_SocaError_init.yml    \
       -d ${bkg_date}
 
 ## Prep yaml for checkpointing 3DVAR analysis
-#----------------------------------------------------------------------
+#--------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/checkpointmodel.yml          \
+      -d ${bkg_date}
+
+## Prep yaml for running mom6 only forecast
+#------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/forecast.yml               \
       -d ${bkg_date}
 
 ## Prep yaml for the soca_enspert 
@@ -110,20 +116,41 @@ if [ $case = 'en' ]; then
       sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
    done
 fi
+
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
+# Get IC
+#-------
+# Check if there was a previous cycle
+if [ -d ../NEXT_IC ]; then
+    # Get IC from previous cycle
+    cp ../NEXT_IC/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc  
+    cp ../NEXT_IC/MOM*.nc $RUNCDATE/INPUT_MOM6/
+    rm -rf ../NEXT_IC
+    exit 0
+fi
+
+# If this is the first cycle, continue below
+# TODO: This is a hack ... in case you had not noticed!
 # Ocean bkg files
 #----------------
 ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNCDATE/INPUT_MOM6/
 
 # Sea-ice bkg files
 #------------------
-# Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
-cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-# Make cice_bkg.nc fms compliant
-ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-
+echo "==========================================================="
+echo $ICE_FMT
+echo "==========================================================="
+if [ "${ICE_FMT}" = notfms ]; then
+    # Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
+    cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    # Make cice_bkg.nc fms compliant
+    ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+fi
+if [ "${ICE_FMT}" = fms ]; then
+    cp $MODEL_SCRATCH/INPUT/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+fi
