@@ -33,8 +33,6 @@ ListOfSST="sst.windsat_l3u.ghrsst \
 for SSTsource in $ListOfSST
 do
     sat=''
-    echo SSTsource is $SSTsource
-    echo sat is $sat
     source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \
                      -i ${SSTsource} \
                      -d $sat
