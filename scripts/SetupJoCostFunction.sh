@@ -55,16 +55,6 @@ echo $obsfile
 if [ -f $obsfile ]; then
    echo "Adding ice concentration to Jo cost function"
    ln -sf ${obsfile} ${DATADIR}/ioda.icec.cat_l2.emc.nc
-   # TODO: Subsample elsewhere
-   #cp ${obsfile} ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc
-   #module load nco
-   # Create record dim
-   #ncks --mk_rec_dmn nlocs ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc ${obsdatabase}/icec-tmp.nc
-   # Subsample
-   #ncks -F -d nlocs,1,,5 ${obsdatabase}/icec-tmp.nc ${DATADIR}/ioda.icec.cat_l2.emc.nc
-   #rm ${obsdatabase}/icec-tmp.nc
-   #rm ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc
-
    sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.cat_l2.emc.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
    cp 3dvartmp.yml ${yamlfile}
    rm 3dvartmp.yml
@@ -84,8 +74,6 @@ for sst_source in $listofsst; do
    if [ -f $obsfile ]; then
       echo "Adding $sst_source SST to Jo cost function"
       ln -sf ${obsfile} ${DATADIR}/ioda.sst.${sst_source}.nc
-
-      echo SST_${sst_source}_JO
       sed -e '/SST_'${sst_source}'_JO/{r '${RUNDIRC}'/yaml/sst.'${sst_source}'.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
       cp 3dvartmp.yml ${yamlfile}
       rm 3dvartmp.yml
