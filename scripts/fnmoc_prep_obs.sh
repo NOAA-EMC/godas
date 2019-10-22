@@ -49,7 +49,6 @@ do
       s+=" ${RawFileName}"
       s+=" -o ${PROCobs} -d ${CDATE}"
      
-      echo ${s}
       eval ${s}
    else
 
