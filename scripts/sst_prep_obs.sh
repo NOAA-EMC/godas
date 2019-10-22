@@ -18,7 +18,6 @@ OUTFILE=ioda.${SSTsource}.${sat}.${DA_SLOT_LEN}h.nc  #Filename of the processed 
 PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}     #FullPath/Filename of preprocessed obs
 PROCobs=${ObsRunDir}/${OUTFILE}                 #FullPath/Filename of observations to be ingested
 
-
 echo "obsrundir: "${ObsRunDir}
 echo "obsrundir: "$RUNCDATE/Data
 
@@ -48,7 +47,6 @@ if [ -d "$OBSDCOM" ]; then
    
    s+=" -o ${PROCobs} -d ${CDATE}"
    eval ${s}
-   echo ${s}
 
 else
    
