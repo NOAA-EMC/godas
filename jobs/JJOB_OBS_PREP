@@ -6,14 +6,10 @@ echo $CDATE
 module purge
 module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
 module load jedi-intel-17.0.5.239
-#module load contrib
-#module load anaconda/latest
 
-module use -a /home/Stylianos.Flampouris/modulefiles
-module load anaconda/2019.08.07
-module list
+module load nco
 
-#module use -a /scratch3/NCEPDEV/marine/save/Todd.Spindler/modulefiles
-#module load ananconda3/1.0.0
+module use -a /scratch3/NCEPDEV/marine/save/Todd.Spindler/modulefiles
+module load ananconda/1.0.0
 
 ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
