@@ -13,7 +13,19 @@ if [ -f "${PREPROCobs}" ]; then
         to ${PROCobs}
    echo
 
-   cp -rf ${PREPROCobs} ${PROCobs}
+   cp -rf ${PREPROCobs} ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc
+
+   # Create record dim
+   ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc ${ObsRunDir}/icec-tmp.nc
+   # Subsample
+   ncks -F -d nlocs,1,,5 ${ObsRunDir}/icec-tmp.nc ${PROCobs}
+   rm ${ObsRunDir}/icec-tmp.nc
+   rm ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc
+
+   sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.cat_l2.emc.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
+   cp 3dvartmp.yml ${yamlfile}
+   rm 3dvartmp.yml
+
 
    return
 fi
