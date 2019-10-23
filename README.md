@@ -84,10 +84,10 @@ The workflow can interactively as shown at step 3. below or as cronjob.
 3. Start rocoto \
    `rocotorun -w workflow.xml -d workflow.db`
 4. Check status \
-   `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db` \
+   `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db` 
    Or you could use "rocoto_viewer.py". Your terminal window needs to be wider than 125 chars \
    `rocotorun -w workflow.xml -d workflow.db `\
-   `python rocoto_viewer.py -w workflow.xml -d workflow.db`\
+   `python rocoto_viewer.py -w workflow.xml -d workflow.db`
 5. Repeat step 4 until all jobs are completed. 
 
 # Check the run and the results
