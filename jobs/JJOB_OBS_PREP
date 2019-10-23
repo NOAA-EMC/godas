@@ -10,6 +10,6 @@ module load jedi-intel-17.0.5.239
 module load nco
 
 module use -a /scratch3/NCEPDEV/marine/save/Todd.Spindler/modulefiles
-module load ananconda3/1.0.0
+module load ananconda/1.0.0
 
 ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
