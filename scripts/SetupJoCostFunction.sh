@@ -54,16 +54,7 @@ obsfile=$obsdatabase/ioda.icec.cat_l2.emc.${DA_SLOT_LEN}h.nc
 echo $obsfile
 if [ -f $obsfile ]; then
    echo "Adding ice concentration to Jo cost function"
-   # TODO: Subsample elsewhere
-   cp ${obsfile} ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc
-   module load nco
-   # Create record dim
-   ncks --mk_rec_dmn nlocs ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc ${obsdatabase}/icec-tmp.nc
-   # Subsample
-   ncks -F -d nlocs,1,,5 ${obsdatabase}/icec-tmp.nc ${DATADIR}/ioda.icec.cat_l2.emc.nc
-   rm ${obsdatabase}/icec-tmp.nc
-   rm ${obsdatabase}/ioda.icec.cat_l2.emc_LARGE.nc
-
+   ln -sf ${obsfile} ${DATADIR}/ioda.icec.cat_l2.emc.nc
    sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.cat_l2.emc.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
    cp 3dvartmp.yml ${yamlfile}
    rm 3dvartmp.yml
@@ -82,36 +73,7 @@ for sst_source in $listofsst; do
    echo $obsfile
    if [ -f $obsfile ]; then
       echo "Adding $sst_source SST to Jo cost function"
-      case $sst_source in 
-         "avhrrmta_l3u.nesdis")
-            subsample=true
-            skip=250
-            ;;
-         "avhrr19_l3u.nesdis")
-            subsample=true
-            skip=250
-            ;;
-         "windsat_l3u.ghrsst")
-            subsample=true
-            skip=5
-            ;;
-      esac
-
-      if [ $subsample ]; then
-         echo "Subsampling $sst_source SST"
-         # TODO: Subsample elsewhere
-	 cp ${obsfile} ${obsdatabase}/ioda.sst.${sst_source}_LARGE.nc
-         module load nco
-         # Create record dim
-         ncks --mk_rec_dmn nlocs ${obsdatabase}/ioda.sst.${sst_source}_LARGE.nc ${obsdatabase}/sst-tmp.nc
-         # Subsample
-         ncks -F -d nlocs,1,,$skip ${obsdatabase}/sst-tmp.nc ${DATADIR}/ioda.sst.${sst_source}.nc
-         rm ${obsdatabase}/sst-tmp.nc
-         rm ${obsdatabase}/ioda.sst.${sst_source}_LARGE.nc   
-      else
-         ln -sf ${obsfile} ${DATADIR}/ioda.sst.${sst_source}.nc
-      fi
-      echo SST_${sst_source}_JO
+      ln -sf ${obsfile} ${DATADIR}/ioda.sst.${sst_source}.nc
       sed -e '/SST_'${sst_source}'_JO/{r '${RUNDIRC}'/yaml/sst.'${sst_source}'.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
       cp 3dvartmp.yml ${yamlfile}
       rm 3dvartmp.yml
