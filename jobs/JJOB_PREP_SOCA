@@ -1,9 +1,18 @@
 #!/bin/bash
-#set -e
+set -e
 
 #================================================================================
 #================================================================================
-# Prep SOCA Static B and grid
+
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_PREP_SOCA
+#   Prep SOCA Static B and grid
+#================================================================================
+#================================================================================
+EOF
 
 module purge
 module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
@@ -31,4 +40,4 @@ echo
 echo 'Initializing BUMP.'
 echo
 mkdir -p bump
-srun -n 200 ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
+srun -n $NPE ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
