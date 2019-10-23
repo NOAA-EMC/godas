@@ -14,7 +14,7 @@ if [ -f "${PREPROCobs}" ]; then
    echo
 
    cp -rf ${PREPROCobs} ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc
-   module load nco
+
    # Create record dim
    ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc ${ObsRunDir}/icec-tmp.nc
    # Subsample
