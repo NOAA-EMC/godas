@@ -21,15 +21,17 @@ fi
 if [ -d "$OBSDCOM" ]; then
 
    cd $OBSDCOM
+   n=`ls *${PDY}.nc |wc -l`
 
-   s="${IODA_EXEC}/emc_ice2ioda.py -i "
-   for files in `ls *${PDY}.nc`; do
-     s+=" $OBSDCOM/${files} "
-   done
-   s+=" -o ${PROCobs} -d ${CDATE}"
-   echo $s
-   eval ${s}
+   if [ $n -gt 0 ]; then 
+      s="${IODA_EXEC}/emc_ice2ioda.py -i "
+      for files in `ls *${PDY}.nc`; do
+        s+=" $OBSDCOM/${files} "
+      done
+      s+=" -o ${PROCobs} -d ${CDATE}"
+      eval ${s}
+   else
+      echo There are no ICEC observations for ${CDATE}
+   fi
 
-else
-   echo There are no ICEC observations
 fi
