@@ -14,9 +14,13 @@ module purge
 module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
 module load jedi-intel-17.0.5.239
 
+echo $RUNCDATE
+
+if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
+
 # Change of the coordinates
 # TODO
 
 # Run H(x)
 
-srun -n 24 ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml
+srun -n ${NPE} ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml

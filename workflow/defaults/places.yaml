@@ -15,7 +15,7 @@ default_places: &default_places
 # To be removed as soon as there is an ensemble yaml file
 # Number of ensemble members
   DA_METHOD: en #options 3dvar or en
-  NO_ENS_MBR: 5
+  NO_ENS_MBR: 5 
 # Model resolution
   NI: 360 #1440   
   NJ: 210 #1080
@@ -23,7 +23,7 @@ default_places: &default_places
 # Ice model file format
   ICE_FMT: fms # notfms
 # Number of procs for DA
-  NPE: 100
+  NPE: 20
 
   PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path

@@ -1,32 +1,6 @@
 suite: !Cycle
       <<: *suite_defaults
 
-      da_prep: !Task
-        <<: *shared_task_template
-        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
-        resources: !calc partition.resources.run_da_prep
-        config: [ base ]
-        J_JOB: JJOB_DA_PREP
-
-#      da_prep: !TaskArray
-#        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
-#        Dimensions:
-#          groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
-#        da_prep_grp: !TaskElement
-#          <<: *shared_task_template
-#          Foreach: [ groupid ]
-#          Name: !expand "da_prep_grp{dimval.groupid}"
-#          resources: !calc partition.resources.run_da_prep
-#          config: [ base ]
-#          J_JOB: JJOB_DA_PREP
-#          ENSGRP: !expand "{dimval.groupid:02d}"
-#          rocoto_command: !expand >-
-#            {rocoto_load_modules} ;
-#            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
-#          ecflow_command: !expand |
-#            export ENSGRP={ENSGRP}
-#            $ROOT_GODAS_DIR/jobs/{J_JOB}
-
       obs_prep: !Task
         <<: *shared_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
@@ -34,16 +8,16 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
 
-#      da_prep_3dvar: !Task
-#        <<: *shared_task_template
-#        Trigger: !Depend  da_prep
-#        resources: !calc partition.resources.run_3dvar
-#        config: [ base ]
-#        J_JOB: JJOB_PREP_3DVAR
+      da_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  ( obs_prep )
+        resources: !calc partition.resources.run_da_prep
+        config: [ base ]
+        J_JOB: JJOB_DA_PREP
 
       da_prep_soca: !Task
         <<: *shared_task_template
-        Trigger: !Depend  da_prep
+        Trigger: !Depend ( da_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_PREP_SOCA
@@ -110,4 +84,23 @@ suite: !Cycle
         rocoto_command: "echo final"
         rocoto_command: /bin/true
         RUN: gfs # useless but required
+
+#      da_prep: !TaskArray
+#        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+#        Dimensions:
+#          groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
+#        da_prep_grp: !TaskElement
+#          <<: *shared_task_template
+#          Foreach: [ groupid ]
+#          Name: !expand "da_prep_grp{dimval.groupid}"
+#          resources: !calc partition.resources.run_da_prep
+#          config: [ base ]
+#          J_JOB: JJOB_DA_PREP
+#          ENSGRP: !expand "{dimval.groupid:02d}"
+#          rocoto_command: !expand >-
+#            {rocoto_load_modules} ;
+#            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+#          ecflow_command: !expand |
+#            export ENSGRP={ENSGRP}
+#            $ROOT_GODAS_DIR/jobs/{J_JOB}
 
