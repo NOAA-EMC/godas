@@ -1,19 +1,19 @@
 suite: !Cycle
       <<: *suite_defaults
 
-      da_prep: !Task
-        <<: *shared_task_template
-        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
-        resources: !calc partition.resources.run_da_prep
-        config: [ base ]
-        J_JOB: JJOB_DA_PREP
-
       obs_prep: !Task
         <<: *shared_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
         resources: !calc partition.resources.run_obs_prep
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
+
+      da_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  obs_prep
+        resources: !calc partition.resources.run_da_prep
+        config: [ base ]
+        J_JOB: JJOB_DA_PREP
 
       da_prep_soca: !Task
         <<: *shared_task_template
