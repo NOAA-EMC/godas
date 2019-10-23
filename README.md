@@ -72,7 +72,6 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `cd $CLONE_DIR/soca-bundle/soca-config` \
    `git checkout feature/emc-3dvar` \
     or alternatively, checkout your own branch or the branch you need to test with.
-
 # Running the workflow
 Assumption all the subsystems have been compiled.
 The workflow can interactively as shown at step 3. below or as cronjob.
@@ -86,6 +85,7 @@ The workflow can interactively as shown at step 3. below or as cronjob.
 4. Check status \
    `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db` \
    Or you could use "rocoto_viewer.py". Your terminal window needs to be wider than 125 chars \
+   `rocotorun -w workflow.xml -d workflow.db `\
    `python rocoto_viewer.py -w workflow.xml -d workflow.db`
 5. Repeat step 4 until all jobs are completed. 
 
