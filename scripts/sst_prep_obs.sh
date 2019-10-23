@@ -57,7 +57,7 @@ if [ -f "${PREPROCobs}" ]; then
       echo "Subsampling $sst_source SST"
       # TODO: Subsample elsewhere
       mv ${PROCobs} ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc
-      module load nco
+#      module load nco
       # Create record dim
       ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
       # Subsample
