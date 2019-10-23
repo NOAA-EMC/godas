@@ -11,14 +11,12 @@ shift $((OPTIND -1))
 
 echo SST SOURCE = ${sst_source}
 
-
 cd $DCOM_ROOT
 
 ObsRunDir=$RUNCDATE/Data/${CDATE}    #TODO: Should not be needed here ...
 OUTFILE=ioda.${sst_source}.${DA_SLOT_LEN}h.nc   #Filename of the processed obs
 PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}     #FullPath/Filename of preprocessed obs
 PROCobs=${ObsRunDir}/${OUTFILE}                 #FullPath/Filename of observations to be ingested
-
 
 echo "obsrundir: "${ObsRunDir}
 echo "obsrundir: "$RUNCDATE/Data/${CDATE}
@@ -57,7 +55,7 @@ if [ -f "${PREPROCobs}" ]; then
       echo "Subsampling $sst_source SST"
       # TODO: Subsample elsewhere
       mv ${PROCobs} ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc
-#      module load nco
+
       # Create record dim
       ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
       # Subsample
