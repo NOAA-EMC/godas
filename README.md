@@ -72,7 +72,6 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `cd $CLONE_DIR/soca-bundle/soca-config` \
    `git checkout feature/emc-3dvar` \
     or alternatively, checkout your own branch or the branch you need to test with.
-
 # Running the workflow
 Assumption all the subsystems have been compiled.
 The workflow can interactively as shown at step 3. below or as cronjob.
