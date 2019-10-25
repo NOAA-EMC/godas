@@ -8,23 +8,6 @@
 default_places: &default_places
 
   IODA_EXEC: !expand "{ROOT_GODAS_DIR}/build/bin"
-
-# TODO!!
-# To be removed as soon as the da.yaml is activated.
-  DA_SLOT_LEN: 24
-# To be removed as soon as there is an ensemble yaml file
-# Number of ensemble members
-  NO_ENS_MBR: 5
-# Model resolution
-  NI: 360 #1440   
-  NJ: 210 #1080
-  NK: 75
-# Ice model file format
-  ICE_FMT: fms # notfms
-# Number of procs for DA
-  NPE: 100
-
-  PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path
   HOMEcrow:    !calc tools.crow_install_dir()                    # CROW repo top level
   EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'    # EXPDIR location
@@ -32,7 +15,7 @@ default_places: &default_places
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
   GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda"        # Root path for external data 
   SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
-  SOCA_STATIC: !expand "{GODAS_RC}/soca-static/{NI}x{NJ}x{NK}"
+  SOCA_STATIC: !expand "{GODAS_RC}/soca-static/{doc.da_settings.NI}x{doc.da_settings.NJ}x{doc.da_settings.NK}"
   SOCA_CONFIG:   !expand "{ROOT_GODAS_DIR}/src/soca-bundle/soca-config/emc"             # soca-config path
   DCOM_ROOT: !expand "{GODAS_RC}/ocean_observations/data"         # Observation root path for raw obs
   IODA_ROOT: !expand "{GODAS_RC}/ioda_observations"               # Processed observations

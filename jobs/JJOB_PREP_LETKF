@@ -19,4 +19,4 @@ module load jedi-intel-17.0.5.239
 
 # Run H(x)
 
-srun -n 24 ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml
+srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml
