@@ -16,4 +16,4 @@ cd $RUNCDATE
 
 # Generate the ensemble using soca_enspert
 
-srun -n $npe_gen ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
+srun -n $npe_psoca ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 

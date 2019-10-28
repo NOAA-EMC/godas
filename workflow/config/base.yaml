@@ -28,7 +28,7 @@ config_base:
     export QUEUE="{doc.accounting.exclusive_partition.exclusive_queue}"
     export QUEUE_ARCH="{doc.accounting.service_partition.service_queue}"
     export NPE="{doc.partition_common.resources.run_letkf_prep[0].mpi_ranks}"       
-    export npe_gen="{doc.partition_common.resources.run_gen_ens[0].mpi_ranks}"
+    export npe_psoca="{doc.partition_common.resources.run_3dvar[0].mpi_ranks}"
  
     # Project to use in mass store:
     HPSS_PROJECT={doc.accounting.hpss_project}

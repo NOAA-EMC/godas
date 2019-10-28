@@ -11,11 +11,10 @@
 
 godas_resource_table:
 #                ranks  ppn  wallclock              threads MB
-  r3dvar:       [  100,   20, !timedelta "01:00:00", 12,  "3072" ]
-  obs_prep:     [  12,    12, !timedelta "01:00:00", 1,   "3072" ]
+  r3dvar:       [  24,    24, !timedelta "00:10:00", 12,  "3072" ]
+  obs_prep:     [  12,    12, !timedelta "00:10:00", 1,   "3072" ]
   da_prep:      [  1,      1, !timedelta "00:30:00", 1,   "3072" ]
-  letkf_prep:   [  100,   20, !timedelta "01:00:00", 12,  "3072" ]
-  gen_ens:      [  100,   24, !timedelta "00:30:00", 1,   "3072" ]
+  letkf_prep:   [  24,    24, !timedelta "00:10:00", 12,  "3072" ]
 
 default_resources: &default_resources
 
@@ -41,12 +40,6 @@ default_resources: &default_resources
       mpi_ranks: !calc doc.godas_resource_table.r3dvar[0]
       walltime: !calc doc.godas_resource_table.r3dvar[2]
       max_ppn: !calc doc.godas_resource_table.r3dvar[1]
-
-  run_gen_ens: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.gen_ens[4]
-      mpi_ranks: !calc doc.godas_resource_table.gen_ens[0]
-      walltime: !calc doc.godas_resource_table.gen_ens[2]
-      max_ppn: !calc doc.godas_resource_table.gen_ens[1]
 
   run_letkf_prep: !JobRequest
     - batch_memory: !calc doc.godas_resource_table.letkf_prep[4]
