@@ -1,0 +1,60 @@
+suite: !Cycle
+      <<: *suite_defaults
+
+      obs_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+        resources: !calc partition.resources.run_obs_prep
+        config: [ base ]
+        J_JOB: JJOB_OBS_PREP
+
+      da_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  obs_prep
+        resources: !calc partition.resources.run_da_prep
+        config: [ base ]
+        J_JOB: JJOB_DA_PREP
+
+      da_prep_soca: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  da_prep
+        resources: !calc partition.resources.run_3denvar
+        config: [ base ]
+        J_JOB: JJOB_PREP_SOCA
+
+      da_3denvar_run: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  ( da_prep_soca & obs_prep )
+        resources: !calc partition.resources.run_3denvar
+        config: [ base ]
+        J_JOB: JJOB_DA_3DENVAR
+
+      fcst_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend da_3denvar_run
+        resources: !calc partition.resources.run_nothing
+        config: [ base ]
+        J_JOB: JJOB_FCST_PREP
+
+      fcst_run: !Task
+        <<: *exclusive_task_template
+        Trigger: !Depend  fcst_prep
+        resources: !calc partition.resources.run_nothing
+        config: [ base ]
+        J_JOB: JJOB_FORECAST
+
+      post: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  fcst_run
+        resources: !calc partition.resources.run_nothing
+        rocoto_command: "echo post"
+        config: [ base ]
+        J_JOB: JJOB_POST
+
+      final: !Task
+        <<: *service_task_template
+        Disable: !calc not metasched.type=="rocoto"
+        resources: !calc partition.resources.run_nothing
+        rocoto_command: "echo final"
+        rocoto_command: /bin/true
+        RUN: gfs # useless but required
