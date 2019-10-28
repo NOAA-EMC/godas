@@ -69,16 +69,22 @@ echo "window_length="$window_length
 echo "bkg_date="$bkg_date
 echo "MODEL_SCRATCH="$MODEL_SCRATCH
 
-## Prep yaml for bump initialization 
-#-----------------------------------
+## Prep yaml for bump correlation initialization 
+#-----------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $RUNCDATE/yaml/static_SocaError_init.yml    \
+      -i $RUNCDATE/yaml/static_SocaError_init.yml  \
+      -d ${bkg_date}
+
+## Prep yaml for bump localization initialization 
+#------------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/parameters_bump_loc.yml    \
       -d ${bkg_date}
 
 ## Prep yaml for checkpointing 3DVAR analysis
 #--------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $RUNCDATE/yaml/checkpointmodel.yml          \
+      -i $RUNCDATE/yaml/checkpointmodel.yml        \
       -d ${bkg_date}
 
 ## Prep yaml for running mom6 only forecast
@@ -98,11 +104,45 @@ ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -k NO_ENS_MBR                                \
       -v ${NO_ENS_MBR}
 
+## Prep yaml for the soca_enspert for envar 
+#--------------------------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/genenspert4envar.yml       \
+      -d ${bkg_date}
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/genenspert4envar.yml       \
+      -k NO_ENS_MBR                                \
+      -v ${NO_ENS_MBR}
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/genenspert4envar.yml       \
+      -k WINDOW_LENGTH                             \
+      -v ${window_length}
+
 # Prep yaml for 3dvar 
-#----------------------------------
+#-----------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
-      -i $RUNCDATE/yaml/3dvar_godas.yml              \
+      -i $RUNCDATE/yaml/3dvar_godas.yml            \
       -d $RUNCDATE
+
+# Prep yaml for 3denvar 
+#----------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
+      -i $RUNCDATE/yaml/3dhybenvar.yml            \
+      -m $RUNCDATE/yaml/envar_member.yml          \
+      -d $RUNCDATE                                \
+      -n ${NO_ENS_MBR}
+
+# Prep yaml for ensemble variance
+#------------------------------------------------
+# TODO: Not clean, using prep_3denvar_yaml.sh to create ens. variance yaml
+${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
+      -i $RUNCDATE/yaml/ensvariance.yml            \
+      -m $RUNCDATE/yaml/ensvariance_member.yml          \
+      -d $RUNCDATE                                \
+      -n ${NO_ENS_MBR}
+
 
 #----------------------------------
 if [ $case = 'en' ]; then 
@@ -113,7 +153,7 @@ if [ $case = 'en' ]; then
    
       ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
          -i ${yaml_tmp}                               \
-         -d ${RUNCDATE}                                 \
+         -d ${RUNCDATE}                               \
          -n ${mbr}
       
       jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
@@ -132,6 +172,11 @@ if [ -d ../NEXT_IC ]; then
     # Get IC from previous cycle
     cp ../NEXT_IC/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc  
     cp ../NEXT_IC/MOM*.nc $RUNCDATE/INPUT_MOM6/
+
+    if [ -d ../NEXT_ENS ]; then
+	mv ../NEXT_ENS/* $RUNCDATE/Data/
+    fi
+    rm -rf ../NEXT_ENS
     rm -rf ../NEXT_IC
     exit 0
 fi
@@ -141,6 +186,10 @@ fi
 # Ocean bkg files
 #----------------
 ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNCDATE/INPUT_MOM6/
+
+# Initial Ocean and Ice perturbations
+#---------------------------------------------------
+ln -sf $MODEL_SCRATCH/ens/*.nc $RUNCDATE/Data/
 
 # Sea-ice bkg files
 #------------------
