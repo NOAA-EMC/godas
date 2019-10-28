@@ -1,42 +1,73 @@
 #!/bin/bash -l 
 set -e
 
-while getopts "i:d:" opt; do
+while getopts "i:" opt; do
    case $opt in
       i) SSTsource=("$OPTARG");;
-      d) sat=("$OPTARG");;
    esac
 done
 shift $((OPTIND -1))
 
-<<<<<<< HEAD
 echo SST SOURCE = ${SSTsource}
+sat=`echo $SSTsource | awk -F 'sst.|_l3u*' '{print $2}'`
+datasource=`echo $SSTsource | awk -F '_' '{print $2}'`
+echo $sat $datasource
 
 echo DCOM_ROOT=$DCOM_ROOT
-=======
-echo SST SOURCE = ${sst_source}
-
->>>>>>> develop
 cd $DCOM_ROOT
 
-ObsRunDir=$RUNCDATE/Data    #TODO: Should not be needed here ...
-OUTFILE=ioda.${SSTsource}.${sat}.${DA_SLOT_LEN}h.nc  #Filename of the processed obs
-PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}     #FullPath/Filename of preprocessed obs
-PROCobs=${ObsRunDir}/${OUTFILE}                 #FullPath/Filename of observations to be ingested
+ObsRunDir=$RUNCDATE/Data                                  #TODO: Should not be needed here ...
+OUTFILE=ioda.sst.${sat}_${datasource}.${DA_SLOT_LEN}h.nc  #Filename of the processed obs
+PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}               #FullPath/Filename of preprocessed obs
+PROCobs=${ObsRunDir}/${OUTFILE}                           #FullPath/Filename of observations to be ingested
 
 echo "obsrundir: "${ObsRunDir}
 echo "obsrundir: "$RUNCDATE/Data
 
 #Check if the observations have been preprocessed.
+echo Processing $SSTsource
+case $SSTsource in 
+   "sst.windsat_l3u.ghrsst")
+      echo $PREPROCobs
+      echo $PROCobs
+      sat=WSAT
+      ;; 
+   "sst.gmi_l3u.ghrsst")
+      echo $PREPROCobs
+      echo $PROCobs
+      sat=GMI
+       ;;
+   "sst.amsr2_l3u.ghrsst")
+      echo $PREPROCobs
+      echo $PROCobs
+      sat=AMSR2
+       ;;
+   "sst.viirs_l3u.nesdis")
+      echo $PREPROCobs
+      echo $PROCobs
+      sat=VIIRS              #TODO: Needs to be checked
+       ;;
+   "sst.avhrr19_l3u.nesdis")
+      echo $PREPROCobs
+      echo $PROCobs
+      sat=AVHRR19
+      ;;
+   "sst.avhrrmta_l3u.nesdis")
+      echo $PREPROCobs
+      echo $PROCobs
+      sat=AVHRRMTA
+      ;;
+esac
+ 
 if [ -f "${PREPROCobs}" ]; then
    echo
    echo PreProcessed Observations are copied from "${PREPROCobs}" \
         to ${PROCobs}
    echo
 
-   cp -rf ${PREPROCobs} ${PROCobs}
+   cp -rp ${PREPROCobs} ${PROCobs}
    
-   # Check if thinning is requiered
+   # Check if thinning is required
    # TODO: This is a temporary fix, thinning should be done as a pre-filter step
    #       in UFO (currently not working)
    echo Processing $sst_source
@@ -71,9 +102,8 @@ if [ -f "${PREPROCobs}" ]; then
       rm ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc   
    fi
 
-   exit
+   return
 fi
-
 # Check if the raw observations exist and process.
 OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
 if [ -d "$OBSDCOM" ]; then
@@ -86,14 +116,19 @@ if [ -d "$OBSDCOM" ]; then
       s+=" $OBSDCOM/${files} "
    done
    
-   s+=" -o ${PROCobs} -d ${CDATE}"
+   s+=" -o ${PREPROCobs} -d ${CDATE}"
    eval ${s}
+# Copying files to RUNCDATE
+      echo PreProcessed Observations are copied from "${PREPROCobs}" \
+           to ${PROCobs}
+
+      cp -rf ${PREPROCobs} ${PROCobs}
+      echo PreProcessed Observations for $SSTsource are copied.
 
 else
    
    set -x
    echo There are no SST observations from ${SSTsource} for ${PDY}  
    set +x
-
 fi
 
