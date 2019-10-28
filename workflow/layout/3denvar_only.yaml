@@ -18,14 +18,14 @@ suite: !Cycle
       da_prep_soca: !Task
         <<: *shared_task_template
         Trigger: !Depend  da_prep
-        resources: !calc partition.resources.run_3dvar
+        resources: !calc partition.resources.run_3denvar
         config: [ base ]
         J_JOB: JJOB_PREP_SOCA
 
       da_3denvar_run: !Task
         <<: *shared_task_template
         Trigger: !Depend  ( da_prep_soca & obs_prep )
-        resources: !calc partition.resources.run_3dvar
+        resources: !calc partition.resources.run_3denvar
         config: [ base ]
         J_JOB: JJOB_DA_3DENVAR
 

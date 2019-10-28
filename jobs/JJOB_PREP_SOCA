@@ -31,14 +31,14 @@ else
     srun --nodes=1 --ntasks=12 ${SOCA_EXEC}/soca_gridgen.x ./yaml/gridgen.yml
 fi
 
-# Create BUMP convolution operator
+# Create BUMP convolution operator (computes convolution weights)
 echo
 echo 'Initializing BUMP.'
 echo
 mkdir -p bump
 srun -n $NPE ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
 
-# Generate BUMP localization
+# Initialize BUMP localization (computes localization weights)
 if [ ${NO_ENS_MBR}>1 ]; then
     echo
     echo 'Initializing BUMP Localization.'

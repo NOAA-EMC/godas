@@ -36,14 +36,15 @@ cat <<EOF
 # Prepare restarting from analysis
 #============================================
 EOF
+if [ -d ANA ]; then rm -Rf ANA; fi
 if [ ! -d ANA ]; then mkdir -p ANA; fi
 ln -s $PWD/INPUT_MOM6/* ./ANA/
 # Unlink old restarts
-rm ./ANA/MOM.*.nc
-rm $PWD/ANA/cice_bkg.nc 
+rm -f ./ANA/MOM.*.nc
+rm -f $PWD/ANA/cice_bkg.nc
 # Get MOM's restart
-mv RESTART/MOM.*.nc ./ANA/  # Because checkpoint dumps analysis in RESTART
-ln -s $PWD/Data/cic.3dvargodas.an.*.nc ./ANA/cice_bkg.nc
+mv -f RESTART/MOM.*.nc ./ANA/  # Because checkpoint dumps analysis in RESTART
+ln -s $PWD/Data/cic.socagodas.an.*.nc ./ANA/cice_bkg.nc
 
 cat <<EOF
 #============================================

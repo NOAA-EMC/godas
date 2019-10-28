@@ -20,7 +20,7 @@ echo '#=================================================================#'
 echo '#                    prep_3dvar_yaml.sh starts                    #'
 echo '#                                                                 #'
 
-while getopts "i:d:n:" opt; do
+while getopts "i:d:" opt; do
    case $opt in
       i) yamlfile=("$OPTARG");;
       d) RUNDIR=("$OPTARG");;

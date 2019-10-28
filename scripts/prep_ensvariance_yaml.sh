@@ -34,7 +34,6 @@ cd ${RUNDIR}
 
 echo $membertemplate
 for (( mbr=1; mbr<=${Ne} ; mbr++ )); do       
-    echo "I am member "$mbr
     cp $yamlmember tmpl.txt
     sed -i "s/ENS_NUM/${mbr}/g" tmpl.txt
     sed -e '/ENSEMBLE_MEMBERS/ {' -e 'r tmpl.txt' -e 'd' -e '}' -i ${yamlfile}
