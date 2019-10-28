@@ -22,11 +22,6 @@ if [ -f "${PREPROCobs}" ]; then
    rm ${ObsRunDir}/icec-tmp.nc
    rm ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc
 
-   sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.cat_l2.emc.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
-   cp 3dvartmp.yml ${yamlfile}
-   rm 3dvartmp.yml
-
-
    return
 fi
 # Check if the raw observations exist and process.
