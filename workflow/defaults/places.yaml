@@ -1,7 +1,7 @@
 # This file sets default values for data and executable locations.
 # See the schema/places.yaml for details.
 #--------------------------------------------------------------------------------
-## Fixed directories. 
+## Fixed directories.
 ##
 ##--------------------------------------------------------------------------------
 #
@@ -16,13 +16,13 @@ default_places: &default_places
 # Number of ensemble members
   NO_ENS_MBR: 5
 # Model resolution
-  NI: 360 #1440   
+  NI: 360 #1440
   NJ: 210 #1080
   NK: 75
 # Ice model file format
   ICE_FMT: fms # notfms
 # Number of procs for DA
-  NPE: 100
+  NPE: 20
 
   PROJECT_DIR: !error Please select a project directory.         # place to generate EXPDIR
   ROOT_GODAS_DIR: !calc ( tools.realpath(tools.abspath("../../")) )  # godas package path
@@ -30,7 +30,7 @@ default_places: &default_places
   EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'    # EXPDIR location
   LOG_DIR:     !expand "{EXPDIR}/log"                            # place to logs
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
-  GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda"        # Root path for external data 
+  GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda"        # Root path for external data
   SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
   SOCA_STATIC: !expand "{GODAS_RC}/soca-static/{NI}x{NJ}x{NK}"
   SOCA_CONFIG:   !expand "{ROOT_GODAS_DIR}/src/soca-bundle/soca-config/emc"             # soca-config path
@@ -40,4 +40,4 @@ default_places: &default_places
   MODEL_SCRATCH: "/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/{NI}x{NJ}x{NK}"
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
-  RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory  
+  RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory
