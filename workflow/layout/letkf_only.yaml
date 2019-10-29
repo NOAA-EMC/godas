@@ -61,7 +61,7 @@ suite: !Cycle
         Trigger: !Depend  ( da_letkf_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
-        J_JOB: JJOB_DA_LEKTF
+        J_JOB: JJOB_DA_LETKF
 
       fcst_prep: !Task
         <<: *shared_task_template

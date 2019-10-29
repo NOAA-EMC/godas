@@ -14,7 +14,7 @@ default_places: &default_places
   DA_SLOT_LEN: 24
 # To be removed as soon as there is an ensemble yaml file
 # Number of ensemble members
-  DA_METHOD: en #options 3dvar or en
+  DA_METHOD: letkf #options 3dvar or en
   NO_ENS_MBR: 5 
 # Model resolution
   NI: 360 #1440

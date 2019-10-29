@@ -144,7 +144,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
 
 
 #----------------------------------
-if [ $DA_METHOD = 'en' ]; then 
+if [ $DA_METHOD = 'letkf' ]; then 
    for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
       
       yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml 
