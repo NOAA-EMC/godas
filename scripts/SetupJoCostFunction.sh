@@ -45,7 +45,7 @@ for ADTsource in $ListofADT; do
    echo $obsfile
    if [ -f $obsfile ]; then
       echo "Adding ADT to Jo cost function"
-      ln -sf ${obsfile} ${DATADIR}/adt.nc
+      ln -sf ${obsfile} ${DATADIR}/ioda.adt.${ADTsource}.${DA_SLOT_LEN}h.nc
       sed -e '/ADT_'${ADTsource}'_JO/{r '${RUNDIRC}'/yaml/adt.'${ADTsource}'.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
       cp 3dvartmp.yml ${yamlfile}
       rm 3dvartmp.yml
@@ -58,7 +58,7 @@ obsfile=$obsdatabase/ioda.icec.cat_l2.emc.${DA_SLOT_LEN}h.nc
 echo $obsfile
 if [ -f $obsfile ]; then
    echo "Adding ice concentration to Jo cost function"
-   ln -sf ${obsfile} ${DATADIR}/ioda.icec.cat_l2.emc.nc
+   ln -sf ${obsfile} ${DATADIR}/ioda.icec.cat_l2.emc.${DA_SLOT_LEN}h.nc
    sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.cat_l2.emc.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
    cp 3dvartmp.yml ${yamlfile}
    rm 3dvartmp.yml
@@ -77,7 +77,7 @@ for SSTsource in $ListofSST; do
    echo $obsfile
    if [ -f $obsfile ]; then
       echo "Adding $SSTsource SST to Jo cost function"
-      ln -sf ${obsfile} ${DATADIR}/ioda.sst.${SSTsource}.nc
+      ln -sf ${obsfile} ${DATADIR}/ioda.sst.${SSTsource}.${DA_SLOT_LEN}h.nc
       sed -e '/SST_'${SSTsource}'_JO/{r '${RUNDIRC}'/yaml/sst.'${SSTsource}'.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
       cp 3dvartmp.yml ${yamlfile}
       rm 3dvartmp.yml
