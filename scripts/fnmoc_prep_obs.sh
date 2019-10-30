@@ -13,13 +13,10 @@ do
    PROCobs=${ObsRunDir}/${OUTFILE}                             #FullPath/Filename of observations to be ingested
    
    if [ -f "${PREPROCobs}" ]; then
-      echo $datafilename
-      echo PreProcessed Observations are copied from "${PREPROCobs}" \
+      echo PreProcessed Observations for $datafilename are copied from "${PREPROCobs}" \
            to ${PROCobs}
 
-# Copying files to RUNCDATE
       cp -rp ${PREPROCobs} ${PROCobs}
-      echo Preprocessed Observations for $datafilename are copied.   
       prepobs_found=1
    fi
 
@@ -49,12 +46,11 @@ do
       s+=" -o ${PREPROCobs} -d ${CDATE}"
      
       eval ${s}
-# Copying files to RUNCDATE
-      echo PreProcessed Observations are copied from "${PREPROCobs}" \
+      
+      echo PreProcessed Observations for $datafilename are copied from "${PREPROCobs}" \
            to ${PROCobs}
 
       cp -rf ${PREPROCobs} ${PROCobs}
-      echo PreProcessed Observations for $datafilename are copied
 
    else
 

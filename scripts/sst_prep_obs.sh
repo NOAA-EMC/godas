@@ -8,20 +8,15 @@ while getopts "i:" opt; do
 done
 shift $((OPTIND -1))
 
-echo SST SOURCE = ${SSTsource}
 sat=`echo $SSTsource | awk -F 'sst.|_l3u*' '{print $2}'`
 datasource=`echo $SSTsource | awk -F '_' '{print $2}'`
-echo $sat $datasource
 
-#echo DCOM_ROOT=$DCOM_ROOT
 cd $DCOM_ROOT
 
-#ObsRunDir=$RUNCDATE/Data/${CDATE}                                  #TODO: Should not be needed here ...
 OUTFILE=ioda.sst.${sat}_${datasource}.${DA_SLOT_LEN}h.nc  #Filename of the processed obs
 PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}               #FullPath/Filename of preprocessed obs
 PROCobs=${ObsRunDir}/${OUTFILE}                           #FullPath/Filename of observations to be ingested
 
-echo "obsrundir: "${ObsRunDir}
 echo "obsrundir: "$RUNCDATE/Data/${CDATE}
 
 #Check if the observations have been preprocessed.
@@ -67,7 +62,7 @@ esac
  
 if [ -f "${PREPROCobs}" ]; then
    echo
-   echo PreProcessed Observations are copied from "${PREPROCobs}" \
+   echo PreProcessed Observations for ${SSTsource} are copied from "${PREPROCobs}" \
         to ${PROCobs}
    echo
 
@@ -80,7 +75,7 @@ if [ -f "${PREPROCobs}" ]; then
    echo Applying THINNING
    echo subsample=$subsample
    echo skip=$skip
-
+   echo
    if [ $subsample ]; then
       echo "Subsampling $SSTsource SST"
       # TODO: Subsample elsewhere
@@ -112,16 +107,15 @@ if [ -d "$OBSDCOM" ]; then
    s+=" -o ${PREPROCobs} -d ${CDATE}"
    eval ${s}
 # Copying files to RUNCDATE
-   echo PreProcessed Observations are copied from "${PREPROCobs}" \
+   echo PreProcessed Observations for ${SSTsource} are copied from "${PREPROCobs}" \
         to ${PROCobs}
 
    cp -rp ${PREPROCobs} ${PROCobs}
-   echo PreProcessed Observations for $SSTsource are copied.
    echo
    echo Applying THINNING
    echo subsample=$subsample
    echo skip=$skip
-
+   echo
    if [ $subsample ]; then
       echo "Subsampling $SSTsource SST"
       # TODO: Subsample elsewhere

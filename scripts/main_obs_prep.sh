@@ -15,14 +15,10 @@ do
    source ${ROOT_GODAS_DIR}/scripts/adt_prep_obs.sh \
                     -i ${ADTsource} \
                     -d ${sat}
-
-#   echo processing of ADT $sat done
-   
 done
 
 # Prep T&S profile obs
 source ${ROOT_GODAS_DIR}/scripts/fnmoc_prep_obs.sh
-#echo processing of FNMOC done
 
 # Prep ice concentration obs
 #source ${ROOT_GODAS_DIR}/scripts/icec_prep_obs.sh

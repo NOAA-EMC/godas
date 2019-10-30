@@ -10,7 +10,6 @@ shift $((OPTIND -1))
 
 cd $DCOM_ROOT
 
-#ObsRunDir=$RUNCDATE/Data${CDATE}                                #TODO: Should not be needed here ...
 OUTFILE=ioda.adt.${sat}_l2.nesdis.${DA_SLOT_LEN}h.nc   #Filename of the processed obs
 PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}            #FullPath/Filename of preprocessed obs
 PROCobs=${ObsRunDir}/${OUTFILE}                        #FullPath/Filename of observations to be ingested
@@ -18,12 +17,11 @@ PROCobs=${ObsRunDir}/${OUTFILE}                        #FullPath/Filename of obs
 #Check if the observations have been preprocessed.
 if [ -f "${PREPROCobs}" ]; then
    echo
-   echo PreProcessed Observations are copied from "${PREPROCobs}" \
+   echo PreProcessed Observations for ${ADTsource} $sat are copied from "${PREPROCobs}" \
         to ${PROCobs}
    echo
 
    cp -rf ${PREPROCobs} ${PROCobs}
-   echo Preprocessed Observations for ADT $sat are copied.
    return
 fi
 
@@ -44,12 +42,11 @@ if [ -d "$OBSDCOM" ]; then
    s+=" -o ${PREPROCobs} -d ${CDATE}"
    
    eval ${s}
-# Copying files to RUNCDATE
-   echo PreProcessed Observations are copied from "${PREPROCobs}" \
+
+   echo PreProcessed Observations for ${ADTsource} $sat are copied from "${PREPROCobs}" \
         to ${PROCobs}
 
    cp -rf ${PREPROCobs} ${PROCobs}
-   echo PreProcessed Observations for ${ADTsource} $sat are copied
 
 
 else
