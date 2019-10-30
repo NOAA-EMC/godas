@@ -22,6 +22,10 @@ echo "Root GODAS " ${ROOT_GODAS_DIR}
 echo
 echo "SOCA_STATIC="$SOCA_STATIC
 
+if [ -d $RUNCDATE ]; then
+   rm -rf $RUNCDATE;
+fi
+
 mkdir -p $RUNCDATE
 
 cd $RUNCDATE

@@ -26,7 +26,7 @@ rename_func "cic.pert.ens.*.PT0S.nc"
 rename_func "ocn.pert.ens.*.PT0S.nc"
 
 cd $RUNCDATE
-
+echo $MEMBER_NO
 # Run H(x)
 
-srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml
+srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d$MEMBER_NO.yml

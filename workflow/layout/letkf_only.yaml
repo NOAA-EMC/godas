@@ -43,6 +43,7 @@ suite: !Cycle
           ENSGRP: !expand "{dimval.groupid:02d}"
           rocoto_command: !expand >-
             {rocoto_load_modules} ;
+            {rocoto_config_source} ;
             /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
           ecflow_command: !expand |
             export ENSGRP={ENSGRP}
