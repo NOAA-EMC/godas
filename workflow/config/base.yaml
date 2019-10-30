@@ -47,7 +47,8 @@ config_base:
     export SOCA_CONFIG="{doc.places.SOCA_CONFIG}"
     export DCOM_ROOT="{doc.places.DCOM_ROOT}"
     export IODA_EXEC="{doc.places.IODA_EXEC}"
-    export DA_SLOT_LEN="{doc.places.DA_SLOT_LEN}" #TODO: is defined at places.yaml, to be moved to da.yaml when it is activated. 
+    export DA_SLOT_LEN="{doc.places.DA_SLOT_LEN}" #TODO: is defined at places.yaml, to be moved to da.yaml when it is activated.
+    export DA_METHOD="{doc.places.DA_METHOD}"   #TODO:                         "                          " 
     export NO_ENS_MBR="{doc.places.NO_ENS_MBR}"   #TODO:                         "                          "
     export NI="{doc.places.NI}"           #TODO:                         "                          "
     export NJ="{doc.places.NJ}"           #TODO:                         "                          "
