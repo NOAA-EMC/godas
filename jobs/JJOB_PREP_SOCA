@@ -28,7 +28,7 @@ else
     echo
     echo 'No grid found. Generating SOCA grid.'
     echo
-    srun --nodes=1 --ntasks=12 ${SOCA_EXEC}/soca_gridgen.x ./yaml/gridgen.yml
+    srun --nodes=2 --ntasks=12 ${SOCA_EXEC}/soca_gridgen.x ./yaml/gridgen.yml
 fi
 
 # Create BUMP convolution operator (computes convolution weights)

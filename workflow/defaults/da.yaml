@@ -24,7 +24,7 @@
 
 da_settings_default: &da_settings_default
   ENS_SIZE:     1
-  DA_MODE:      "var"
+  DA_METHOD:      "var"
   DA_HYB_ALPHA: 0.5
   DA_SLOT_LEN:  24
   DA_WNDW_OFST: 48
