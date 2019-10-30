@@ -4,13 +4,13 @@ echo "J_JOB for OBS_PREP"
 echo $CDATE
 
 module purge
-# JEDI
 module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
 module load jedi-intel-17.0.5.239
+
+module load nco
 
 module use -a /scratch2/NCEPDEV/marine/Todd.Spindler/save/modulefiles/
 module load anaconda/1.0.0
 
-module load nco
 
 ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
