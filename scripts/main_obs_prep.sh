@@ -5,7 +5,7 @@ echo ${ROOT_GODAS_DIR}
 echo CDATE is $CDATE
 
 
-ObsRunDir=$RUNCDATE/Data    #Path for observations to be ingested by DA
+ObsRunDir=$RUNCDATE/Data/${CDATE}    #Path for observations to be ingested by DA
 mkdir -p ${ObsRunDir}
 
 # Prep absolute dynamic topography obs
@@ -43,14 +43,12 @@ do
                      -i ${SSTsource}
 
           echo preprocessing of $SSTsource done
-          echo THINNING YET TO BE APPLIED
       done
    else
       source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \
                      -i ${SSTsource} 
 
       echo preprocessing of $SSTsource done
-      echo THINNING YET TO BE APPLIED
    fi
 done
 echo

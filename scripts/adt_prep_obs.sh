@@ -10,7 +10,7 @@ shift $((OPTIND -1))
 
 cd $DCOM_ROOT
 
-ObsRunDir=$RUNCDATE/Data                               #TODO: Should not be needed here ...
+#ObsRunDir=$RUNCDATE/Data${CDATE}                                #TODO: Should not be needed here ...
 OUTFILE=ioda.adt.${sat}_l2.nesdis.${DA_SLOT_LEN}h.nc   #Filename of the processed obs
 PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}            #FullPath/Filename of preprocessed obs
 PROCobs=${ObsRunDir}/${OUTFILE}                        #FullPath/Filename of observations to be ingested
