@@ -50,7 +50,7 @@ config_base:
     export DCOM_ROOT="{doc.places.DCOM_ROOT}"
     export IODA_EXEC="{doc.places.IODA_EXEC}"
 
-    export DA_MODE="{doc.da_settings.DA_MODE}"
+    export DA_METHOD="{doc.da_settings.DA_METHOD}"
     export DA_SLOT_LEN="{doc.da_settings.DA_SLOT_LEN}"
     export NO_ENS_MBR="{doc.da_settings.NO_ENS_MBR}"
     export NI="{doc.da_settings.NI}"

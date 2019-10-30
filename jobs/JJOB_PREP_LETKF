@@ -15,6 +15,16 @@ module purge
 module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
 module load jedi-intel-17.0.5.239
 
+rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; done }
+
+# Rename the ensemble members
+cd $RUNCDATE/Data
+
+rename_func "cic.pert.ens.*.PT0S.nc"
+rename_func "ocn.pert.ens.*.PT0S.nc"
+
+cd $RUNCDATE
+
 # Change of the coordinates
 # TODO
 rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; done }
