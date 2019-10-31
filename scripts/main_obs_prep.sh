@@ -38,7 +38,7 @@ do
           source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \
                      -i ${SSTsource}
 
-          echo preprocessing of $SSTsource done
+          echo preprocessing of $SSTsource ${instr} done
       done
    else
       source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \

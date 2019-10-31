@@ -19,47 +19,35 @@ PROCobs=${ObsRunDir}/${OUTFILE}                           #FullPath/Filename of 
 
 echo "obsrundir: "$RUNCDATE/Data/${CDATE}
 
-#Check if the observations have been preprocessed.
 echo Processing $SSTsource
 case $SSTsource in 
    "sst.windsat_l3u.ghrsst")
-      echo $PREPROCobs
-      echo $PROCobs
       sat=WSAT
       subsample=true
       skip=5
       ;; 
    "sst.gmi_l3u.ghrsst")
-      echo $PREPROCobs
-      echo $PROCobs
       sat=GMI
       ;;
    "sst.amsr2_l3u.ghrsst")
-      echo $PREPROCobs
-      echo $PROCobs
       sat=AMSR2
       ;;
    "sst.viirs_l3u.nesdis")
-      echo $PREPROCobs
-      echo $PROCobs
       sat=VIIRS              #TODO: Needs to be checked
       ;;
    "sst.avhrr19_l3u.nesdis")
-      echo $PREPROCobs
-      echo $PROCobs
       sat=AVHRR19
       subsample=true
       skip=250
       ;;
    "sst.avhrrmta_l3u.nesdis")
-      echo $PREPROCobs
-      echo $PROCobs
       sat=AVHRRMTA
       subsample=true
       skip=250
       ;;
 esac
- 
+
+#Check if the observations have been preprocessed. 
 if [ -f "${PREPROCobs}" ]; then
    echo
    echo PreProcessed Observations for ${SSTsource} are copied from "${PREPROCobs}" \
@@ -93,11 +81,17 @@ if [ -f "${PREPROCobs}" ]; then
    return
 fi
 # Check if the raw observations exist and process.
-OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
+if [ "$SSTsource" == "sst.avhrr19_l3u.nesdis" ] || \
+   [ "$SSTsource" == "sst.avhrrmta_l3u.nesdis" ]; then
+   SSTsource="sst.avhrr_l3u.nesdis"
+   OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
+else
+   OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
+fi
 if [ -d "$OBSDCOM" ]; then
    
    cd $OBSDCOM
-   echo SST Observations from ${SSTsource} for $PDY exist and will be processed, obs directory: `pwd` 
+   echo SST Observations from ${SSTsource}-${sat} for $PDY exist and will be processed, obs directory: `pwd` 
 
    s="${IODA_EXEC}/gds2_sst2ioda.py -i "
    for files in `ls *${sat}*.nc`; do
@@ -106,8 +100,8 @@ if [ -d "$OBSDCOM" ]; then
    
    s+=" -o ${PREPROCobs} -d ${CDATE}"
    eval ${s}
-# Copying files to RUNCDATE
-   echo PreProcessed Observations for ${SSTsource} are copied from "${PREPROCobs}" \
+
+   echo PreProcessed Observations for ${SSTsource}-${sat} are copied from "${PREPROCobs}" \
         to ${PROCobs}
 
    cp -rp ${PREPROCobs} ${PROCobs}
@@ -117,7 +111,7 @@ if [ -d "$OBSDCOM" ]; then
    echo skip=$skip
    echo
    if [ $subsample ]; then
-      echo "Subsampling $SSTsource SST"
+      echo "Subsampling $SSTsource ${sat} SST"
       # TODO: Subsample elsewhere
       mv ${PROCobs} ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc
 
@@ -132,7 +126,7 @@ if [ -d "$OBSDCOM" ]; then
 else
    
    set -x
-   echo There are no SST observations from ${SSTsource} for ${PDY}  
+   echo There are no SST observations from ${SSTsource}-${sat} for ${PDY}  
    set +x
 fi
 

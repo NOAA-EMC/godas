@@ -53,6 +53,7 @@ for ADTsource in $ListofADT; do
       echo "Not assimilating $ADTsource ADT"
    fi
 done
+
 # Add icec obs to Jo (f285-f286 SSMI/SSMIS)
 obsfile=$obsdatabase/ioda.icec.cat_l2.emc.${DA_SLOT_LEN}h.nc
 echo $obsfile
