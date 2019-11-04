@@ -16,7 +16,7 @@ do
       echo PreProcessed Observations for $datafilename are copied from "${PREPROCobs}" \
            to ${PROCobs}
 
-      cp -rp ${PREPROCobs} ${PROCobs}
+      cp -rf ${PREPROCobs} ${PROCobs}
       prepobs_found=1
    fi
 
