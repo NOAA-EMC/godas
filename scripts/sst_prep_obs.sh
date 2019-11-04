@@ -8,6 +8,26 @@ while getopts "i:" opt; do
 done
 shift $((OPTIND -1))
 
+# Function for Thinning
+thinning_func () {
+if $1; then
+   echo Subsampling/Thinning $SSTsource SST
+   echo subsample =$1
+   echo skip =$2
+   echo
+
+   mv ${PROCobs} ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc
+   # Create record dim
+   ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
+   # Subsample
+   ncks -F -d nlocs,1,,$2 ${ObsRunDir}/sst-tmp.nc ${PROCobs}
+   # Cleanup
+   rm ${ObsRunDir}/sst-tmp.nc
+   rm ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc
+fi   
+}
+
+# Get Satellite name and data source from $SSTsource
 sat=`echo $SSTsource | awk -F 'sst.|_l3u*' '{print $2}'`
 datasource=`echo $SSTsource | awk -F '_' '{print $2}'`
 
@@ -54,79 +74,50 @@ if [ -f "${PREPROCobs}" ]; then
         to ${PROCobs}
    echo
 
-   cp -rp ${PREPROCobs} ${PROCobs}
-   
-   # Check if thinning is required
-   # TODO: This is a temporary fix, thinning should be done as a pre-filter step
-   #       in UFO (currently not working)
-   echo
-   echo Applying THINNING
-   echo subsample=$subsample
-   echo skip=$skip
-   echo
-   if [ $subsample ]; then
-      echo "Subsampling $SSTsource SST"
-      # TODO: Subsample elsewhere
-      mv ${PROCobs} ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc
+   # COPY preprocessed Data to RUNCDATE
+   cp -rf ${PREPROCobs} ${PROCobs}
 
-      # Create record dim
-      ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
-      # Subsample
-      ncks -F -d nlocs,1,,$skip ${ObsRunDir}/sst-tmp.nc ${PROCobs}
-      # Cleanup
-      rm ${ObsRunDir}/sst-tmp.nc
-      rm ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc   
+   # Apply THINNING
+   thinning_func $subsample $skip
+
+else
+   
+   # Check if the raw observations exist and process.
+   if [ "$SSTsource" == "sst.avhrr19_l3u.nesdis" ] || \
+      [ "$SSTsource" == "sst.avhrrmta_l3u.nesdis" ]; then
+      SSTsource="sst.avhrr_l3u.nesdis"
+      OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
+   else
+      OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
+   fi
+   if [ -d "$OBSDCOM" ]; then
+   
+      cd $OBSDCOM
+      echo SST Observations from ${SSTsource}-${sat} for $PDY exist and will be processed, obs directory: `pwd` 
+
+      s="${IODA_EXEC}/gds2_sst2ioda.py -i "
+      for files in `ls *${sat}*.nc`; do
+         s+=" $OBSDCOM/${files} "
+      done
+   
+      s+=" -o ${PREPROCobs} -d ${CDATE}"
+      eval ${s}
+
+      echo PreProcessed Observations for ${SSTsource}-${sat} are copied from "${PREPROCobs}" \
+           to ${PROCobs}
+
+      # COPY preprocessed Data to RUNCDATE
+      cp -rf ${PREPROCobs} ${PROCobs}
+
+      # Apply THINNING
+      thinning_func $subsample $skip
+
+   else
+   
+      set -x
+      echo There are no SST observations from ${SSTsource}-${sat} for ${PDY}  
+      set +x
    fi
 
-   return
-fi
-# Check if the raw observations exist and process.
-if [ "$SSTsource" == "sst.avhrr19_l3u.nesdis" ] || \
-   [ "$SSTsource" == "sst.avhrrmta_l3u.nesdis" ]; then
-   SSTsource="sst.avhrr_l3u.nesdis"
-   OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
-else
-   OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
-fi
-if [ -d "$OBSDCOM" ]; then
-   
-   cd $OBSDCOM
-   echo SST Observations from ${SSTsource}-${sat} for $PDY exist and will be processed, obs directory: `pwd` 
-
-   s="${IODA_EXEC}/gds2_sst2ioda.py -i "
-   for files in `ls *${sat}*.nc`; do
-      s+=" $OBSDCOM/${files} "
-   done
-   
-   s+=" -o ${PREPROCobs} -d ${CDATE}"
-   eval ${s}
-
-   echo PreProcessed Observations for ${SSTsource}-${sat} are copied from "${PREPROCobs}" \
-        to ${PROCobs}
-
-   cp -rp ${PREPROCobs} ${PROCobs}
-   echo
-   echo Applying THINNING
-   echo subsample=$subsample
-   echo skip=$skip
-   echo
-   if [ $subsample ]; then
-      echo "Subsampling $SSTsource ${sat} SST"
-      # TODO: Subsample elsewhere
-      mv ${PROCobs} ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc
-
-      # Create record dim
-      ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
-      # Subsample
-      ncks -F -d nlocs,1,,$skip ${ObsRunDir}/sst-tmp.nc ${PROCobs}
-      # Cleanup
-      rm ${ObsRunDir}/sst-tmp.nc
-      rm ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc   
-   fi 
-else
-   
-   set -x
-   echo There are no SST observations from ${SSTsource}-${sat} for ${PDY}  
-   set +x
 fi
 
