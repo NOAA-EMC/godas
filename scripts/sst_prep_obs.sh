@@ -16,14 +16,14 @@ if $1; then
    echo skip =$2
    echo
 
-   mv ${PROCobs} ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc
+   mv ${PROCobs} ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc
    # Create record dim
-   ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
+   ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
    # Subsample
    ncks -F -d nlocs,1,,$2 ${ObsRunDir}/sst-tmp.nc ${PROCobs}
    # Cleanup
    rm ${ObsRunDir}/sst-tmp.nc
-   rm ${ObsRunDir}/ioda.sst.${SSTsource}_LARGE.nc
+   rm ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc
 fi   
 }
 
