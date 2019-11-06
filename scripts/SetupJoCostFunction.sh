@@ -45,7 +45,7 @@ for ADTsource in $ListofADT; do
    echo $obsfile
    if [ -f $obsfile ]; then
       echo "Adding ADT to Jo cost function"
-      ln -sf ${obsfile} ${DATADIR}/ioda.adt.${ADTsource}.${DA_SLOT_LEN}h.nc
+      ln -sf ${obsfile} ${DATADIR}/ioda.adt.${ADTsource}.nc
       sed -e '/ADT_'${ADTsource}'_JO/{r '${RUNDIRC}'/yaml/adt.'${ADTsource}'.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
       cp 3dvartmp.yml ${yamlfile}
       rm 3dvartmp.yml
@@ -59,7 +59,7 @@ obsfile=$obsdatabase/ioda.icec.cat_l2.emc.${DA_SLOT_LEN}h.nc
 echo $obsfile
 if [ -f $obsfile ]; then
    echo "Adding ice concentration to Jo cost function"
-   ln -sf ${obsfile} ${DATADIR}/ioda.icec.cat_l2.emc.${DA_SLOT_LEN}h.nc
+   ln -sf ${obsfile} ${DATADIR}/ioda.icec.cat_l2.emc.nc
    sed -e '/ICEC_emcice_JO/{r '${RUNDIRC}'/yaml/icec.cat_l2.emc.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
    cp 3dvartmp.yml ${yamlfile}
    rm 3dvartmp.yml
@@ -74,11 +74,11 @@ ListofSST="windsat_l3u.ghrsst \
            avhrrmta_l3u.nesdis \
            avhrr19_l3u.nesdis"
 for SSTsource in $ListofSST; do
-   obsfile=$obsdatabase/ioda.sst.${SSTsource}.${DA_SLOT_LEN}h.nc 
+   obsfile=$obsdatabase/ioda.sst.${SSTsource}.nc 
    echo $obsfile
    if [ -f $obsfile ]; then
       echo "Adding $SSTsource SST to Jo cost function"
-      ln -sf ${obsfile} ${DATADIR}/ioda.sst.${SSTsource}.${DA_SLOT_LEN}h.nc
+      ln -sf ${obsfile} ${DATADIR}/ioda.sst.${SSTsource}.nc
       sed -e '/SST_'${SSTsource}'_JO/{r '${RUNDIRC}'/yaml/sst.'${SSTsource}'.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
       cp 3dvartmp.yml ${yamlfile}
       rm 3dvartmp.yml
@@ -95,7 +95,7 @@ for Insitusource in $ListofInsitu; do
    obsfile=$obsdatabase/ioda.${Insitusource}.${DA_SLOT_LEN}h.nc 
    if [ -f $obsfile ]; then
       echo "Adding ${Insitusource} to Jo cost function"
-      ln -sf ${obsfile} ${DATADIR}/ioda.${Insitusource}.${DA_SLOT_LEN}h.nc
+      ln -sf ${obsfile} ${DATADIR}/ioda.${Insitusource}.nc
       sed -e '/INSITU_'${Insitusource}'_JO/{r '${RUNDIRC}'/yaml/'${Insitusource}'.yml' -e 'd}' ${yamlfile}> 3dvartmp.yml 
       cp 3dvartmp.yml ${yamlfile}
       rm 3dvartmp.yml
