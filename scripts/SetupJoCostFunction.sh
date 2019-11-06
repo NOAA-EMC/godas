@@ -74,7 +74,7 @@ ListofSST="windsat_l3u.ghrsst \
            avhrrmta_l3u.nesdis \
            avhrr19_l3u.nesdis"
 for SSTsource in $ListofSST; do
-   obsfile=$obsdatabase/ioda.sst.${SSTsource}.nc 
+   obsfile=$obsdatabase/ioda.sst.${SSTsource}.${DA_SLOT_LEN}h.nc 
    echo $obsfile
    if [ -f $obsfile ]; then
       echo "Adding $SSTsource SST to Jo cost function"
