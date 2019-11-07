@@ -1,4 +1,5 @@
 #!/bin/bash -l 
+set -e
 
 while getopts "i:d:" opt; do
    case $opt in
@@ -10,14 +11,12 @@ shift $((OPTIND -1))
 
 echo SST SOURCE = ${sst_source}
 
-
 cd $DCOM_ROOT
 
 ObsRunDir=$RUNCDATE/Data/${CDATE}    #TODO: Should not be needed here ...
 OUTFILE=ioda.${sst_source}.${DA_SLOT_LEN}h.nc   #Filename of the processed obs
 PREPROCobs=${IODA_ROOT}/${CDATE}/${OUTFILE}     #FullPath/Filename of preprocessed obs
 PROCobs=${ObsRunDir}/${OUTFILE}                 #FullPath/Filename of observations to be ingested
-
 
 echo "obsrundir: "${ObsRunDir}
 echo "obsrundir: "$RUNCDATE/Data/${CDATE}
@@ -30,6 +29,41 @@ if [ -f "${PREPROCobs}" ]; then
    echo
 
    cp -rf ${PREPROCobs} ${PROCobs}
+   
+   # Check if thinning is requiered
+   # TODO: This is a temporary fix, thinning should be done as a pre-filter step
+   #       in UFO (currently not working)
+   echo Processing $sst_source
+   case $sst_source in 
+      "sst.avhrrmta_l3u.nesdis")
+         subsample=true
+         skip=250
+         ;;
+      "sst.avhrr19_l3u.nesdis")
+         subsample=true
+         skip=250
+         ;;
+      "sst.windsat_l3u.ghrsst")
+         subsample=true
+         skip=5
+         ;;
+   esac
+   echo subsample=$subsample
+   echo skip=$skip
+
+   if [ $subsample ]; then
+      echo "Subsampling $sst_source SST"
+      # TODO: Subsample elsewhere
+      mv ${PROCobs} ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc
+
+      # Create record dim
+      ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
+      # Subsample
+      ncks -F -d nlocs,1,,$skip ${ObsRunDir}/sst-tmp.nc ${PROCobs}
+      # Cleanup
+      rm ${ObsRunDir}/sst-tmp.nc
+      rm ${ObsRunDir}/ioda.sst.${sst_source}_LARGE.nc   
+   fi
 
    exit
 fi

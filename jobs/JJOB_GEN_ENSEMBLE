@@ -6,16 +6,19 @@
 # Generate the ensemble
 
 module purge
-module use -a /contrib/da/modulefiles
-module load jedi/jedim
-module list
+module use -a /scratch1/NCEPDEV/stmp4/Daniel.Holdaway/opt/modulefiles
+module load apps/jedi/intel-19.0.5.281
 
-echo $RUNDIR
+echo $RUNCDATE
 
-if [ ! -d $RUNDIR ]; then mkdir -p $RUNDIR; fi
-cd $RUNDIR
+if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
+cd $RUNCDATE
+
+if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 
 # Generate the ensemble using soca_enspert
 
-srun -n 24 ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
+srun -n ${NPE} ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
+
+#if   [ ! -d RESTART ]; then rm -rf RESTART; fi
 
