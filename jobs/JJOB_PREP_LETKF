@@ -20,6 +20,8 @@ rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; do
 # Rename the ensemble members
 cd $RUNCDATE/Data
 
+find -type l -delete
+# Remove all softlinks before proceed
 rename_func "cic.pert.ens.*.PT0S.nc"
 rename_func "ocn.pert.ens.*.PT0S.nc"
 
@@ -27,19 +29,10 @@ cd $RUNCDATE
 
 # Change of the coordinates
 # TODO
-rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; done }
-
-# Rename the ensemble members
-cd $RUNCDATE/Data
-
-rename_func "cic.pert.ens.*.PT0S.nc"
-rename_func "ocn.pert.ens.*.PT0S.nc"
 
 # Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
 export ENSEND=$((NMEM_PGRP * ENSGRP))
 export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
-
-cd $RUNCDATE
 
 for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
         echo $MEMBER_NO

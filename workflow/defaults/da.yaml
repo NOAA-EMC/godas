@@ -31,8 +31,8 @@ da_settings_default: &da_settings_default
   DA_TS_ONLY:   0
   DA_SLOT_LEN: 24
 # Number of ensemble members
-  NO_ENS_MBR: 5
-  GROUPS: 1
+  NO_ENS_MBR: 15
+  GROUPS: 3
   NMEM_PGRP: !calc ( NO_ENS_MBR // GROUPS )
 # Model resolution
   NI: 360 #1440   
