@@ -53,6 +53,7 @@ config_base:
     export DA_METHOD="{doc.da_settings.DA_METHOD}"
     export DA_SLOT_LEN="{doc.da_settings.DA_SLOT_LEN}"
     export NO_ENS_MBR="{doc.da_settings.NO_ENS_MBR}"
+    export NMEM_PGRP="{doc.da_settings.NMEM_PGRP}"
     export NI="{doc.da_settings.NI}"
     export NJ="{doc.da_settings.NJ}"
     export NK="{doc.da_settings.NK}"

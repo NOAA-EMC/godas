@@ -33,6 +33,7 @@ da_settings_default: &da_settings_default
 # Number of ensemble members
   NO_ENS_MBR: 5
   GROUPS: 1
+  NMEM_PGRP: !calc ( NO_ENS_MBR // GROUPS )
 # Model resolution
   NI: 360 #1440   
   NJ: 210 #1080
