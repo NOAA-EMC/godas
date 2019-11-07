@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+#set -x
 
 #================================================================================
 #================================================================================
@@ -35,8 +35,14 @@ cd $RUNCDATE/Data
 rename_func "cic.pert.ens.*.PT0S.nc"
 rename_func "ocn.pert.ens.*.PT0S.nc"
 
-cd $RUNCDATE
-echo $MEMBER_NO
-# Run H(x)
+# Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
+export ENSEND=$((NMEM_PGRP * ENSGRP))
+export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
 
-srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d$MEMBER_NO.yml
+cd $RUNCDATE
+
+for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+        echo $MEMBER_NO
+        # Run H(x)
+        srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d$MEMBER_NO.yml
+done
