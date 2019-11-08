@@ -21,7 +21,7 @@ done
 source ${ROOT_GODAS_DIR}/scripts/fnmoc_prep_obs.sh
 
 # Prep ice concentration obs
-#source ${ROOT_GODAS_DIR}/scripts/icec_prep_obs.sh
+source ${ROOT_GODAS_DIR}/scripts/icec_prep_obs.sh
 
 # Prep sst obs
 ListOfSST="sst.windsat_l3u.ghrsst \
