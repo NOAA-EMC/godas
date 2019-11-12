@@ -4,12 +4,8 @@ echo "J_JOB for OBS_PREP"
 echo $CDATE
 
 module purge
-module use -a /scratch1/NCEPDEV/stmp4/Daniel.Holdaway/opt/modulefiles
-module load apps/jedi/intel-19.0.5.281
-
-module load nco
-
-module use -a /scratch2/NCEPDEV/marine/Todd.Spindler/save/modulefiles/
-module load anaconda/1.0.0
+source $MOD_PATH/godas.main
+source $MOD_PATH/godas.python
+module list
 
 ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
