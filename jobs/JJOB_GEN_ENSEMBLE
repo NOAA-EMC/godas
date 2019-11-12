@@ -6,15 +6,19 @@
 # Generate the ensemble
 
 module purge
-module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
-module load jedi-intel-17.0.5.239
+source $MOD_PATH/godas.main
+module list
 
 echo $RUNCDATE
 
 if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
 cd $RUNCDATE
 
+if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
+
 # Generate the ensemble using soca_enspert
 
-srun -n 24 ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
+srun -n ${NPE} ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
+
+#if   [ ! -d RESTART ]; then rm -rf RESTART; fi
 
