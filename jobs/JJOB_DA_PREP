@@ -11,9 +11,8 @@ cat <<EOF
 EOF
 
 module purge
-module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
-module load jedi-intel-17.0.5.239
-module load nco
+source $MOD_PATH/godas.main
+module list
 
 echo  
 echo "The system runs at $RUNCDATE"
@@ -29,7 +28,6 @@ cd $RUNCDATE
 # TODO: Hard-coded stuff that needs to be moved/changed
 export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/${NI}x${NJ}x${NK}
 # TODO: Put the job files for the ensemble to a temporary job-dir
-export case='3dvar' #options 3dvar or en
 
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
 cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }          # make generic.
@@ -145,7 +143,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
 
 
 #----------------------------------
-if [ $case = 'en' ]; then 
+if [ $DA_METHOD = 'letkf' ]; then 
    for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
       
       yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml 

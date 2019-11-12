@@ -18,8 +18,8 @@ During this process, three directories will be created:
 
 # Clone the soca-bundle (bundle of repositories necessary to build soca)
 
-1. `git clone --branch master https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src`
-
+1. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
+ 
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
    `mkdir -p PROJECT_DIR`
@@ -41,7 +41,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 3. `cd $CLONE_DIR/workflow/CROW`
 4. Setup the workflow: \
    Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar: \
-   `./setup_case.sh -p HERA -f ../cases/3dvar.yaml workflowtest001`
+   `./setup_case.sh -p HERA ../cases/3dvar.yaml workflowtest001`
  
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
  
@@ -59,8 +59,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `cd $CLONE_DIR/build`
 1. Load the JEDI modules \
    `module purge` \
-   `module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles` \
-   `module load jedi-intel-17.0.5.239`
+   `source  $CLONE_DIR/modulefiles/godas.main` \
 2. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
 3. `make -j12`
@@ -73,7 +72,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `git checkout develop` \
     or alternatively, checkout your own branch or the branch you need to test with.
 # Running the workflow
-Assumption all the subsystems have been compiled.
+Assumption: All the subsystems have been compiled.
 The workflow can interactively as shown at step 3. below or as cronjob.
 
 1. Go into the test directory \

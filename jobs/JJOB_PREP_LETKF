@@ -8,15 +8,26 @@
 echo ''
 echo 'Running the JJOB for PREP_LETKF, aka SOCA HoFx'
 echo 'Date of Analysis: ' $CDATE
+echo 'Run Directory: ' $RUNCDATE
 echo ''
 
 module purge
-module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
-module load jedi-intel-17.0.5.239
+source $MOD_PATH/godas.main
+module list
+
+rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; done }
+
+# Rename the ensemble members
+cd $RUNCDATE/Data
+
+rename_func "cic.pert.ens.*.PT0S.nc"
+rename_func "ocn.pert.ens.*.PT0S.nc"
+
+cd $RUNCDATE
 
 # Change of the coordinates
 # TODO
 
 # Run H(x)
 
-srun -n 24 ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml
+srun -n ${NPE} ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml

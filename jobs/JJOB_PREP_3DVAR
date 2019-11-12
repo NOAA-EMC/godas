@@ -6,8 +6,8 @@ set -e
 # Prep SOCA Static B and grid
 
 module purge
-module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
-module load jedi-intel-17.0.5.239
+source $MOD_PATH/godas.main
+module list
 
 echo $RUNCDATE
 
