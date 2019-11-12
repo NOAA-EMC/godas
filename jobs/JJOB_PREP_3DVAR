@@ -7,7 +7,7 @@ set -e
 
 module purge
 source $MOD_PATH/godas.main
-moudule list
+module list
 
 echo $RUNCDATE
 

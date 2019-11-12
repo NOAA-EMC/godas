@@ -12,7 +12,7 @@ EOF
 
 module purge
 source $MOD_PATH/godas.main
-moudule list
+module list
 
 echo  
 echo "The system runs at $RUNCDATE"

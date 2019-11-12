@@ -6,6 +6,6 @@ echo $CDATE
 module purge
 source $MOD_PATH/godas.main
 source $MOD_PATH/godas.python
-moudule list
+module list
 
 ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
