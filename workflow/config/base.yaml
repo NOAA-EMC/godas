@@ -56,7 +56,7 @@ config_base:
     export NPE="{doc.places.NPE}"           #TODO:                         "                          "
     export ICE_FMT="{doc.places.ICE_FMT}"           #TODO:                         "                          "
 
-
+    export MOD_PATH="{doc.places.MOD_PATH}"
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"
     export DCOM_ROOT="{doc.places.DCOM_ROOT}"
     export IODA_ROOT="{doc.places.IODA_ROOT}"

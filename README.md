@@ -18,7 +18,7 @@ During this process, three directories will be created:
 
 # Clone the soca-bundle (bundle of repositories necessary to build soca)
 
-1. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src`
+1. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
  
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
@@ -59,8 +59,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `cd $CLONE_DIR/build`
 1. Load the JEDI modules \
    `module purge` \
-   `module use -a /scratch1/NCEPDEV/stmp4/Daniel.Holdaway/opt/modulefiles` \
-   `module load apps/jedi/intel-19.0.5.281`
+   `source  $CLONE_DIR/modulefiles/godas.main` \
 2. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
 3. `make -j12`
