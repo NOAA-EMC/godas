@@ -13,7 +13,7 @@ if [ $model = "godas" ]; then
 
 echo soca bundle checkout ... 
 if [[ ! -d soca-bundle ]] ; then 
-    git clone --branch master https://github.com/JCSDA/soca-bundle.git 
+    git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git
     cd ${topdir}
 else 
     echo 'Skip.  Directory soca-bundle already exists.'

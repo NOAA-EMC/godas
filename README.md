@@ -25,8 +25,6 @@ During this process, three directories will be created:
 # Build the model: 
 0. `cd $CLONE_DIR/src`
 1. `sh build_DATM-MOM6-CICE5.sh`
-
-1. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
  
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
@@ -61,6 +59,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 
 5. Read output and run suggested command. Should be similar to: \
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
+
 # Building the soca-bundle 
 0. Create the build directory for SOCA
    `mkdir -p $CLONE_DIR/build` \
