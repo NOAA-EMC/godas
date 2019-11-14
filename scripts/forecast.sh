@@ -10,7 +10,7 @@ SCRIPTDIR=${SCRIPTDIR:-"/scratch2/NCEPDEV/marineda/Jessica.Meixner/godas/scripts
 CDUMP
 PDY
 cyc
-
+IC directories... 
 
 FHMAX=${FHMAX:-24} #total forecast length in hours
 restart_interval=${restart_interval:-86400}  # number of seconds for writing restarts (for non-cold start) default to 1 day interval
@@ -388,8 +388,8 @@ if [ $CDATE = '2011100100' ]; then
   cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
   #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
 else 
-  #copy from ROTDIR from cycled exp --- need coordinate name  
-  cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/$iceic
+  #copy from ROTDIR from cycled exp --- need coordinate name/folder locations  
+  cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/restart/
 fi
 
 # Copy CICE fixed files:
