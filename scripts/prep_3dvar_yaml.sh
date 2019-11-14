@@ -14,7 +14,7 @@
 # History Log        :
 #
 # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
-#set -x
+# set -x
 
 echo '#=================================================================#'
 echo '#                    prep_3dvar_yaml.sh starts                    #'
@@ -45,3 +45,4 @@ ${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh \
 echo '#                                                                 #'
 echo '#                      prep_3dvar_yaml.sh ends                    #'
 echo '#=================================================================#'
+ 

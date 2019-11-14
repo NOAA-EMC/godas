@@ -4,12 +4,11 @@ set -e
 cat <<EOF
 #================================================================================
 #================================================================================
-# JJOB_DA_3DVAR
+# JJOB_DA_3DENVAR
 #   Run SOCA 3DVAR, checkpoint, forecast
 #================================================================================
 #================================================================================
 EOF
-
 module purge
 source $MOD_PATH/godas.main
 module list
@@ -18,24 +17,31 @@ cd $RUNCDATE
 
 cat <<EOF
 #============================================
-# Run SOCA 3DVAR
+# Link ensemble members for ENVAR
 #============================================
 EOF
-export OOPS_TRACE=0
-srun -n $NPE ${SOCA_EXEC}/soca_3dvar.x ./yaml/3dvar_godas.yml
+# link files here
 
 cat <<EOF
 #============================================
-# Checkpoint SOCA 3DVAR analysis
+# Run SOCA 3DENVAR
+#============================================
+EOF
+export OOPS_TRACE=0
+srun -n $NPE ${SOCA_EXEC}/soca_3dvar.x ./yaml/3dhybenvar.yml
+
+cat <<EOF
+#============================================
+# Checkpoint SOCA 3DENVAR analysis
 #============================================
 EOF
 if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 srun -n $NPE ${SOCA_EXEC}/soca_checkpoint_model.x ./yaml/checkpointmodel.yml
 
 cat <<EOF
-#============================================
-# Prepare restarting from analysis
-#============================================
+#========================================================
+# Prepare restarting deterministic forecast from analysis
+#========================================================
 EOF
 if [ -d ANA ]; then rm -Rf ANA; fi
 if [ ! -d ANA ]; then mkdir -p ANA; fi
@@ -49,7 +55,7 @@ ln -s $PWD/Data/cic.socagodas.an.*.nc ./ANA/cice_bkg.nc
 
 cat <<EOF
 #============================================
-# Run mom6 only forecast
+# Run mom6 only deterministic forecast
 #============================================
 EOF
 if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
@@ -60,5 +66,24 @@ cat <<EOF
 # Move ocean and ice restarts to place holder for next cycle
 #============================================
 EOF
-mv ./RESTART ../NEXT_IC
-mv ./ANA/cice_bkg.nc ../NEXT_IC/
+mv -f ./RESTART ../NEXT_IC
+mv -f ./ANA/cice_bkg.nc ../NEXT_IC/cice_bkg.nc
+
+cat <<EOF
+#============================================
+# Run mom6 only genpert forecast
+#============================================
+EOF
+if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
+srun -n $NPE ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert4envar.yml
+
+cat <<EOF
+#============================================
+# Move ensemble forecast to place holder for next cycle
+#============================================
+EOF
+if [ ! -d ../NEXT_ENS ]; then mkdir -p ../NEXT_ENS; fi
+for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
+    mv -f ./Data/ocn.pert.ens.${mbr}.*.P1D.nc ../NEXT_ENS/ocn.pert.ens.${mbr}.nc
+    mv -f ./Data/cic.pert.ens.${mbr}.*.P1D.nc ../NEXT_ENS/cic.pert.ens.${mbr}.nc
+done

@@ -26,6 +26,8 @@ During this process, three directories will be created:
 0. `cd $CLONE_DIR/src`
 1. `sh build_DATM-MOM6-CICE5.sh`
 
+1. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
+ 
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
    `mkdir -p PROJECT_DIR`
@@ -46,11 +48,17 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 
 3. `cd $CLONE_DIR/workflow/CROW`
 4. Setup the workflow: \
-   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar_only_exp: \
-   `./setup_case.sh -p HERA -f ../cases/3dvar_only_exp.yaml workflowtest001`
-   
+   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar: \
+   `./setup_case.sh -p HERA ../cases/3dvar.yaml workflowtest001`
+ 
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
-   
+ 
+   Available cases:
+   1. 3dvar.yaml
+   2. letkf_only_exp.yaml
+
+   Note: Each case files point to a corresponding layout file at $CLONE_DIR/workflow/layout. 
+
 5. Read output and run suggested command. Should be similar to: \
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
 # Building the soca-bundle 
@@ -59,8 +67,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `cd $CLONE_DIR/build`
 1. Load the JEDI modules \
    `module purge` \
-   `module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles` \
-   `module load jedi-intel-17.0.5.239`
+   `source  $CLONE_DIR/modulefiles/godas.main` \
 2. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
 3. `make -j12`
@@ -70,11 +77,10 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
  5. Change the soca-config branch \
     The yaml files that configure the DA experiments live inside of the soca-config repository. For example, to checkout the feature branch for the 3DVAR: \
    `cd $CLONE_DIR/soca-bundle/soca-config` \
-   `git checkout feature/emc-3dvar` \
+   `git checkout develop` \
     or alternatively, checkout your own branch or the branch you need to test with.
-
 # Running the workflow
-Assumption all the subsystems have been compiled.
+Assumption: All the subsystems have been compiled.
 The workflow can interactively as shown at step 3. below or as cronjob.
 
 1. Go into the test directory \
@@ -84,7 +90,10 @@ The workflow can interactively as shown at step 3. below or as cronjob.
 3. Start rocoto \
    `rocotorun -w workflow.xml -d workflow.db`
 4. Check status \
-   `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db`
+   `rocotorun -w workflow.xml -d workflow.db & rocotostat -v 10 -w workflow.xml -d workflow.db` \
+   Or you could use "rocoto_viewer.py". Your terminal window needs to be wider than 125 chars \
+   `rocotorun -w workflow.xml -d workflow.db `\
+   `python rocoto_viewer.py -w workflow.xml -d workflow.db`
 5. Repeat step 4 until all jobs are completed. 
 
 # Check the run and the results

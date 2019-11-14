@@ -1,13 +1,18 @@
 #!/bin/bash
-#set -e
+set -e
 
+cat <<EOF
 #================================================================================
 #================================================================================
-# Prep SOCA Static B and grid
+# JJOB_PREP_SOCA
+#   Prep SOCA Static B and grid
+#================================================================================
+#================================================================================
+EOF
 
 module purge
-module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
-module load jedi-intel-17.0.5.239
+source $MOD_PATH/godas.main
+module list
 
 echo $RUNCDATE
 
@@ -26,9 +31,17 @@ else
     srun --nodes=1 --ntasks=12 ${SOCA_EXEC}/soca_gridgen.x ./yaml/gridgen.yml
 fi
 
-# Create BUMP convolution operator
+# Create BUMP convolution operator (computes convolution weights)
 echo
 echo 'Initializing BUMP.'
 echo
 mkdir -p bump
-srun -n 200 ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
+srun -n $NPE ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
+
+# Initialize BUMP localization (computes localization weights)
+if [ ${NO_ENS_MBR}>1 ]; then
+    echo
+    echo 'Initializing BUMP Localization.'
+    echo
+    srun -n $NPE ${SOCA_EXEC}/soca_parameters.x ./yaml/parameters_bump_loc.yml
+fi

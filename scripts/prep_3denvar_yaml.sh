@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/bash -l
 #
-# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
-#                       Unix Script Documentation 
-# 
+# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * #
+#                       Unix Script Documentation
+#
 # Script Name        :
 #
 # Script Description :
@@ -13,38 +13,45 @@
 #
 # History Log        :
 #
-# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
-#set -x
+# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * #
+# set -x
 
 echo '#=================================================================#'
-echo '#                   prep_hofx3d_yaml.sh starts                    #'
+echo '#                    prep_3denvar_yaml.sh starts                  #'
 echo '#                                                                 #'
 
-while getopts "i:d:n:" opt; do
+while getopts "i:m:d:n:" opt; do
    case $opt in
       i) yamlfile=("$OPTARG");;
+      m) yamlmember=("$OPTARG");;
       d) RUNDIR=("$OPTARG");;
-      n) mbr=("$OPTARG");;
+      n) Ne=("$OPTARG");;
    esac
 done
 shift $((OPTIND -1))
 
 cd ${RUNDIR}
 
-## Set date for hofx
+echo $membertemplate
+for (( mbr=1; mbr<=${Ne} ; mbr++ )); do
+    cp $yamlmember tmpl.txt
+    sed -i "s/ENS_NUM/${mbr}/g" tmpl.txt
+    sed -e '/ENSEMBLE_MEMBERS/ {' -e 'r tmpl.txt' -e 'd' -e '}' -i ${yamlfile}
+    rm tmpl.txt
+done
+
+## Set date
 sed -i "s/WINDOW_BEGIN/${window_begin}/g" ${yamlfile}
 sed -i "s/WINDOW_LENGTH/${window_length}/g" ${yamlfile}
 sed -i "s/BKG_DATE/${bkg_date}/g" ${yamlfile}
-sed -i "s/MEMBER_NO/${mbr}/g" ${yamlfile}
-
 #
-# Setup Jo cost function
-#-----------------------
+## Setup Jo cost function
+##-----------------------
 
 ${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh \
       -i ${yamlfile}                             \
       -d $RUNDIR
 
 echo '#                                                                 #'
-echo '#                     prep_hofx3d_yaml.sh                         #'
+echo '#                      prep_3denvar_yaml.sh ends                  #'
 echo '#=================================================================#'

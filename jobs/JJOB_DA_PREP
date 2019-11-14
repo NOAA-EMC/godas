@@ -1,25 +1,36 @@
 #!/bin/bash
-#set -e
+set -e
 
+cat <<EOF
 #================================================================================
 #================================================================================
-# Prep SOCA-DA
+# JJOB_DA_PREP
+#   Prepare yaml files for SOCA applications 
+#================================================================================
+#================================================================================
+EOF
 
 module purge
-module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
-module load jedi-intel-17.0.5.239
-module load nco
+source $MOD_PATH/godas.main
+module list
 
+echo  
+echo "The system runs at $RUNCDATE"
+echo
+echo "Root GODAS " ${ROOT_GODAS_DIR}
+echo
 echo "SOCA_STATIC="$SOCA_STATIC
-echo $RUNCDATE
 
 mkdir -p $RUNCDATE
+
 cd $RUNCDATE
 
 # TODO: Hard-coded stuff that needs to be moved/changed
-export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/test-initcice5
+export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/${NI}x${NJ}x${NK}
+# TODO: Put the job files for the ensemble to a temporary job-dir
+
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
-cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }      # make generic.
+cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }          # make generic.
 
 # Make sure CDATE is at 12z
 cdate_hh(){ echo  ${1:8:2}; }
@@ -31,21 +42,21 @@ else
     exit 1
 fi
 
-# Copy SOCA static files into RUNDIR
-#-----------------------------------
+# Copy SOCA static files into RUNCDATE
+#---------------------------------------------------
 cp -r $SOCA_STATIC/* $RUNCDATE
 
-# Copy SOCA config files into RUNDIR
-#-----------------------------------
+# Copy SOCA config files into RUNCDATE
+#----------------------------------------------------
 mkdir -p $RUNCDATE/yaml
 cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
 
 # Prepare SOCA configuration
-#---------------------------
+#-----------------------------------------
 export window_begin=$(cdate2window_begin $CDATE)
 export bkg_date=$(cdate2bkg_date $CDATE)
 
-if [ $godas_cyc -eq 1 ]; then
+if [ $godas_cyc = "1" ]; then
     export window_length=PT24H
 else
     echo "godas_cyc not valid"
@@ -56,16 +67,28 @@ echo "window_length="$window_length
 echo "bkg_date="$bkg_date
 echo "MODEL_SCRATCH="$MODEL_SCRATCH
 
-## Prep yaml for bump initialization 
-#----------------------------------------------------
+## Prep yaml for bump correlation initialization 
+#-----------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $RUNCDATE/yaml/static_SocaError_init.yml    \
+      -i $RUNCDATE/yaml/static_SocaError_init.yml  \
+      -d ${bkg_date}
+
+## Prep yaml for bump localization initialization 
+#------------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/parameters_bump_loc.yml    \
       -d ${bkg_date}
 
 ## Prep yaml for checkpointing 3DVAR analysis
-#----------------------------------------------------------------------
+#--------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $RUNCDATE/yaml/checkpointmodel.yml          \
+      -i $RUNCDATE/yaml/checkpointmodel.yml        \
+      -d ${bkg_date}
+
+## Prep yaml for running mom6 only forecast
+#------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/forecast.yml               \
       -d ${bkg_date}
 
 ## Prep yaml for the soca_enspert 
@@ -79,31 +102,104 @@ ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -k NO_ENS_MBR                                \
       -v ${NO_ENS_MBR}
 
+## Prep yaml for the soca_enspert for envar 
+#--------------------------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/genenspert4envar.yml       \
+      -d ${bkg_date}
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/genenspert4envar.yml       \
+      -k NO_ENS_MBR                                \
+      -v ${NO_ENS_MBR}
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/genenspert4envar.yml       \
+      -k WINDOW_LENGTH                             \
+      -v ${window_length}
+
 # Prep yaml for 3dvar 
-#----------------------------------
+#-----------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
-      -i $RUNCDATE/yaml/3dvar_godas.yml              \
+      -i $RUNCDATE/yaml/3dvar_godas.yml            \
       -d $RUNCDATE
 
-# TODO: yaml for HoFx, add the ensemble member 
+# Prep yaml for 3denvar 
 #----------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh      \
-      -i $RUNCDATE/yaml/hofx3d.yml
+${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
+      -i $RUNCDATE/yaml/3dhybenvar.yml            \
+      -m $RUNCDATE/yaml/envar_member.yml          \
+      -d $RUNCDATE                                \
+      -n ${NO_ENS_MBR}
+
+# Prep yaml for ensemble variance
+#------------------------------------------------
+# TODO: Not clean, using prep_3denvar_yaml.sh to create ens. variance yaml
+${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
+      -i $RUNCDATE/yaml/ensvariance.yml            \
+      -m $RUNCDATE/yaml/ensvariance_member.yml          \
+      -d $RUNCDATE                                \
+      -n ${NO_ENS_MBR}
+
+
+#----------------------------------
+if [ $DA_METHOD = 'letkf' ]; then 
+   for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
+      
+      yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml 
+      cp -r $RUNCDATE/yaml/hofx3d.yml ${yaml_tmp}
+   
+      ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
+         -i ${yaml_tmp}                               \
+         -d ${RUNCDATE}                               \
+         -n ${mbr}
+      
+      jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
+      cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
+      sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
+   done
+fi
 
 # TODO: Prep yaml for letkf 
 #----------------------------------
 
+# Get IC
+#-------
+# Check if there was a previous cycle
+if [ -d ../NEXT_IC ]; then
+    # Get IC from previous cycle
+    cp ../NEXT_IC/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc  
+    cp ../NEXT_IC/MOM*.nc $RUNCDATE/INPUT_MOM6/
+
+    if [ -d ../NEXT_ENS ]; then
+	mv ../NEXT_ENS/* $RUNCDATE/Data/
+    fi
+    rm -rf ../NEXT_ENS
+    rm -rf ../NEXT_IC
+    exit 0
+fi
+
+# If this is the first cycle, continue below
+# TODO: This is a hack ... in case you had not noticed!
 # Ocean bkg files
 #----------------
 ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNCDATE/INPUT_MOM6/
 
+# Initial Ocean and Ice perturbations
+#---------------------------------------------------
+ln -sf $MODEL_SCRATCH/ens/*.nc $RUNCDATE/Data/
+
 # Sea-ice bkg files
 #------------------
-# Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
-cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-# Make cice_bkg.nc fms compliant
-ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-
+if [ "${ICE_FMT}" = notfms ]; then
+    # Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
+    cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    # Make cice_bkg.nc fms compliant
+    ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+fi
+if [ "${ICE_FMT}" = fms ]; then
+    cp $MODEL_SCRATCH/INPUT/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+fi

@@ -1,13 +1,13 @@
 #!/bin/bash
-#set -e
+set -e
 
 #================================================================================
 #================================================================================
 # Prep SOCA Static B and grid
 
 module purge
-module use -a /scratch2/NCEPDEV/marine/marineda/modulefiles/
-module load jedi-intel-17.0.5.239
+source $MOD_PATH/godas.main
+module list
 
 echo $RUNCDATE
 
@@ -31,4 +31,4 @@ echo
 echo 'Initializing BUMP.'
 echo
 mkdir -p bump
-srun -n 100 ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
+srun -n $NPE ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
