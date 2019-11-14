@@ -20,10 +20,11 @@ During this process, three directories will be created:
 
 0. `cd $CLONE_DIR/src`
 1. `sh checkout.sh godas`
+2. `sh link.sh godas`
 
 # Build the model: 
 0. `cd $CLONE_DIR/src`
-1. `sh build_ufs_godas.sh`
+1. `sh build_DATM-MOM6-CICE5.sh`
 
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:

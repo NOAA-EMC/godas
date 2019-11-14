@@ -6,30 +6,26 @@
 CDATE=${CDATE:-2011100100}   #YYYYMMDDHH --  start time
 ROTDIR
 DATA
-
-runtyp=${runtp:-'initial'}  # run type=  'continue' 'initial'
-inistep=${inistep:-"cold"}  # inistep=cold for mediator cold start 
+SCRIPTDIR=${SCRIPTDIR:-"/scratch2/NCEPDEV/marineda/Jessica.Meixner/godas/scripts"}  # this script directory path 
 CDUMP
 PDY
 cyc
 
-SCRIPTDIR  # this script directory path 
 
-NTASKS_TOT
-FHMAX=${FHMAX:-9}
-
-cplflx=${cplflx:-".true."}  #couple with ocean/ice model 
-cplice=${cplice:-$cplflx}   #couple with ice model 
-
+FHMAX=${FHMAX:-24} #total forecast length in hours
 restart_interval=${restart_interval:-86400}  # number of seconds for writing restarts (for non-cold start) default to 1 day interval
 
-#Calculated Varaibles: 
-SYEAR=$(echo  $CDATE | cut -c1-4)
-SMONTH=$(echo $CDATE | cut -c5-6)
-SDAY=$(echo   $CDATE | cut -c7-8)
-SHOUR=$(echo  $CDATE | cut -c9-10)
 
-#Variables that need to be defined list 
+
+#################################
+# Variables that are for the most part hard coded but could be pulled out and configured/etc. 
+
+#Both of these variables could be used for if/else later, but basically have hard coded for simplicity 
+runtyp=${runtp:-'continue'}  # run type=  'continue' 'initial'
+inistep=${inistep:-"warm"}  # inistep=cold for mediator cold start 
+
+cplflx=${cplflx:-".true."}  #couple with ocean/ice model 
+cplice=${cplice:-$cplflx}   #couple with ice model
 
 #DATM Variables: 
 #resources/basics:
@@ -77,9 +73,13 @@ MEDPETS=${MEDPETS:-$ATMPETS}  #Number of MED Pets
 DumpFields=${NEMSDumpFields:-false}   #Dump diagnostic netcdf fields from component model caps
 CPL_SLOW=${CPL_SLOW:-$DT_THERM_MOM6}  #slow coupling time step
 CPL_FAST=${CPL_FAST:-$DT_ATMOS}       #fast coupling time step 
-restart_interval   ## need to name it something else and then use this as time interval to write restarts in s
-inistep   #if [[ $inistep = "cold" ]] --- mediator coldstart or not// not sure if this logic is totally right
 
+#Calculated Varaibles: 
+SYEAR=$(echo  $CDATE | cut -c1-4)
+SMONTH=$(echo $CDATE | cut -c5-6)
+SDAY=$(echo   $CDATE | cut -c7-8)
+SHOUR=$(echo  $CDATE | cut -c9-10)
+NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
 
 ######################################################################
 ######################################################################
@@ -104,7 +104,6 @@ inistep   #if [[ $inistep = "cold" ]] --- mediator coldstart or not// not sure i
         
 if [ ! -d $ROTDIR ]; then mkdir -p $ROTDIR; fi        
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
-if [ ! -d $DATA/RESTART ]; then mkdir -p $DATA/RESTART; fi
 if [ ! -d $DATA/INPUT ]; then mkdir -p $DATA/INPUT; fi
 if [ ! -d $DATA/restart ]; then mkdir -p $DATA/restart; fi
 if [ ! -d $DATA/history ]; then mkdir -p $DATA/history; fi
@@ -127,7 +126,7 @@ cd $DATA
 # 1.7 DATM datm_data_table                                           #
 #                                                                    #
 #  DATM input variable documentation:                                #
-# https://vlab.ncep.noaa.gov/redmine/projects/emc_nemsdatacomps/wiki/Input_File_Descriptions                               
+#  https://github.com/NOAA-EMC/NEMSdatm/wiki/DATM-Input-File-Descriptions #
 ######################################################################
 ######################################################################
 
@@ -156,7 +155,7 @@ cat > input.nml << EOF
 EOF
 
 ######################################################################
-# 1.2 diag_table                                                     #
+# 1.2 diag_table and data_table                                      #
 ######################################################################
 
 # diag_table is an FMS (FV3, MOM6) input file that determines outputs 
@@ -168,11 +167,15 @@ $SYEAR $SMONTH $SDAY $SHOUR 0 0
 EOF
 cat $DIAG_TABLE >> diag_table
 
+cp $SCRIPTDIR/data_table.IN $DATA/data_table
+
 ######################################################################
 # 1.3 model_configure                                                #
 ######################################################################
 
 #Model_configure is used by the NEMS driver, FV3 and DATM to get inputs
+
+# More info on variables: https://vlab.ncep.noaa.gov/redmine/projects/emc_nemsdatacomps/wiki/Input_File_Descriptions#model_configure
 
 cat > model_configure <<EOF
 total_member:              ${ENS_NUM:-1}
@@ -204,17 +207,19 @@ EOF
 
 # nems.configure is used by NEMS driver  
 
+
+##TODO: Someday need to add cold start capability, keeping simple for now 
 #Determine values of variables based one if mediator cold start or not
-if [[ $inistep = "medcold" ]]; then
-  #cold mediator restart 
-  restart_interval_write=0
-  confignamevarfornems="medcold_atm_ocn_ice"
-  medcoldstart=true    
-else
+#if [[ $inistep = "medcold" ]]; then
+#  #cold mediator restart 
+#  restart_interval_write=0
+#  confignamevarfornems="medcold_atm_ocn_ice"
+#  medcoldstart=true    
+#else
   restart_interval_write=${restart_interval:-1296000}    # Interval in seconds to write restarts
   confignamevarfornems="med_atm_ocn_ice"
   medcoldstart=false
-fi
+#fi
 
 #Caulculate bounds based on resource PETS
 med_petlist_bounds=${med_petlist_bounds:-"0 $(( $MEDPETS-1 ))"}
@@ -247,7 +252,7 @@ fi
 mv tmp1 nems.configure
 
 ######################################################################
-# 1.5 MOM_input                                                      #
+# 1.5 MOM_input and MOM_override                                     #
 ######################################################################
 
 # Copy the ice template into run directory
@@ -258,6 +263,8 @@ sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
 # Rename to proper input ice input name
 mv tmp1 $DATA/INPUT/MOM_input
 
+cp $SCRIPTDIR/MOM_override $DATA/MOM_override
+
 ######################################################################
 # 1.6 CICE input                                                     #
 ######################################################################
@@ -267,15 +274,24 @@ mv tmp1 $DATA/INPUT/MOM_input
 # info on restarting CICE model is here: 
 #  https://vlab.ncep.noaa.gov/redmine/projects/emc_fv3-mom6-cice5/wiki/Restarting_the_coupled_model#CICE5
 
-FRAZIL_FWSALT=${FRAZIL_FWSALT:-".false."}
+FRAZIL_FWSALT=${FRAZIL_FWSALT:-".true."}
 tr_pond_lvl=${tr_pond_lvl:-".true."} # Use level melt ponds tr_pond_lvl=true
-restart_pond_lvl=${restart_pond_lvl:-".false."}  
+
 # restart_pond_lvl (if tr_pond_lvl=true):
 #   -- if true, initialize the level ponds from restart (if runtype=continue) 
 #   -- if false, re-initialize level ponds to zero (if runtype=initial or continue)  
     
-RUNTYPE='initial'
-USE_RESTART_TIME='.false.'
+if [ $CDATE = '2011100100' ]; then
+  #using cold start IC
+  RUNTYPE='initial'
+  USE_RESTART_TIME='.false.'
+  restart_pond_lvl=${restart_pond_lvl:-".false."}
+else
+  #continuing run "hot start" 
+  RUNTYPE='continue'
+  USE_RESTART_TIME='.true.'
+  restart_pond_lvl=${restart_pond_lvl:-".true."}
+fi
 
 dumpfreq_n=${dumpfreq_n:-"restart_interval"} 
 dumpfreq=${dumpfreq:-"s"} #  "s" or "d" or "m" for restarts at intervals of "seconds", "days" or "months"
@@ -283,7 +299,6 @@ dumpfreq=${dumpfreq:-"s"} #  "s" or "d" or "m" for restarts at intervals of "sec
 iceres=${iceres:-"mx025"}
 ice_grid_file=${ice_grid_file:-"grid_cice_NEMS_${iceres}.nc"}
 ice_kmt_file=${ice_kmt_file:-"kmtu_cice_NEMS_${iceres}.nc"}
-
 
 # Calculated variables for ice_in: 
 stepsperhr=$((3600/${DT_CICE}))
@@ -341,14 +356,13 @@ mv tmp1 $DATA/datm_data_table
 #2.1 Copy DATM  inputs (ie forcing files)                            #
 ######################################################################
 
-#This should be some loop through CDATE-> CDATE+ FORECAST length 
+#TODO: This should be some loop through CDATE-> CDATE+ FORECAST length 
 #and get input from either CFSR or GEFS or Whatever... 
-#But for now we assume everyone is running sometime in 2011-10 and 
-#using cfsr... 
+#Currently assumes you only need the month of DATM input for IC date
 
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
 
-DATMINPUTDIR="/scratch1/NCEPDEV/nems/emc.nemspara/RT/DATM-MOM6-CICE5/master-20191018/DATM/CFSR_v0/201110"
+DATMINPUTDIR="/scratch2/NCEPDEV/marineda/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}.*.nc $DATA/DATM_INPUT/
 
 ######################################################################
@@ -356,7 +370,11 @@ ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}.*.nc $DATA/DATM_INPUT/
 ######################################################################
 
 # Copy MOM6 ICs       
-cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
+if [ $CDATE = '2011100100' ]; then
+  cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
+else 
+  cp $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART/MOM*nc $DATA/INPUT/
+fi 
         
 # Copy MOM6 fixed files        
 cp -pf $FIXmom/INPUT/* $DATA/INPUT/
@@ -407,11 +425,26 @@ if [ $inistep = 'cold' ]; then
   cp $DATA/mediator_* $ROTDIR/$CDUMP.$PDY/$cyc/
 else 
   #copy data from run 
- 
-  #restart file from each component 
 
 
-  #any CICE/MOM6 output 
+#TODO: THE RESTARTS SHOULD BE COPIED INTO THE NEXT $cyc file? or PDY?  
+#or should the restarts from before be copied in a different dir? 
+  #restart file from each component   
+  mkdir -p $ROTDIR/$CDUMP.$PDY/$cyc/restart
+  mkdir -p $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART
+  cp $DATA/restart/* $ROTDIR/$CDUMP.$PDY/$cyc/restart/
+  cp $DATA/MOM6_RESTART/* $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART/
+  cp $DATA/mediator_* $ROTDIR/$CDUMP.$PDY/$cyc/
+
+  #MOM6 output: 
+  mkdir -p  $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT
+  cp $DATA/SST_*.nc $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT/
+  cp $DATA/ocn_*.nc $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT/
+  cp $DATA/MOM6_OUTPUT/* $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT/ 
+
+  #CICE output: 
+  mkdir -p  $ROTDIR/$CDUMP.$PDY/$cyc/CICE_history 
+  cp $DATA/history/* $ROTDIR/$CDUMP.$PDY/$cyc/CICE_history/
 
 fi
 

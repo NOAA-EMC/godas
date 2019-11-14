@@ -20,11 +20,11 @@ else
 fi
 
 echo ufs_godas checkout ...
-rm -f ${topdir}/checkout-ufs_godas.log
+rm -f ${topdir}/checkout-DATM-MOM6-CICE5.log
 if [[ ! -d ufs_godas.fd ]] ; then
-    git clone gerrit:EMC_DATM-MOM6-CICE5 ufs_godas.fd >> ${topdir}/checkout-ufs_godas.log 2>&1
+    git clone https://github.com/NOAA-EMC/DATM-MOM6-CICE5 DATM-MOM6-CICE5.fd >> ${topdir}/checkout-DATM-MOM6-CICE5.log 2>&1
     cd ufs_godas.fd
-    git checkout v0.0.0
+    #git checkout v0.0.0
     git submodule update --init --recursive
     cd ${topdir}
 else
