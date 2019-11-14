@@ -1,16 +1,27 @@
 #! /bin/sh
 
+######################################################################
+######################################################################
+#                                                                    #
+# Overview of prep_forecast.sh:                                      #
+#                                                                    #
+# 1. Set up directories                                              #
+# 2. Create input files                                              #
+# 3. Copy fix files                                                  #
+# 4. Copy restart/IC files                                           #
+#                                                                    #
+######################################################################
+######################################################################
+
 #Variables which need to be defined: 
 
 #Generic variables 
 CDATE=${CDATE:-2011100100}   #YYYYMMDDHH --  start time
 ROTDIR
-DATA=${RUNCDATE}
-SCRIPTDIR=${SCRIPTDIR:-"/scratch2/NCEPDEV/marineda/Jessica.Meixner/godas/scripts"}  # this script directory path 
+SCRIPTDIR=${ROOT_GODAS_DIR}/scripts
 CDUMP
 PDY
 cyc
-IC directories... 
 
 FHMAX=${FHMAX:-24} #total forecast length in hours
 restart_interval=${restart_interval:-86400}  # number of seconds for writing restarts (for non-cold start) default to 1 day interval
@@ -81,55 +92,47 @@ NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
 
 ######################################################################
 ######################################################################
-#                                                                    #
-# Overview of forecast.sh:                                           #
-#                                                                    #
-# 0. Set up directories                                              #
-# 1. Create input files                                              #
-# 2. Copy fix files and IC files over                                #
-#    Run forecast                                                    #
-#    Copy output                                                     #
-#                                                                    #
-######################################################################
-######################################################################
-
-
-######################################################################
-######################################################################
-#0.  Set up directories                                              #
+# 1.  Set up directories                                             #
 ######################################################################
 ######################################################################
         
 if [ ! -d $ROTDIR ]; then mkdir -p $ROTDIR; fi        
+
+#Set up forecast run directory:
+ 
+DATA=${RUNCDATE}/fcst
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
 if [ ! -d $DATA/INPUT ]; then mkdir -p $DATA/INPUT; fi
 if [ ! -d $DATA/restart ]; then mkdir -p $DATA/restart; fi
 if [ ! -d $DATA/history ]; then mkdir -p $DATA/history; fi
+#TODO: do we need OUTPUT or is everything in MOM6_OUTPUT? 
 if [ ! -d $DATA/OUTPUT ]; then mkdir -p $DATA/OUTPUT; fi
 if [ ! -d $DATA/MOM6_OUTPUT ]; then mkdir -p $DATA/MOM6_OUTPUT; fi
 if [ ! -d $DATA/MOM6_RESTART ]; then mkdir -p $DATA/MOM6_RESTART; fi
 if [ ! -d $DATA/DATM_INPUT ]; then mkdir -p $DATA/DATM_INPUT; fi
+
 # Go to Run Directory (DATA)         
 cd $DATA 
 
 ######################################################################
 ######################################################################
-#1. Inputs:                                                          #
-# 1.1 input.nml                                                      #
-# 1.2 diag_table                                                     #
-# 1.3 model_configure                                                # 
-# 1.4 nems_configure                                                 #
-# 1.5 MOM_input                                                      #
-# 1.6 CICE input                                                     #
-# 1.7 DATM datm_data_table                                           #
+# 2. Inputs:                                                         #
+#                                                                    # 
+# 2.1 input.nml (MOM6/FMS))                                          #
+# 2.2 diag_table/data_table (MOM6/FMS)                               #
+# 2.3 model_configure (NEMS/DATM))                                   # 
+# 2.4 nems_configure (NEMS)                                          #
+# 2.5 MOM_input/MOM_override (MOM6)                                  #
+# 2.6 CICE input (CICE5)                                             #
+# 2.7 DATM datm_data_table (DATM)                                    #
 #                                                                    #
-#  DATM input variable documentation:                                #
-#  https://github.com/NOAA-EMC/NEMSdatm/wiki/DATM-Input-File-Descriptions #
+# DATM input variable documentation:                                 #
+# https://github.com/NOAA-EMC/NEMSdatm/wiki/DATM-Input-File-Descriptions #
 ######################################################################
 ######################################################################
 
 ######################################################################
-# 1.1 input.nml                                                      #
+# 2.1 input.nml                                                      #
 ######################################################################
 
 #Input.nml is an FMS file used by both FV3 and MOM6 
@@ -153,7 +156,7 @@ cat > input.nml << EOF
 EOF
 
 ######################################################################
-# 1.2 diag_table and data_table                                      #
+# 2.2 diag_table and data_table                                      #
 ######################################################################
 
 # diag_table is an FMS (FV3, MOM6) input file that determines outputs 
@@ -168,7 +171,7 @@ cat $DIAG_TABLE >> diag_table
 cp $SCRIPTDIR/data_table.IN $DATA/data_table
 
 ######################################################################
-# 1.3 model_configure                                                #
+# 2.3 model_configure                                                #
 ######################################################################
 
 #Model_configure is used by the NEMS driver, FV3 and DATM to get inputs
@@ -200,7 +203,7 @@ filename_base:             ${DATM_FILENAME_BASE}
 EOF
 
 ######################################################################
-# 1.4 nems_configure                                                 #
+# 2.4 nems_configure                                                 #
 ######################################################################
 
 # nems.configure is used by NEMS driver  
@@ -250,7 +253,7 @@ fi
 mv tmp1 nems.configure
 
 ######################################################################
-# 1.5 MOM_input and MOM_override                                     #
+# 2.5 MOM_input and MOM_override                                     #
 ######################################################################
 
 # Copy the ice template into run directory
@@ -264,7 +267,7 @@ mv tmp1 $DATA/INPUT/MOM_input
 cp $SCRIPTDIR/MOM_override $DATA/MOM_override
 
 ######################################################################
-# 1.6 CICE input                                                     #
+# 2.6 CICE input                                                     #
 ######################################################################
 
 # parsing namelist of CICE (ice_in) 
@@ -327,7 +330,7 @@ sed -i -e "s;ICE_KMT_FILE;${ice_kmt_file};g" tmp1
 mv tmp1 ice_in 
 
 ######################################################################
-# 1.7 datm_data_table (DATM)                                         #
+# 2.7 datm_data_table (DATM)                                         #
 ######################################################################
 
 # Copy the ice template into run directory
@@ -340,18 +343,17 @@ mv tmp1 $DATA/datm_data_table
 
 ######################################################################
 ######################################################################
-# 2. Copy inputs                                                     #
+# 3. Copy fix files                                                  #
 #                                                                    #
-#2.1 Copy DATM inputs and fix files                                  #
-#2.2 Copy MOM6 ICs, inputs and fix files                             #
-#2.3 Copy CICE5 ICs, inputs and fix files                            #
-#2.4 Copy Mediator inputs                                            #
+# 3.1 Copy DATM forcing files                                        #
+# 3.2 Copy MOM6 ICs, inputs and fix files                            #
+# 3.3 Copy CICE5 ICs, inputs and fix files                           #
 #                                                                    #
 ######################################################################
 ######################################################################
 
 ######################################################################
-#2.1 Copy DATM  inputs (ie forcing files)                            #
+# 3.1 Copy DATM  inputs (ie forcing files)                           #
 ######################################################################
 
 #TODO: This should be some loop through CDATE-> CDATE+ FORECAST length 
@@ -364,38 +366,32 @@ DATMINPUTDIR="/scratch2/NCEPDEV/marineda/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}.*.nc $DATA/DATM_INPUT/
 
 ######################################################################
-#2.2 Copy MOM6 IC, inputs and fix files                              #
+# 3.2 Copy MOM6 fix files                                            #
 ######################################################################
 
-# Copy MOM6 ICs       
-if [ $CDATE = '2011100100' ]; then
-  cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
-else 
-  cp $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART/MOM*nc $DATA/INPUT/
-fi 
-        
-# Copy MOM6 fixed files        
 cp -pf $FIXmom/INPUT/* $DATA/INPUT/
 
 ######################################################################
-#2.3 Copy CICE5 ICs  and fix files                                   #          
+# 3.3 Copy CICE5 fix files                                           #
 ######################################################################
-        
-if [ $CDATE = '2011100100' ]; then
-  #first IC: generated from CFSv2
-  cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
-  #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
-else 
-  #copy from ROTDIR from cycled exp --- need coordinate name/folder locations  
-  cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/restart/
-fi
 
 # Copy CICE fixed files:
 cp -p $FIXcice/${ice_grid_file} $DATA/
 cp -p $FIXcice/${ice_kmt_file} $DATA/
 
 ######################################################################
-#2.4  Copy Mediator inputs                                           #
+######################################################################
+# 4. Copy restarts/ICs                                               #
+#                                                                    #
+# 4.1 Copy Mediator restart files                                    #
+# 4.2 Copy MOM6 restarts/IC                                          #
+# 4.3 Copy CICE5 restart/IC                                          #
+#                                                                    #
+######################################################################
+######################################################################
+
+######################################################################
+# 4.1  Copy Mediator restart files                                   #
 ######################################################################
 
 # Copy mediator restart files to RUNDIR       
@@ -406,43 +402,36 @@ else
 fi
 
 ######################################################################
+# 4.2 Copy MOM6 IC                                                   #
 ######################################################################
-# Run forecast                                                       #
-######################################################################
-######################################################################
+#TODO: coordinate with DA -- does this get copied over somewhere else? 
 
-
-######################################################################
-######################################################################
-# Copy outputs:                                                      #
-######################################################################
-######################################################################
-
-#If a cold mediator start, copy the mediator files: 
-if [ $inistep = 'cold' ]; then
-  cp $DATA/mediator_* $ROTDIR/$CDUMP.$PDY/$cyc/
-else 
-  #copy data from run 
-
-
-#TODO: THE RESTARTS SHOULD BE COPIED INTO THE NEXT $cyc file? or PDY?  
-#or should the restarts from before be copied in a different dir? 
-  #restart file from each component   
-  mkdir -p $ROTDIR/$CDUMP.$PDY/$cyc/restart
-  mkdir -p $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART
-  cp $DATA/restart/* $ROTDIR/$CDUMP.$PDY/$cyc/restart/
-  cp $DATA/MOM6_RESTART/* $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART/
-  cp $DATA/mediator_* $ROTDIR/$CDUMP.$PDY/$cyc/
-
-  #MOM6 output: 
-  mkdir -p  $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT
-  cp $DATA/SST_*.nc $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT/
-  cp $DATA/ocn_*.nc $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT/
-  cp $DATA/MOM6_OUTPUT/* $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT/ 
-
-  #CICE output: 
-  mkdir -p  $ROTDIR/$CDUMP.$PDY/$cyc/CICE_history 
-  cp $DATA/history/* $ROTDIR/$CDUMP.$PDY/$cyc/CICE_history/
-
+# Copy MOM6 ICs
+if [ $CDATE = '2011100100' ]; then
+  #TODO: hardcoded IC date for first date for benchmark 
+  ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
+  cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
+else
+  cp $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART/MOM*nc $DATA/INPUT/
 fi
 
+######################################################################
+# 4.3 Copy CICE5 ICs                                                 #
+######################################################################
+#TODO: coordinate with DA -- does this get copied over somewhere else?
+
+if [ $CDATE = '2011100100' ]; then
+  #first IC: generated from CFSv2
+  #TODO: hardcoded IC date for first date for benchmark
+  ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
+  cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
+  #TODO: could grab cpc instead of cfsr for this IC (need cice namelist changes for cpc)
+  #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
+else
+  #copy from ROTDIR from cycled exp --- need coordinate name/folder locations
+  cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/restart/
+fi
+
+######################################################################
+#   End of prep_forecast.sh                                          #
+######################################################################

@@ -1,9 +1,11 @@
 **/build
 **/src/soca-bundle
 **/src/DATM-MOM6-CICE5.fd
+**/src/checkout-DATM-MOM6-CICE5.log
 workflow/user.yaml
 **/fix/CICE_FIX_mx025
 **/fix/MOM6_FIX_mx025
+**/modulefiles/godas.fcst
 # Do not ignore the following files
 !.gitignore
 !README.md

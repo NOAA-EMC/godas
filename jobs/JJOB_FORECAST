@@ -1,2 +1,36 @@
-#!/bin/bash
-echo "Forecast J_JOB placeholder"
+#!/bin/bash -l
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_PREP_FORECAST
+#   Set up DIRs, make input files, copy over fix files
+#================================================================================
+#================================================================================
+EOF
+
+module purge
+source $MOD_PATH/godas.fcst
+module list
+
+#TODO: DATA defined multiple places...
+DATA=$RUNCDATE/fcst
+FORECAST_EXE=${ROOT_GODAS_DIR}/src/DATM-MOM6-CICE5.fd/NEMS/exe/nems_datm_mom6_cice5.x
+
+#TODO: This should be a configuration calculation/currently defined in multiple places 
+#for now all these values should be hardcoded, these are things that should be controld 
+#by global-workflow forecast anyways
+##ATMPETS=${ATMPETS:-"72"}   #Number of ATM Pets
+##OCNPETS=${OCNPETS:-"120"}  #number of ocean pets
+##ICEPETS=${ICEPETS:-"48"}   #number of ice pets
+##NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
+
+NPE_FCST=${NTASKS_TOT:-240}
+
+cd $DATA
+
+srun -n $NPE_FCST ${FORECAST_EXE}
+
+${ROOT_GODAS_DIR}/scripts/post_forecast.sh
+

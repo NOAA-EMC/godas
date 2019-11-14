@@ -23,7 +23,7 @@ echo ufs_godas checkout ...
 rm -f ${topdir}/checkout-DATM-MOM6-CICE5.log
 if [[ ! -d ufs_godas.fd ]] ; then
     git clone https://github.com/NOAA-EMC/DATM-MOM6-CICE5 DATM-MOM6-CICE5.fd >> ${topdir}/checkout-DATM-MOM6-CICE5.log 2>&1
-    cd ufs_godas.fd
+    cd DATM-MOM6-CICE5.fd
     #git checkout v0.0.0
     git submodule update --init --recursive
     cd ${topdir}
