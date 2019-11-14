@@ -1,2 +1,26 @@
 #!/bin/bash
 echo "PREP J_JOB place holder"
+
+#!/bin/bash -l
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_PREP_FORECAST
+#   Set up DIRs, make input files, copy over fix files 
+#================================================================================
+#================================================================================
+EOF
+
+#module purge
+#source $MOD_PATH/godas.main
+#module list
+
+cd $RUNCDATE
+
+
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yamli.sh
+
+
+

@@ -5,7 +5,7 @@
 #Generic variables 
 CDATE=${CDATE:-2011100100}   #YYYYMMDDHH --  start time
 ROTDIR
-DATA
+DATA=${RUNCDATE}
 SCRIPTDIR=${SCRIPTDIR:-"/scratch2/NCEPDEV/marineda/Jessica.Meixner/godas/scripts"}  # this script directory path 
 CDUMP
 PDY
