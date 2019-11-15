@@ -4,8 +4,8 @@ set -e
 cat <<EOF
 #================================================================================
 #================================================================================
-# JJOB_PREP_FORECAST
-#   Set up DIRs, make input files, copy over fix files
+# JJOB_FORECAST
+#   Run the forecast and then run the post_forecast script to copy over output
 #================================================================================
 #================================================================================
 EOF
@@ -33,4 +33,7 @@ cd $DATA
 srun -n $NPE_FCST ${FORECAST_EXE}
 
 ${ROOT_GODAS_DIR}/scripts/post_forecast.sh
+
+## add a cleanup call: 
+# rm -rf $DATA
 
