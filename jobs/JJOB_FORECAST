@@ -32,8 +32,8 @@ cd $DATA
 
 srun -n $NPE_FCST ${FORECAST_EXE}
 
+
+# Copy ICs for next cycle, copy output to save location, cleanup forecast directory 
 ${ROOT_GODAS_DIR}/scripts/post_forecast.sh
 
-## add a cleanup call: 
-# rm -rf $DATA
 

@@ -386,6 +386,7 @@ cp -p $FIXcice/${ice_kmt_file} $DATA/
 # 4.1 Copy Mediator restart files                                    #
 # 4.2 Copy MOM6 restarts/IC                                          #
 # 4.3 Copy CICE5 restart/IC                                          #
+# 4.4 Remove NEXT_IC Dir                                             #
 #                                                                    #
 ######################################################################
 ######################################################################
@@ -397,8 +398,11 @@ cp -p $FIXcice/${ice_kmt_file} $DATA/
 # Copy mediator restart files to RUNDIR       
 if [ $inistep = 'cold' ]; then
   echo "mediator cold start run sequence"
-else 
-  cp $ROTDIR/$CDUMP.$PDY/$cyc/mediator_* $DATA/
+else
+  if [ -d $RUNCDATE/../NEXT_IC ]; then 
+    #cp $ROTDIR/$CDUMP.$PDY/$cyc/mediator_* $DATA/
+    cp ../NEXT_IC/mediator_* $DATA/
+  fi 
 fi
 
 ######################################################################
@@ -407,12 +411,18 @@ fi
 #TODO: coordinate with DA -- does this get copied over somewhere else? 
 
 # Copy MOM6 ICs
-if [ $CDATE = '2011100100' ]; then
-  #TODO: hardcoded IC date for first date for benchmark 
-  ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
-  cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
-else
-  cp $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_RESTART/MOM*nc $DATA/INPUT/
+if [ -d $RUNCDATE/../NEXT_IC ]; then
+    # Get IC from previous cycle
+    ##cp ../NEXT_IC/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+    cp $RUNCDATE/../NEXT_IC/MOM*.nc $DATA/INPUT/
+else 
+
+  if [ $CDATE = '2011100100' ]; then
+    #TODO: hardcoded IC date for first date for benchmark 
+    ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
+    cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
+  fi 
+
 fi
 
 ######################################################################
@@ -420,17 +430,25 @@ fi
 ######################################################################
 #TODO: coordinate with DA -- does this get copied over somewhere else?
 
-if [ $CDATE = '2011100100' ]; then
-  #first IC: generated from CFSv2
-  #TODO: hardcoded IC date for first date for benchmark
-  ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
-  cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
-  #TODO: could grab cpc instead of cfsr for this IC (need cice namelist changes for cpc)
-  #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
-else
-  #copy from ROTDIR from cycled exp --- need coordinate name/folder locations
-  cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/restart/
+if [ -d $RUNCDATE/../NEXT_IC ]; then
+  #cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/restart/
+  cp $RUNCDATE/../NEXT_IC/restart/* $DATA/restart/
+else 
+  if [ $CDATE = '2011100100' ]; then
+    #first IC: generated from CFSv2
+    #TODO: hardcoded IC date for first date for benchmark
+    ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
+    cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
+    #TODO: could grab cpc instead of cfsr for this IC (need cice namelist changes for cpc)
+    #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
+  fi 
 fi
+
+######################################################################
+# 4.4 Remove NEXT_IC DIR                                             #
+######################################################################
+
+rm -rf $RUNCDATE/../NEXT_IC
 
 ######################################################################
 #   End of prep_forecast.sh                                          #
