@@ -48,12 +48,13 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 4. Setup the workflow: \
    Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar: \
    `./setup_case.sh -p HERA ../cases/3dvar.yaml workflowtest001`
- 
+   `./setup_case.sh -p HERA ../cases/fcst_only.yaml workflowtest001` 
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
  
    Available cases:
    1. 3dvar.yaml
    2. letkf_only_exp.yaml
+   3. fcst_only.yaml 
 
    Note: Each case files point to a corresponding layout file at $CLONE_DIR/workflow/layout. 
 

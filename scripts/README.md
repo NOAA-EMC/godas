@@ -3,7 +3,7 @@ scripts for forecast jobs:
 post_forecast.sh
 prep_forecast.sh
 
-Templates used in prep_forecast.sh:  
+Templates used in prep_forecast.sh are in the templates/ directory:  
 data_table.IN
 datm_data_table.IN
 diag_table_template

@@ -16,15 +16,26 @@
 #Variables which need to be defined: 
 
 #Generic variables 
-CDATE=${CDATE:-2011100100}   #YYYYMMDDHH --  start time
-ROTDIR
+#CDATE=${CDATE:-2011100100}   #YYYYMMDDHH --  start time
 SCRIPTDIR=${ROOT_GODAS_DIR}/scripts
-CDUMP
-PDY
-cyc
-
+TEMPLATEDIR=${ROOT_GODAS_DIR}/scripts/templates
+FIXmom=${ROOT_GODAS_DIR}/fix/MOM6_FIX_mx025
+FIXcice=${ROOT_GODAS_DIR}/fix/CICE_FIX_mx025
 FHMAX=${FHMAX:-24} #total forecast length in hours
 restart_interval=${restart_interval:-86400}  # number of seconds for writing restarts (for non-cold start) default to 1 day interval
+
+DATA=${RUNCDATE}/fcst
+
+
+
+echo "CDATE is $CDATE"
+echo "RUNCDATE is ${RUNCDATE}" 
+echo "DATA is ${DATA}"
+echo "SCRIPTDIR is $SCRIPTDIR"
+echo "TEMPLATEDIR is $TEMPLATEDIR"
+echo "FHMAX is $FHMAX"
+echo "restart interval is ${restart_interval}"
+
 
 #################################
 # Variables that are for the most part hard coded but could be pulled out and configured/etc. 
@@ -43,7 +54,7 @@ ATMPETS=${ATMPETS:-"72"}   #Number of ATM Pets
 # model_configure variables 
 DT_ATMOS=${DT_ATMOS:-900}  #DATM time step [seconds]
 coupling_interval_fast_sec=${coupling_interval_fast_sec:-$DT_ATMOS} #likely can be depricated from DATM
-DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-'cfsr'} #The prefix of the forcing files for the DATM
+DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-'cfsr.'} #The prefix of the forcing files for the DATM
 #for cfsr:  (will be different for gefs)
 NFHOUT=${NFHOUT:-6}  #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs    
 IATM=${IATM:-1760}  #dimension of DATM input files, lon     
@@ -58,14 +69,14 @@ OCNPETS=${OCNPETS:-"120"}  #number of ocean pets
 DT_THERM_MOM6=${DT_THERM_MOM6:-"1800"}  #MOM6 thermodynamic time step  [seconds]
 DT_DYNAM_MOM6=${DT_DYNAM_MOM6:-"900"}   #MOM6 dynamic time step   [seconds]
 #diag table (FMS) 
-DIAG_TABLE=${DIAG_TABLE:-$SCRIPTDIR/diag_table_template}
+DIAG_TABLE=${DIAG_TABLE:-$TEMPLATEDIR/diag_table_template}
 #input.nml (FMS) 
 MOM6_RESTART_SETTING=${MOM6_RESTART_SETTING:-"r"}  #MOM6 restart setting 'r' or 'n'
 
 # CICE5 Ice Variables 
 
 #resource/basic
-icemode=${icemod:-"cice"}
+icemod=${icemod:-"cice"}
 ICEPETS=${ICEPETS:-"48"}   #number of ice pets 
 
 #ice_input 
@@ -95,8 +106,9 @@ NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
 # 1.  Set up directories                                             #
 ######################################################################
 ######################################################################
-        
-if [ ! -d $ROTDIR ]; then mkdir -p $ROTDIR; fi        
+
+echo "Set up Directories"        
+#if [ ! -d $ROTDIR ]; then mkdir -p $ROTDIR; fi        
 
 #Set up forecast run directory:
  
@@ -136,6 +148,7 @@ cd $DATA
 ######################################################################
 
 #Input.nml is an FMS file used by both FV3 and MOM6 
+echo "creating inpu.nml"
 
 #MOM6 with DATM input.nml: 
 cat > input.nml << EOF
@@ -160,6 +173,7 @@ EOF
 ######################################################################
 
 # diag_table is an FMS (FV3, MOM6) input file that determines outputs 
+echo "Creating diag_table and data_table"
 
 # build the diag_table with the experiment name and date stamp
 cat > diag_table << EOF
@@ -168,13 +182,14 @@ $SYEAR $SMONTH $SDAY $SHOUR 0 0
 EOF
 cat $DIAG_TABLE >> diag_table
 
-cp $SCRIPTDIR/data_table.IN $DATA/data_table
+cp $TEMPLATEDIR/data_table.IN $DATA/data_table
 
 ######################################################################
 # 2.3 model_configure                                                #
 ######################################################################
 
 #Model_configure is used by the NEMS driver, FV3 and DATM to get inputs
+echo "Creating model_configure"
 
 # More info on variables: https://vlab.ncep.noaa.gov/redmine/projects/emc_nemsdatacomps/wiki/Input_File_Descriptions#model_configure
 
@@ -207,7 +222,7 @@ EOF
 ######################################################################
 
 # nems.configure is used by NEMS driver  
-
+echo "Creating nems.configure file"
 
 ##TODO: Someday need to add cold start capability, keeping simple for now 
 #Determine values of variables based one if mediator cold start or not
@@ -217,7 +232,7 @@ EOF
 #  confignamevarfornems="medcold_atm_ocn_ice"
 #  medcoldstart=true    
 #else
-  restart_interval_write=${restart_interval:-1296000}    # Interval in seconds to write restarts
+  restart_interval_write=${restart_interval:-86400}    # Interval in seconds to write restarts
   confignamevarfornems="med_atm_ocn_ice"
   medcoldstart=false
 #fi
@@ -230,7 +245,7 @@ ice_petlist_bounds=${ice_petlist_bounds:-"$(( $ATMPETS+$OCNPETS )) $(( $ATMPETS+
 
 # Copy the selected template into run directory
 rm -f $DATA/nems.configure
-cp $SCRIPTDIR/nems.configure.${confignamevarfornems}.IN tmp1
+cp $TEMPLATEDIR/nems.configure.${confignamevarfornems}.IN tmp1
 # Replace values in template
 sed -i -e "s;@\[med_model\];$medmod;g" tmp1
 sed -i -e "s;@\[atm_model\];$atmmod;g" tmp1
@@ -256,20 +271,23 @@ mv tmp1 nems.configure
 # 2.5 MOM_input and MOM_override                                     #
 ######################################################################
 
+echo "Creating MOM_input and MOM_override"
+
 # Copy the ice template into run directory
-cp $SCRIPTDIR/MOM_input_template tmp1
+cp $TEMPLATEDIR/MOM_input_template tmp1
 # Replace values in template
 sed -i -e "s;DT_THERM_MOM6;${DT_THERM_MOM6};g" tmp1
 sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
 # Rename to proper input ice input name
 mv tmp1 $DATA/INPUT/MOM_input
 
-cp $SCRIPTDIR/MOM_override $DATA/MOM_override
+cp $TEMPLATEDIR/MOM_override $DATA/INPUT/MOM_override
 
 ######################################################################
 # 2.6 CICE input                                                     #
 ######################################################################
 
+echo "Create CICE input files" 
 # parsing namelist of CICE (ice_in) 
 
 # info on restarting CICE model is here: 
@@ -281,34 +299,47 @@ tr_pond_lvl=${tr_pond_lvl:-".true."} # Use level melt ponds tr_pond_lvl=true
 # restart_pond_lvl (if tr_pond_lvl=true):
 #   -- if true, initialize the level ponds from restart (if runtype=continue) 
 #   -- if false, re-initialize level ponds to zero (if runtype=initial or continue)  
-    
-if [ $CDATE = '2011100100' ]; then
+if [ -d $RUNCDATE/../NEXT_IC ]; then
+  #continuing run "hot start" 
+  RUNTYPE='continue'
+  USE_RESTART_TIME='.true.'
+  restart_pond_lvl=${restart_pond_lvl:-".true."}    
+else 
   #using cold start IC
   RUNTYPE='initial'
   USE_RESTART_TIME='.false.'
   restart_pond_lvl=${restart_pond_lvl:-".false."}
-else
-  #continuing run "hot start" 
-  RUNTYPE='continue'
-  USE_RESTART_TIME='.true.'
-  restart_pond_lvl=${restart_pond_lvl:-".true."}
 fi
 
-dumpfreq_n=${dumpfreq_n:-"restart_interval"} 
+dumpfreq_n=${dumpfreq_n:-"${restart_interval}"} 
 dumpfreq=${dumpfreq:-"s"} #  "s" or "d" or "m" for restarts at intervals of "seconds", "days" or "months"
 
 iceres=${iceres:-"mx025"}
 ice_grid_file=${ice_grid_file:-"grid_cice_NEMS_${iceres}.nc"}
 ice_kmt_file=${ice_kmt_file:-"kmtu_cice_NEMS_${iceres}.nc"}
 
+#TODO iceic name... this might need to be update? 
+iceic='cice5_model.res.nc'
+
+
+#TODO: nhour is not getting propagated from workflow/patforms/hera.yaml for some reason..
+NWPROD="/scratch1/NCEPDEV/global/glopara"
+NHOUR="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+
+echo "NHOUR is ${NHOUR}"
+echo "DT_CICE is $DT_CICE"
+echo "CDATE is $CDATE" 
+echo "SYEAR is $SYEAR" 
+
 # Calculated variables for ice_in: 
 stepsperhr=$((3600/${DT_CICE}))
+echo "stepsperhr is $stepsperhr"
 nhours=$(${NHOUR} ${CDATE} ${SYEAR}010100)
 istep0=$((nhours*stepsperhr))
 npt=$((FHMAX*$stepsperhr))      # Need this in order for dump_last to work
 
 # Copy the ice template into run directory
-cp $SCRIPTDIR/ice_in_template tmp1
+cp $TEMPLATEDIR/ice_in_template tmp1
 # Replace values in template
 sed -i -e "s;YEAR_INIT;${SYEAR};g" tmp1
 sed -i -e "s;ICE_IC_NAME;${iceic};g" tmp1
@@ -334,7 +365,7 @@ mv tmp1 ice_in
 ######################################################################
 
 # Copy the ice template into run directory
-cp $SCRIPTDIR/datm_data_table.IN tmp1
+cp $TEMPLATEDIR/datm_data_table.IN tmp1
 # Replace values in template
 #sed -i -e "s;SOMEVAR;${SOMEVAR};g" tmp1
 
@@ -343,17 +374,17 @@ mv tmp1 $DATA/datm_data_table
 
 ######################################################################
 ######################################################################
-# 3. Copy fix files                                                  #
+# 3. Link fix files                                                  #
 #                                                                    #
-# 3.1 Copy DATM forcing files                                        #
-# 3.2 Copy MOM6 ICs, inputs and fix files                            #
-# 3.3 Copy CICE5 ICs, inputs and fix files                           #
+# 3.1 Link DATM forcing files                                        #
+# 3.2 Link MOM6 ICs, inputs and fix files                            #
+# 3.3 Link CICE5 ICs, inputs and fix files                           #
 #                                                                    #
 ######################################################################
 ######################################################################
 
 ######################################################################
-# 3.1 Copy DATM  inputs (ie forcing files)                           #
+# 3.1 Link DATM  inputs (ie forcing files)                           #
 ######################################################################
 
 #TODO: This should be some loop through CDATE-> CDATE+ FORECAST length 
@@ -361,23 +392,24 @@ mv tmp1 $DATA/datm_data_table
 #Currently assumes you only need the month of DATM input for IC date
 
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
-
+echo "Link DATM forcing files"
 DATMINPUTDIR="/scratch2/NCEPDEV/marineda/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}.*.nc $DATA/DATM_INPUT/
 
 ######################################################################
-# 3.2 Copy MOM6 fix files                                            #
+# 3.2 Link MOM6 fix files                                            #
 ######################################################################
 
-cp -pf $FIXmom/INPUT/* $DATA/INPUT/
+echo "Link MOM6 fix files" 
+ln -sf $FIXmom/* $DATA/INPUT/
 
 ######################################################################
-# 3.3 Copy CICE5 fix files                                           #
+# 3.3 Link CICE5 fix files                                           #
 ######################################################################
 
-# Copy CICE fixed files:
-cp -p $FIXcice/${ice_grid_file} $DATA/
-cp -p $FIXcice/${ice_kmt_file} $DATA/
+echo "Link CICE fixed files"
+ln -sf $FIXcice/${ice_grid_file} $DATA/
+ln -sf $FIXcice/${ice_kmt_file} $DATA/
 
 ######################################################################
 ######################################################################
@@ -395,13 +427,23 @@ cp -p $FIXcice/${ice_kmt_file} $DATA/
 # 4.1  Copy Mediator restart files                                   #
 ######################################################################
 
+echo "Copy mediator restart files" 
+
 # Copy mediator restart files to RUNDIR       
 if [ $inistep = 'cold' ]; then
-  echo "mediator cold start run sequence"
+  echo "mediator cold start run sequence... error currently not set up for this"
 else
   if [ -d $RUNCDATE/../NEXT_IC ]; then 
     #cp $ROTDIR/$CDUMP.$PDY/$cyc/mediator_* $DATA/
     cp ../NEXT_IC/mediator_* $DATA/
+  else 
+    if [ $CDATE = '2011100100' ]; then
+      echo "Copying mediator restarts for $CDATE from regtest area"
+      ICSDIR="/scratch1/NCEPDEV/nems/emc.nemspara/RT/DATM-MOM6-CICE5/master-20191106/MEDIATOR_2011100100"
+      cp $ICSDIR/mediator* $DATA/
+    else 
+       echo "ERROR:  You need to generate mediator restarts for this from a cold-mediator run sequence"
+    fi 
   fi 
 fi
 
@@ -410,6 +452,8 @@ fi
 ######################################################################
 #TODO: coordinate with DA -- does this get copied over somewhere else? 
 
+echo "Copy MOM6 ICs" 
+
 # Copy MOM6 ICs
 if [ -d $RUNCDATE/../NEXT_IC ]; then
     # Get IC from previous cycle
@@ -417,12 +461,11 @@ if [ -d $RUNCDATE/../NEXT_IC ]; then
     cp $RUNCDATE/../NEXT_IC/MOM*.nc $DATA/INPUT/
 else 
 
-  if [ $CDATE = '2011100100' ]; then
-    #TODO: hardcoded IC date for first date for benchmark 
-    ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
-    cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
-  fi 
-
+  echo "CICE5 IC is being copied from benchmark area for CDATE $CDATE" 
+  echo "Note these only exist for the 01 and 15 ths of every month" 
+  #TODO: hardcoded IC date for first date for benchmark 
+  ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
+  cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
 fi
 
 ######################################################################
@@ -430,26 +473,30 @@ fi
 ######################################################################
 #TODO: coordinate with DA -- does this get copied over somewhere else?
 
+echo "Copy CICE5 ICs" 
+
 if [ -d $RUNCDATE/../NEXT_IC ]; then
   #cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/restart/
   cp $RUNCDATE/../NEXT_IC/restart/* $DATA/restart/
 else 
-  if [ $CDATE = '2011100100' ]; then
-    #first IC: generated from CFSv2
-    #TODO: hardcoded IC date for first date for benchmark
-    ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
-    cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
-    #TODO: could grab cpc instead of cfsr for this IC (need cice namelist changes for cpc)
-    #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
-  fi 
+  echo "CICE5 IC is being copied from benchmark area for CDATE $CDATE" 
+  echo "Note these only exist for the 01 and 15 ths of every month" 
+  #first IC: generated from CFSv2
+  #TODO: hardcoded IC date for first date for benchmark
+  ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
+  cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
+  #TODO: could grab cpc instead of cfsr for this IC (need cice namelist changes for cpc)
+  #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
 fi
 
 ######################################################################
 # 4.4 Remove NEXT_IC DIR                                             #
 ######################################################################
 
+echo "removing NEXT_IC DIR" 
 rm -rf $RUNCDATE/../NEXT_IC
 
 ######################################################################
 #   End of prep_forecast.sh                                          #
 ######################################################################
+echo "End of prep_forecast.sh"

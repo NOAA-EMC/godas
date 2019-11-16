@@ -28,12 +28,17 @@ FORECAST_EXE=${ROOT_GODAS_DIR}/src/DATM-MOM6-CICE5.fd/NEMS/exe/nems_datm_mom6_ci
 
 NPE_FCST=${NTASKS_TOT:-240}
 
-cd $DATA
 
+echo "Forecast Run Directory: $DATA" 
+echo "Forecast exe: $FORECAST_EXE"
+echo "Number of tasks: $NPE_FCST"
+echo "Run command: srun -n $NPE_FCST ${FORECAST_EXE}"
+
+cd $DATA
 srun -n $NPE_FCST ${FORECAST_EXE}
 
-
+echo "Finished forecast, now copy output using script: ${ROOT_GODAS_DIR}/scripts/post_forecast.sh"
 # Copy ICs for next cycle, copy output to save location, cleanup forecast directory 
 ${ROOT_GODAS_DIR}/scripts/post_forecast.sh
 
-
+echo "End of Forecast for $CDATE" 

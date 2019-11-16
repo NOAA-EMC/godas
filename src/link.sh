@@ -13,7 +13,6 @@ if [ $model = "godas" ]; then
 
 #if on hera:  (should put on hpss eventually too)
 ln -sf /scratch2/NCEPDEV/marineda/Jessica.Meixner/FIX/* $topdir/../fix/
-ln -sf ${topdir}/DATM-MOM6-CICE5.fd/modulefiles/hera.intel/coupled $topdir/../modulefiles/godas.fcst
 
 
 fi
