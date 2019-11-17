@@ -20,7 +20,7 @@ if $1; then
    # Create record dim
    ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
    # Subsample
-   ncks -F -d nlocs,1,,$2 ${ObsRunDir}/sst-tmp.nc ${PROCobs}
+   ncks -O -F -d nlocs,1,,$2 ${ObsRunDir}/sst-tmp.nc ${PROCobs}
    # Cleanup
    rm ${ObsRunDir}/sst-tmp.nc
    rm ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc
@@ -91,7 +91,7 @@ else
       OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
    fi
 
-   if [ test -n "$(find $OBSDCOM -maxdepth 1 -name "*$sat*" -print -quit)" ]; then 
+   if [ test -n "$(find $OBSDCOM -name "*$sat*" -print -quit)" ]; then 
    
       cd $OBSDCOM
       echo SST Observations from ${SSTsource}-${sat} for $PDY exist and will be processed, obs directory: `pwd` 
