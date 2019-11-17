@@ -90,7 +90,8 @@ else
    else
       OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
    fi
-   if [ -d "$OBSDCOM" ]; then
+
+   if [ test -n "$(find $OBSDCOM -maxdepth 1 -name "*$sat*" -print -quit)" ]; then 
    
       cd $OBSDCOM
       echo SST Observations from ${SSTsource}-${sat} for $PDY exist and will be processed, obs directory: `pwd` 
@@ -113,11 +114,7 @@ else
       thinning_func $subsample $skip
 
    else
-   
-      set -x
       echo There are no SST observations from ${SSTsource}-${sat} for ${PDY}  
-      set +x
    fi
-
 fi
 
