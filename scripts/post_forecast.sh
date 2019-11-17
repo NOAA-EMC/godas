@@ -1,5 +1,9 @@
 #! /bin/sh
 
+
+echo "Entering post run forecast script" 
+
+
 ######################################################################
 ######################################################################
 # Copy IC/Restarts:                                                  #
@@ -13,9 +17,15 @@ DATA=${RUNCDATE}/fcst
 ##   cp $DATA/mediator_* $ROTDIR/$CDUMP.$PDY/$cyc/
 
 mkdir -p $RUNCDATE/../NEXT_IC/restart
+
+echo "Forecast Run Dir is: $DATA" 
+echo "NEXT_IC dir is: $RUNCDATE/../NEXT_IC"
   
+echo "Copy restarts for ice"
 cp $DATA/restart/*  $RUNCDATE/../NEXT_IC/restart/
+echo "Copy mediator restarts" 
 cp $DATA/mediator_* $RUNCDATE/../NEXT_IC/
+echo "Copy MOM6 Restarts" 
 cp $DATA/MOM6_RESTART/* $RUNCDATE/../NEXT_IC/
 
 

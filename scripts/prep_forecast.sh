@@ -394,7 +394,7 @@ mv tmp1 $DATA/datm_data_table
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
 echo "Link DATM forcing files"
 DATMINPUTDIR="/scratch2/NCEPDEV/marineda/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
-ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}.*.nc $DATA/DATM_INPUT/
+ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 
 ######################################################################
 # 3.2 Link MOM6 fix files                                            #
@@ -435,7 +435,7 @@ if [ $inistep = 'cold' ]; then
 else
   if [ -d $RUNCDATE/../NEXT_IC ]; then 
     #cp $ROTDIR/$CDUMP.$PDY/$cyc/mediator_* $DATA/
-    cp ../NEXT_IC/mediator_* $DATA/
+    cp $RUNCDATE/../NEXT_IC/mediator_* $DATA/
   else 
     if [ $CDATE = '2011100100' ]; then
       echo "Copying mediator restarts for $CDATE from regtest area"
