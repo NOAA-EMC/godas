@@ -46,9 +46,9 @@ During this process, three directories will be created:
 3. `cd $CLONE_DIR/build/letkf`
 4. Setup the environment at the HPC that you work on, e.g. at Hera  
    `source $CLONE_DIR/src/letkf/config/env.hera`
-5. Run the cmake:
+5. Run the cmake:  
    `cmake -DNETCDF_DIR=$NETCDF  $CLONE_DIR/src/letkf`  
-6. Compile the code: 
+6. Compile the code:   
    `make -j2`
 7. `ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver`
 
