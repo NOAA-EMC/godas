@@ -23,7 +23,8 @@ During this process, three directories will be created:
    `cd $CLONE_DIR/build`
 2. Load the JEDI modules \
    `module purge` \
-   `source  $CLONE_DIR/modulefiles/godas.main` \
+   `source  $CLONE_DIR/modulefiles/godas.main` \ 
+   `module list` 
 3. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
 4. `make -j12`
@@ -32,21 +33,24 @@ During this process, three directories will be created:
    `ctest`
 6. Change the soca-config branch \
     The yaml files that configure the DA experiments live inside of the soca-config repository. For example, to checkout the feature branch for the 3DVAR: \
-   `cd $CLONE_DIR/soca-bundle/soca-config` \
+   `cd $CLONE_DIR/src/soca-bundle/soca-config` \
    `git checkout develop` \
     or alternatively, checkout your own branch or the branch you need to test with.
 
-# Clone and build the UMD-LETKF 
+# Clone and build the UMD-LETKF
+ 
 0. `git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git $CLONE_DIR/src/letkf`  
 1. `cd $CLONE_DIR/src/letkf`  
 2. `git submodule update --init --recursive`   
-3. `cd $CLONE_DIR/build`
+3. `mkdir -p $CLONE_DIR/build/letkf`
+3. `cd $CLONE_DIR/build/letkf`
 4. Setup the environment at the HPC that you work on, e.g. at Hera  
-   `source config/env.hera`
+   `source $CLONE_DIR/src/letkf/config/env.hera`
 5. Run the cmake:
-   `cmake -DNETCDF_DIR=$NETCDF  [...]/letkf`  
+   `cmake -DNETCDF_DIR=$NETCDF  $CLONE_DIR/src/letkf`  
 6. Compile the code: 
-   `make -j<n>` 
+   `make -j2`
+7. `ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver`
 
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
