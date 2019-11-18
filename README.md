@@ -68,6 +68,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 1. Load the JEDI modules \
    `module purge` \
    `source  $CLONE_DIR/modulefiles/godas.main` \
+   `source  $CLONE_DIR/modulefiles/godas.python` \
 2. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
 3. `make -j12`
@@ -76,7 +77,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    `ctest`
  5. Change the soca-config branch \
     The yaml files that configure the DA experiments live inside of the soca-config repository. For example, to checkout the feature branch for the 3DVAR: \
-   `cd $CLONE_DIR/soca-bundle/soca-config` \
+   `cd $CLONE_DIR/src/soca-bundle/soca-config` \
    `git checkout develop` \
     or alternatively, checkout your own branch or the branch you need to test with.
 # Running the workflow
