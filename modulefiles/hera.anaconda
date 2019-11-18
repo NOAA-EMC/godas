@@ -1,0 +1,7 @@
+#%Module######################################################################
+##
+##      Python prerequisites
+##
+
+module use -a /scratch2/NCEPDEV/marine/Todd.Spindler/save/modulefiles/
+module load anaconda/1.0.0

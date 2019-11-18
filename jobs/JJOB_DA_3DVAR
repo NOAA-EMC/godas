@@ -9,9 +9,10 @@ cat <<EOF
 #================================================================================
 #================================================================================
 EOF
+
 module purge
-module use -a /scratch1/NCEPDEV/stmp4/Daniel.Holdaway/opt/modulefiles
-module load apps/jedi/intel-19.0.5.281
+source $MOD_PATH/godas.main
+module list
 
 cd $RUNCDATE
 

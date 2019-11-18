@@ -1,9 +1,7 @@
 #!/bin/bash -l
 
 echo 'main_obs_prep.sh starts'
-echo ${ROOT_GODAS_DIR}
 echo CDATE is $CDATE
-
 
 ObsRunDir=$RUNCDATE/Data/${CDATE}    #Path for observations to be ingested by DA
 mkdir -p ${ObsRunDir}
