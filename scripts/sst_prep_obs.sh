@@ -91,7 +91,7 @@ else
       OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
    fi
 
-   if [ test -n "$(find $OBSDCOM -name "*$sat*" -print -quit)" ]; then 
+   if [  "$(find $OBSDCOM -name "*$sat*" -print -quit)" ]; then
    
       cd $OBSDCOM
       echo SST Observations from ${SSTsource}-${sat} for $PDY exist and will be processed, obs directory: `pwd` 
