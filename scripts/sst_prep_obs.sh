@@ -20,7 +20,7 @@ if $1; then
    # Create record dim
    ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
    # Subsample
-   ncks -F -d nlocs,1,,$2 ${ObsRunDir}/sst-tmp.nc ${PROCobs}
+   ncks -O -F -d nlocs,1,,$2 ${ObsRunDir}/sst-tmp.nc ${PROCobs}
    # Cleanup
    rm ${ObsRunDir}/sst-tmp.nc
    rm ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc
@@ -90,7 +90,8 @@ else
    else
       OBSDCOM=$DCOM_ROOT/${SSTsource}/$PDY              #FullPath of raw obs
    fi
-   if [ -d "$OBSDCOM" ]; then
+
+   if [  "$(find $OBSDCOM -name "*$sat*" -print -quit)" ]; then
    
       cd $OBSDCOM
       echo SST Observations from ${SSTsource}-${sat} for $PDY exist and will be processed, obs directory: `pwd` 
@@ -113,11 +114,7 @@ else
       thinning_func $subsample $skip
 
    else
-   
-      set -x
       echo There are no SST observations from ${SSTsource}-${sat} for ${PDY}  
-      set +x
    fi
-
 fi
 
