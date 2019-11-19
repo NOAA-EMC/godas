@@ -10,7 +10,7 @@ suite: !Cycle
 
       da_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend  ( obs_prep )
+        Trigger: !Depend  obs_prep
         resources: !calc partition.resources.run_da_prep
         config: [ base ]
         J_JOB: JJOB_DA_PREP
@@ -29,32 +29,25 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_GEN_ENSEMBLE
 
-# WORKS for one member
-      da_letkf_prep: !Task
-        <<: *shared_task_template
+      da_letkf_prep: !TaskArray
         Trigger: !Depend  ( gen_ens_run & obs_prep )
-        resources: !calc partition.resources.run_3dvar
-        config: [ base ]
-        J_JOB: JJOB_PREP_LETKF1
-
-#      da_letkf_prep: !TaskArray
-#        Trigger: !Depend  ( gen_ens_run & obs_prep )
-#        Dimensions:
-#          groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
-#        da_letkf_grp: !TaskElement
-#          <<: *shared_task_template
-#          Foreach: [ groupid ]
-#          Name: !expand "da_letkf_grp{dimval.groupid}"
-#          resources: !calc partition.resources.run_da_prep
-#          config: [ base ]
-#          J_JOB: JJOB_PREP_LETKF
-#          ENSGRP: !expand "{dimval.groupid:02d}"
-#          rocoto_command: !expand >-
-#            {rocoto_load_modules} ;
-#            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
-#          ecflow_command: !expand |
-#            export ENSGRP={ENSGRP}
-#            $ROOT_GODAS_DIR/jobs/{J_JOB}
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        da_letkf_prep_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_letkf_prep
+          config: [ base ]
+          J_JOB: JJOB_PREP_LETKF
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
 
       da_letkf_run: !Task
         <<: *shared_task_template
@@ -73,11 +66,11 @@ suite: !Cycle
       fcst_run: !TaskArray
         Trigger: !Depend  fcst_prep
         Dimensions:
-          groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
         fcst_run_hrs: !TaskElement
           <<: *exclusive_task_template
           Foreach: [ groupid ]
-          Name: !expand "fcst_run_grp{dimval.groupid}"
+          Name: !expand "fgrp{dimval.groupid}"
           resources: !calc partition.resources.run_nothing
           config: [ base ]
           J_JOB: JJOB_FORECAST

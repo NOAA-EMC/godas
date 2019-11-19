@@ -9,23 +9,56 @@ During this process, three directories will be created:
 
 - RUNCDATE     : The directory where the system runs, optionally defined by the user.
 
-
 # Clone godas
 0. `set CLONE_DIR=PATH/OF/YOUR/CHOICE`
 1. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
 2. `cd $CLONE_DIR`
 3. `git submodule update --init --recursive`
 
-# Clone model and soca-bundle (bundle of repositories necessary to build soca)
+# Clone and build model
 
 0. `cd $CLONE_DIR/src`
 1. `sh checkout.sh godas`
 2. `sh link.sh godas`
+3. `sh build_DATM-MOM6-CICE5.sh`
 
-# Build the model: 
-0. `cd $CLONE_DIR/src`
-1. `sh build_DATM-MOM6-CICE5.sh`
+# Clone the soca-bundle (bundle of repositories necessary to build soca) and build soca
+
+0. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
+1. Create the build directory for SOCA
+   `mkdir -p $CLONE_DIR/build` \
+   `cd $CLONE_DIR/build`
+2. Load the JEDI modules \
+   `module purge` \
+   `source  $CLONE_DIR/modulefiles/godas.main` \ 
+   `module list` 
+3. Clone all the necessary repositories to build soca \
+   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
+4. `make -j12`
+5. Unit test the build \
+   `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
+   `ctest`
+6. Change the soca-config branch \
+    The yaml files that configure the DA experiments live inside of the soca-config repository. For example, to checkout the feature branch for the 3DVAR: \
+   `cd $CLONE_DIR/src/soca-bundle/soca-config` \
+   `git checkout develop` \
+    or alternatively, checkout your own branch or the branch you need to test with.
+
+# Clone and build the UMD-LETKF
  
+0. `git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git $CLONE_DIR/src/letkf`  
+1. `cd $CLONE_DIR/src/letkf`  
+2. `git submodule update --init --recursive`   
+3. `mkdir -p $CLONE_DIR/build/letkf`
+3. `cd $CLONE_DIR/build/letkf`
+4. Setup the environment at the HPC that you work on, e.g. at Hera  
+   `source $CLONE_DIR/src/letkf/config/env.hera`
+5. Run the cmake:  
+   `cmake -DNETCDF_DIR=$NETCDF  $CLONE_DIR/src/letkf`  
+6. Compile the code:   
+   `make -j2`
+7. `ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver`
+
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
    `mkdir -p PROJECT_DIR`
@@ -61,25 +94,6 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 5. Read output and run suggested command. Should be similar to: \
    `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
 
-# Building the soca-bundle 
-0. Create the build directory for SOCA
-   `mkdir -p $CLONE_DIR/build` \
-   `cd $CLONE_DIR/build`
-1. Load the JEDI modules \
-   `module purge` \
-   `source  $CLONE_DIR/modulefiles/godas.main` \
-   `source  $CLONE_DIR/modulefiles/godas.python` \
-2. Clone all the necessary repositories to build soca \
-   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
-3. `make -j12`
-4. Unit test the build \
-   `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
-   `ctest`
- 5. Change the soca-config branch \
-    The yaml files that configure the DA experiments live inside of the soca-config repository. For example, to checkout the feature branch for the 3DVAR: \
-   `cd $CLONE_DIR/src/soca-bundle/soca-config` \
-   `git checkout develop` \
-    or alternatively, checkout your own branch or the branch you need to test with.
 # Running the workflow
 Assumption: All the subsystems have been compiled.
 The workflow can interactively as shown at step 3. below or as cronjob.
