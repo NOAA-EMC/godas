@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set -e
 
 #================================================================================
 #================================================================================
@@ -20,6 +20,13 @@ rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; do
 # Rename the ensemble members
 cd $RUNCDATE/Data
 
+# Removing softlinks to pertubations from the PREP_DA
+
+find ./ -name 'cic.pert.ens.*.nc' -type l -delete
+find ./ -name 'ocn.pert.ens.*.nc' -type l -delete
+
+#find -type l -delete
+
 rename_func "cic.pert.ens.*.PT0S.nc"
 rename_func "ocn.pert.ens.*.PT0S.nc"
 
@@ -28,6 +35,12 @@ cd $RUNCDATE
 # Change of the coordinates
 # TODO
 
-# Run H(x)
+# Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
+export ENSEND=$((NMEM_PGRP * ENSGRP))
+export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
 
-srun -n ${NPE} ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3dMEMBER_NO.yml
+for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+        echo $MEMBER_NO
+        # Run H(x)
+        srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d$MEMBER_NO.yml
+done

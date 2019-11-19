@@ -28,6 +28,15 @@ platform: !Platform
   # data assimilation archiving, which are not in the public release.
   CHGRP_RSTPROD_COMMAND: "chgrp rstprod"
 
+  # NWPROD - location of the NCEP operational "nwprod" directory, which
+  # only has meaning on the NCEP WCOSS machines.  It is used to get
+  # the paths to certain programs and scripts.
+  NWPROD: "/scratch1/NCEPDEV/global/glopara"
+
+  config_base_extras: !expand |
+    export NDATE="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/ndate"
+    export NHOUR="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+
   partitions:
     Evaluate: false
     default_shared: !calc doc.platform.partitions.hera

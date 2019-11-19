@@ -27,7 +27,9 @@ config_base:
     export ACCOUNT="{doc.accounting.cpu_project}"     # This comes from user.yaml
     export QUEUE="{doc.accounting.exclusive_partition.exclusive_queue}"
     export QUEUE_ARCH="{doc.accounting.service_partition.service_queue}"
-        
+    export NPE="{doc.partition_common.resources.run_3dvar[0].mpi_ranks}"       
+    #export npe_psoca="{doc.partition_common.resources.run_3dvar[0].mpi_ranks}"
+ 
     # Project to use in mass store:
     HPSS_PROJECT={doc.accounting.hpss_project}
     
@@ -47,14 +49,15 @@ config_base:
     export SOCA_CONFIG="{doc.places.SOCA_CONFIG}"
     export DCOM_ROOT="{doc.places.DCOM_ROOT}"
     export IODA_EXEC="{doc.places.IODA_EXEC}"
-    export DA_SLOT_LEN="{doc.places.DA_SLOT_LEN}" #TODO: is defined at places.yaml, to be moved to da.yaml when it is activated.
-    export DA_METHOD="{doc.places.DA_METHOD}"   #TODO:                         "                          " 
-    export NO_ENS_MBR="{doc.places.NO_ENS_MBR}"   #TODO:                         "                          "
-    export NI="{doc.places.NI}"           #TODO:                         "                          "
-    export NJ="{doc.places.NJ}"           #TODO:                         "                          "
-    export NK="{doc.places.NK}"           #TODO:                         "                          "
-    export NPE="{doc.places.NPE}"           #TODO:                         "                          "
-    export ICE_FMT="{doc.places.ICE_FMT}"           #TODO:                         "                          "
+
+    export DA_METHOD="{doc.da_settings.DA_METHOD}"
+    export DA_SLOT_LEN="{doc.da_settings.DA_SLOT_LEN}"
+    export NO_ENS_MBR="{doc.da_settings.NO_ENS_MBR}"
+    export NMEM_PGRP="{doc.da_settings.NMEM_PGRP}"
+    export NI="{doc.da_settings.NI}"
+    export NJ="{doc.da_settings.NJ}"
+    export NK="{doc.da_settings.NK}"
+    export ICE_FMT="{doc.da_settings.ICE_FMT}"
 
     export MOD_PATH="{doc.places.MOD_PATH}"
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"
@@ -80,8 +83,6 @@ config_base:
     export SDATE={tools.to_YMDH(doc.settings.SDATE)}
     export EDATE={tools.to_YMDH(doc.settings.EDATE)}
     export PSLOT="{doc.names.experiment}"
-
-    export NMEM={doc.settings.NMEM}
 
     export EXPDIR="{doc.places.EXPDIR}"
     export ROTDIR="{doc.places.ROTDIR}"
