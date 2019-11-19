@@ -18,10 +18,11 @@
 # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
 # set -x
 
-while getopts "i:d:" opt; do
+while getopts "i:d:o:" opt; do
    case $opt in
       i) yamlfile=("$OPTARG");;
       d) RUNDIRC=("$OPTARG");;
+      o) OUTDIR=("$OPTARG");;
    esac
 done
 shift $((OPTIND -1))
@@ -32,6 +33,14 @@ shift $((OPTIND -1))
 DATADIR=${RUNDIRC}/Data
 
 mkdir -p ${DATADIR}
+
+if [ -z $OUTDIR ]; then
+   HOFXDIR='./Data'
+else
+   HOFXDIR='./Data/'$OUTDIR
+fi
+
+mkdir -p ${HOFXDIR}
 
 obsdatabase=${DATADIR}/${CDATE} 
 echo "obsdatabase="$obsdatabase
@@ -103,3 +112,9 @@ for Insitusource in $ListofInsitu; do
       echo "Not assimilating $Insitusource"
    fi
 done
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i ${yamlfile}                               \
+      -k OBSDATAOUT                                \
+      -v ${HOFXDIR}
+ 

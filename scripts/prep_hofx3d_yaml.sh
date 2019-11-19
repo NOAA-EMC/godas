@@ -40,10 +40,12 @@ sed -i "s/MEMBER_NO/${mbr}/g" ${yamlfile}
 #
 # Setup Jo cost function
 #-----------------------
+OUTDIR="hofx/mem${mbr}"
 
 ${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh \
       -i ${yamlfile}                             \
-      -d $RUNDIR
+      -d $RUNDIR                                 \
+      -o $OUTDIR
 
 echo '#                                                                 #'
 echo '#                     prep_hofx3d_yaml.sh                         #'
