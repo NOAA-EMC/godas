@@ -148,7 +148,7 @@ cd $DATA
 ######################################################################
 
 #Input.nml is an FMS file used by both FV3 and MOM6 
-echo "creating inpu.nml"
+echo "creating input.nml"
 
 #MOM6 with DATM input.nml: 
 cat > input.nml << EOF
@@ -237,7 +237,7 @@ echo "Creating nems.configure file"
   medcoldstart=false
 #fi
 
-#Caulculate bounds based on resource PETS
+#Calculate bounds based on resource PETS
 med_petlist_bounds=${med_petlist_bounds:-"0 $(( $MEDPETS-1 ))"}
 atm_petlist_bounds=${atm_petlist_bounds:-"0 $(( $ATMPETS-1 ))"}
 ocn_petlist_bounds=${ocn_petlist_bounds:-"$ATMPETS $(( $ATMPETS+$OCNPETS-1 ))"} 
