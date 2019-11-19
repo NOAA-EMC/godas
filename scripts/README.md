@@ -1,3 +1,21 @@
+
+scripts for forecast jobs: 
+post_forecast.sh
+prep_forecast.sh
+
+Templates used in prep_forecast.sh are in the templates/ directory:  
+data_table.IN
+datm_data_table.IN
+diag_table_template
+MOM_input_template
+MOM_override
+nems.configure.med_atm_ocn_ice.IN
+nems.configure.medcold_atm_ocn_ice.IN
+
+
+Below is really out of date: 
+----------------------
+
 Jian Kuang 20190627
 These will be separated into J-Jobs and scripts
 
