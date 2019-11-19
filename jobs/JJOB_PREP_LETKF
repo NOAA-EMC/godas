@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -e
 
 #================================================================================
 #================================================================================
@@ -21,7 +21,7 @@ rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; do
 cd $RUNCDATE/Data
 
 #find -type l -delete
-# Remove all softlinks before proceed
+# TODO Remove softlinks to pertubations before proceed, when the ensemble is in.
 rename_func "cic.pert.ens.*.PT0S.nc"
 rename_func "ocn.pert.ens.*.PT0S.nc"
 

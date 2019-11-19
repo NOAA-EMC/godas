@@ -29,7 +29,6 @@ da_settings_default: &da_settings_default
   DA_SLOT_LEN:  24
   DA_WNDW_OFST: 48
   DA_TS_ONLY:   0
-  DA_SLOT_LEN: 24
 # Number of ensemble members
   NO_ENS_MBR: 15
   GROUPS: 3

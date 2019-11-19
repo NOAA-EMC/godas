@@ -49,25 +49,6 @@ suite: !Cycle
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
 
-#      da_letkf_prep: !TaskArray
-#        Trigger: !Depend  ( gen_ens_run & obs_prep )
-#        Dimensions:
-#          groupid: !calc tools.seq(1,doc.settings.GROUPS,1)
-#        da_letkf_grp: !TaskElement
-#          <<: *shared_task_template
-#          Foreach: [ groupid ]
-#          Name: !expand "da_letkf_grp{dimval.groupid}"
-#          resources: !calc partition.resources.run_da_prep
-#          config: [ base ]
-#          J_JOB: JJOB_PREP_LETKF
-#          ENSGRP: !expand "{dimval.groupid:02d}"
-#          rocoto_command: !expand >-
-#            {rocoto_load_modules} ;
-#            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
-#          ecflow_command: !expand |
-#            export ENSGRP={ENSGRP}
-#            $ROOT_GODAS_DIR/jobs/{J_JOB}
-
       da_letkf_run: !Task
         <<: *shared_task_template
         Trigger: !Depend  ( da_letkf_prep )
