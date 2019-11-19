@@ -18,7 +18,4 @@ if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 
 # Generate the ensemble using soca_enspert
 
-srun -n ${NPE} ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
-
-#if   [ ! -d RESTART ]; then rm -rf RESTART; fi
-
+srun -n $NPE ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml 
