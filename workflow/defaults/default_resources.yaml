@@ -14,6 +14,7 @@ godas_resource_table:
   r3dvar:       [  24,    24, !timedelta "00:10:00", 12,  "3072" ]
   r3denvar:     [  80,   20, !timedelta "01:00:00", 12,  "3072" ]
   da_prep:      [  1,      1, !timedelta "00:30:00", 1,   "3072" ]
+  obs_prep:     [  12,    12, !timedelta "00:10:00", 1,   "3072" ]
   fcst_prep:    [   1,    1, !timedelta "00:20:00", 1,   "3072" ]
   fcst_025:     [ 240,   40, !timedelta "00:30:00", 1,   "3072" ]
   letkf_prep:   [  24,    24, !timedelta "00:10:00", 12,  "3072" ]
