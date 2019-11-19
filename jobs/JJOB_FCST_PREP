@@ -1,2 +1,17 @@
-#!/bin/bash
-echo "PREP J_JOB place holder"
+#!/bin/bash -l
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_PREP_FORECAST
+#   Set up DIRs, make input files, copy over fix files 
+#================================================================================
+#================================================================================
+EOF
+
+#TODO: DATA defined multiple places... 
+DATA=$RUNCDATE/fcst 
+
+${ROOT_GODAS_DIR}/scripts/prep_forecast.sh
+

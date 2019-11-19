@@ -1,0 +1,34 @@
+suite: !Cycle
+      <<: *suite_defaults
+
+      fcst_prep: !Task
+        <<: *shared_task_template
+        #TODO: depend on previous cycle in case cycle is more than 1 day (ie running one really long run)
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+        resources: !calc partition.resources.run_fcst_prep
+        config: [ base ]
+        J_JOB: JJOB_FCST_PREP
+
+      fcst_run: !Task
+        <<: *exclusive_task_template
+        Trigger: !Depend  fcst_prep
+        resources: !calc partition.resources.run_fcst
+        config: [ base ]
+        J_JOB: JJOB_FORECAST
+
+      post: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  fcst_run
+        resources: !calc partition.resources.run_nothing
+#        rocoto_command: "echo post"
+        config: [ base ]
+        J_JOB: JJOB_POST
+
+      final: !Task
+        <<: *service_task_template
+        Disable: !calc not metasched.type=="rocoto"
+        resources: !calc partition.resources.run_nothing
+        rocoto_command: "echo final"
+        rocoto_command: /bin/true
+        RUN: gfs # useless but required
+

@@ -15,6 +15,13 @@ During this process, three directories will be created:
 2. `cd $CLONE_DIR`
 3. `git submodule update --init --recursive`
 
+# Clone and build model
+
+0. `cd $CLONE_DIR/src`
+1. `sh checkout.sh godas`
+2. `sh link.sh godas`
+3. `sh build_DATM-MOM6-CICE5.sh`
+
 # Clone the soca-bundle (bundle of repositories necessary to build soca) and build soca
 
 0. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
@@ -74,12 +81,13 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 4. Setup the workflow: \
    Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar: \
    `./setup_case.sh -p HERA ../cases/3dvar.yaml workflowtest001`
- 
+   
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
  
    Available cases:
    1. 3dvar.yaml
    2. letkf_only_exp.yaml
+   3. fcst_only.yaml 
 
    Note: Each case files point to a corresponding layout file at $CLONE_DIR/workflow/layout. 
 
