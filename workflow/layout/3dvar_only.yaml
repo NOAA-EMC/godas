@@ -3,7 +3,7 @@ suite: !Cycle
 
       obs_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | da_3dvar_run.at('-24:00:00'))
         resources: !calc partition.resources.run_obs_prep
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
@@ -43,13 +43,13 @@ suite: !Cycle
       #  config: [ base ]
       #  J_JOB: JJOB_FORECAST
 
-      post: !Task
-        <<: *shared_task_template
-        Trigger: !Depend  fcst_run
-        resources: !calc partition.resources.run_nothing
-#        rocoto_command: "echo post"
-        config: [ base ]
-        J_JOB: JJOB_POST
+      #post: !Task
+      #  <<: *shared_task_template
+      #  Trigger: !Depend  fcst_run
+      #  resources: !calc partition.resources.run_nothing
+#     #   rocoto_command: "echo post"
+      #  config: [ base ]
+      #  J_JOB: JJOB_POST
 
       final: !Task
         <<: *service_task_template
