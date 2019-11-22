@@ -46,19 +46,3 @@ rm -f $PWD/ANA/cice_bkg.nc
 # Get MOM's restart
 mv -f RESTART/MOM.*.nc ./ANA/  # Because checkpoint dumps analysis in RESTART
 ln -s $PWD/Data/cic.socagodas.an.*.nc ./ANA/cice_bkg.nc
-
-cat <<EOF
-#============================================
-# Run mom6 only forecast
-#============================================
-EOF
-if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
-srun -n $NPE ${SOCA_EXEC}/soca_forecast.x ./yaml/forecast.yml
-
-cat <<EOF
-#============================================
-# Move ocean and ice restarts to place holder for next cycle
-#============================================
-EOF
-mv ./RESTART ../NEXT_IC
-mv ./ANA/cice_bkg.nc ../NEXT_IC/

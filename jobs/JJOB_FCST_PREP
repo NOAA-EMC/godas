@@ -10,8 +10,12 @@ cat <<EOF
 #================================================================================
 EOF
 
-#TODO: DATA defined multiple places... 
-DATA=$RUNCDATE/fcst 
-
-${ROOT_GODAS_DIR}/scripts/prep_forecast.sh
-
+case $FCSTMODEL in
+   "MOM6solo")
+      ;;
+   "MOM6CICE5")
+      #TODO: DATA defined multiple places... 
+      DATA=$RUNCDATE/fcst
+      ${ROOT_GODAS_DIR}/scripts/prep_forecast.sh
+      ;;
+esac

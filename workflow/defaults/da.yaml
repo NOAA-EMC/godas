@@ -22,6 +22,19 @@
 ##                 T/S/U/V will be updated. 3DVar ONLY updates T/S no matter what.
 ##--------------------------------------------------------------------------------
 
+gridsize: !Select
+  select: !calc doc.settings.resolution
+  otherwise: !error "Resolution no implemented: {doc.settings.resolution}"
+  cases:
+    Ocean1deg:
+      NI: 360
+      NJ: 210
+      NK: 75
+    Ocean025deg:
+      NI: 1440   
+      NJ: 1080
+      NK: 75
+
 da_settings_default: &da_settings_default
   ENS_SIZE:     1
   DA_METHOD:      "var"
@@ -33,9 +46,11 @@ da_settings_default: &da_settings_default
   NO_ENS_MBR: 15
   GROUPS: 3
   NMEM_PGRP: !calc ( NO_ENS_MBR // GROUPS )
+# Forecast model (options: MOM6solo, MOM6CICE5)
+  FCSTMODEL: MOM6solo
 # Model resolution
-  NI: 360 #1440   
-  NJ: 210 #1080
-  NK: 75
+  NI: !calc doc.gridsize.NI
+  NJ: !calc doc.gridsize.NJ
+  NK: !calc doc.gridsize.NK
 # Ice model file format
   ICE_FMT: fms # notfms
