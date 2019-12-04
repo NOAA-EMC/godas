@@ -1,0 +1,4 @@
+CLONE_DIR: /scratch2/NCEPDEV/marineda/user.id/godas.setup.name
+PROJECT_DIR: /scratch2/NCEPDEV/marineda/user.id/scrub/project.dir
+WORKFLOW_NAME: workflow.name
+SKIP_BUILD: False
