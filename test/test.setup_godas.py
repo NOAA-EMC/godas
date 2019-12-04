@@ -77,9 +77,11 @@ def check_job_status(filename):
 
 if __name__ == '__main__':
     #1. Read directory paths, build/ctest option, and workflow name ------------
+    try:  
+        os.environ["CLONE_DIR"]
+    except KeyError:
     with open('test.setup_godas.yaml') as input_file:
          input = yaml.load(input_file)
-    CLONE_DIR = input.get('CLONE_DIR')
     PROJECT_DIR = input.get('PROJECT_DIR')
     WORKFLOW_NAME = input.get('WORKFLOW_NAME')
     SKIP_BUILD= input.get('SKIP_BUILD')

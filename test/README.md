@@ -4,7 +4,11 @@ test.setup_godas.py
 
 test.setup_godas.yaml
 
-1-2. Edit four variables in test.setup_godas.yaml. In test.setup_godas.py, GODAS system build and project set up options are specified through the yaml file. For an example of test.setup_godas.yaml:
+1-2. Set CLONE_DIR. For an example:
+
+setenv CLONE_DIR /scratch2/NCEPDEV/marineda/user.id/godas.setup.name
+
+1-2. Edit three variables in test.setup_godas.yaml. In test.setup_godas.py, GODAS system build and project set up options are specified through the yaml file. For an example of test.setup_godas.yaml:
 
 CLONE_DIR: /scratch2/NCEPDEV/marineda/Jong.Kim/godas_test
 
