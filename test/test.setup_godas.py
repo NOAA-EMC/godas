@@ -91,12 +91,9 @@ if __name__ == '__main__':
     path = os.getcwd()
     print ("----- Current work directory is %s" % path)
 
-    if not SKIP_BUILD :
-        if os.path.isdir(CLONE_DIR): delete_dir(CLONE_DIR)
-    
+    if not SKIP_BUILD :    
         #1. Setup GODAS system at CLONE_DIR ------------------------------------
         print ('-----------Setup GODAS system at:',CLONE_DIR)
-        os.system("git clone https://github.com/NOAA-EMC/godas.git "+CLONE_DIR)
         os.chdir(CLONE_DIR)
         os.system("git submodule update --init --recursive")
 
