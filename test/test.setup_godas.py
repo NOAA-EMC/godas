@@ -78,8 +78,11 @@ def check_job_status(filename):
 if __name__ == '__main__':
     #1. Read directory paths, build/ctest option, and workflow name ------------
     try:  
-        os.environ["CLONE_DIR"]
+        CLONE_DIR=os.environ["CLONE_DIR"]
     except KeyError:
+        print "Please set the environment variable CLONE_DIR"
+        sys.exit(1)
+
     with open('test.setup_godas.yaml') as input_file:
          input = yaml.load(input_file)
     PROJECT_DIR = input.get('PROJECT_DIR')
