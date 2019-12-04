@@ -32,3 +32,10 @@ else
 fi
 fi
 
+echo UMD-LETKF checkout ...  
+if [[ ! -d letkf ]] ; then
+    git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git letkf 
+    cd ${topdir}
+else
+    echo 'Skip.  Directory letkf already exists.'
+fi
