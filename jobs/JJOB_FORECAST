@@ -29,7 +29,7 @@ case $FCSTMODEL in
       # Move ocean and ice restarts to place holder for next cycle
       #============================================
       mv ./RESTART ../NEXT_IC
-      mv ./ANA/cice_bkg.nc ../NEXT_IC/      
+      mv ./ANA/cice_bkg.nc ../NEXT_IC/ # Percistance for sea-ice
       ;;
    "MOM6CICE5")
       module purge

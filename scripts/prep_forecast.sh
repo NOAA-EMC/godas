@@ -94,12 +94,13 @@ DumpFields=${NEMSDumpFields:-false}   #Dump diagnostic netcdf fields from compon
 CPL_SLOW=${CPL_SLOW:-$DT_THERM_MOM6}  #slow coupling time step
 CPL_FAST=${CPL_FAST:-$DT_ATMOS}       #fast coupling time step 
 
-#Calculated Varaibles: 
+#Calculated Variables: 
 SYEAR=$(echo  $CDATE | cut -c1-4)
 SMONTH=$(echo $CDATE | cut -c5-6)
 SDAY=$(echo   $CDATE | cut -c7-8)
 SHOUR=$(echo  $CDATE | cut -c9-10)
 NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
+NEARESTCDATE=$(echo $CDATE | cut -c1-8)00
 
 ######################################################################
 ######################################################################
@@ -281,7 +282,9 @@ sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
 # Rename to proper input ice input name
 mv tmp1 $DATA/INPUT/MOM_input
 
-cp $TEMPLATEDIR/MOM_override $DATA/INPUT/MOM_override
+#cp $TEMPLATEDIR/MOM_override $DATA/INPUT/MOM_override
+echo 'RESTART_CHECKSUMS_REQUIRED = False' > $DATA/INPUT/MOM_override
+cat $DATA/INPUT/MOM_override
 
 ######################################################################
 # 2.6 CICE input                                                     #
@@ -437,8 +440,8 @@ else
     #cp $ROTDIR/$CDUMP.$PDY/$cyc/mediator_* $DATA/
     cp $RUNCDATE/../NEXT_IC/mediator_* $DATA/
   else 
-    if [ $CDATE = '2011100100' ]; then
-      echo "Copying mediator restarts for $CDATE from regtest area"
+    if [ $NEARESTCDATE = '2011100100' ]; then
+      echo "Copying mediator restarts for $NEARESTCDATE from regtest area"
       ICSDIR="/scratch1/NCEPDEV/nems/emc.nemspara/RT/DATM-MOM6-CICE5/master-20191106/MEDIATOR_2011100100"
       cp $ICSDIR/mediator* $DATA/
     else 
@@ -465,7 +468,7 @@ else
   echo "Note these only exist for the 01 and 15 ths of every month" 
   #TODO: hardcoded IC date for first date for benchmark 
   ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
-  cp -pf $ICSDIR/$CDATE/mom6_da/MOM*nc $DATA/INPUT/
+  cp -pf $ICSDIR/$NEARESTCDATE/mom6_da/MOM*nc $DATA/INPUT/
 fi
 
 ######################################################################
@@ -484,7 +487,7 @@ else
   #first IC: generated from CFSv2
   #TODO: hardcoded IC date for first date for benchmark
   ICSDIR=/scratch2/NCEPDEV/climate/Bin.Li/S2S/FROM_HPSS/
-  cp -p $ICSDIR/$CDATE/cice5_model_0.25.res_$CDATE.nc $DATA/$iceic
+  cp -p $ICSDIR/$NEARESTCDATE/cice5_model_0.25.res_$NEARESTCDATE.nc $DATA/$iceic
   #TODO: could grab cpc instead of cfsr for this IC (need cice namelist changes for cpc)
   #cp -p $ICSDIR/$CDATE/cpc/cice5_model_0.25.res_$CDATE.nc ./cice5_model.res_$CDATE.nc
 fi

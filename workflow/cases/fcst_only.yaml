@@ -3,6 +3,8 @@ case:
     SDATE: 2011-10-01t00:00:00
     EDATE: 2011-10-03t00:00:00
     godas_cyc: 1 # selection of godas cycle: 1(default)- 24h; 2 - 12h; 4 - 6h
+    resolution: Ocean025deg #Ocean3deg # Ocean1deg or Ocean025deg 
+    FCSTMODEL: MOM6CICE5
 
   places:
     workflow_file: layout/fcst_only.yaml

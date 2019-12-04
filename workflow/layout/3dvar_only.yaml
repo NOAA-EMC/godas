@@ -8,9 +8,16 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
 
+      fcst_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+        resources: !calc partition.resources.run_fcst_prep
+        config: [ base ]
+        J_JOB: JJOB_FCST_PREP
+
       da_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend  obs_prep
+        Trigger: !Depend  ( obs_prep & fcst_prep ) 
         resources: !calc partition.resources.run_da_prep
         config: [ base ]
         J_JOB: JJOB_DA_PREP
@@ -29,16 +36,9 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_DA_3DVAR
 
-      fcst_prep: !Task
-        <<: *shared_task_template
-        Trigger: !Depend da_3dvar_run
-        resources: !calc partition.resources.run_fcst_prep
-        config: [ base ]
-        J_JOB: JJOB_FCST_PREP
-
       fcst_run: !Task
         <<: *exclusive_task_template
-        Trigger: !Depend  fcst_prep
+        Trigger: !Depend  da_3dvar_run
         resources: !calc partition.resources.run_fcst
         config: [ base ]
         J_JOB: JJOB_FORECAST

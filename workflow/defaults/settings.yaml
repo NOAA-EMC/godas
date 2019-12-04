@@ -6,7 +6,12 @@ default_settings: &default_setting
   SDATE: 2011-10-01t12:00:00
   EDATE: 2011-10-01t12:00:00
 
+# Model Resolution (Ocean3deg, Ocean1deg, Ocean025deg)
   resolution: Ocean1deg
+
+# Forecast model (options: MOM6solo, MOM6CICE5)
+  FCSTMODEL: MOM6solo
+
   da_hours: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
   max_job_tries: 2
   four_cycle_mode: False

@@ -5,7 +5,7 @@ cat <<EOF
 #================================================================================
 #================================================================================
 # JJOB_PREP_FORECAST
-#   Set up DIRs, make input files, copy over fix files 
+#   Set up DIRs, make input files, copy over fix files for $FCSTMODEL
 #================================================================================
 #================================================================================
 EOF
@@ -17,5 +17,7 @@ case $FCSTMODEL in
       #TODO: DATA defined multiple places... 
       DATA=$RUNCDATE/fcst
       ${ROOT_GODAS_DIR}/scripts/prep_forecast.sh
+      # HACK!!!!!!!!!!!!! REMOVE
+      #cp /scratch1/NCEPDEV/stmp2/Guillaume.Vernieres/Guillaume.Vernieres/rundir/fcsttest/2011100100/fcst/cice5_model.res.nc /scratch1/NCEPDEV/stmp2/Guillaume.Vernieres/Guillaume.Vernieres/rundir/testresol3dvar/2011100112/fcst/
       ;;
 esac
