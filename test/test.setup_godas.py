@@ -62,15 +62,15 @@ def check_job_status(filename):
     for index in range(len(jobtask)):
         if jobstate[index] == 'SUCCEEDED':
             count_success += 1
-            print jobcycle[index],jobtask[index],jobstate[index],jobtries[index]
+            print (jobcycle[index],jobtask[index],jobstate[index],jobtries[index])
         if jobstate[index] == 'SUBMITTING':
             count_submit = 1
             lapse_time = 60.*6
-            print jobcycle[index],jobtask[index],jobstate[index],jobtries[index]
+            print (jobcycle[index],jobtask[index],jobstate[index],jobtries[index])
         if jobstate[index] == 'QUEUED':
             count_qued = 1
             lapse_time = 60.*6
-            print jobcycle[index],jobtask[index],jobstate[index],jobtries[index]
+            print (jobcycle[index],jobtask[index],jobstate[index],jobtries[index])
         if count_success == len(jobtask): alljobs_success = True
 
     return alljobs_success, lapse_time
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     try:  
         CLONE_DIR=os.environ["CLONE_DIR"]
     except KeyError:
-        print "Please set the environment variable CLONE_DIR"
+        print ("Please set the environment variable CLONE_DIR")
         sys.exit(1)
 
     with open('test.setup_godas.yaml') as input_file:
