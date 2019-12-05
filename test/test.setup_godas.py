@@ -78,7 +78,7 @@ def check_job_status(filename):
 if __name__ == '__main__':
     #1. Read directory paths, build/ctest option, and workflow name ------------
     try:  
-        CLONE_DIR=os.environ["CLONE_DIR"]
+        CLONE_DIR=os.environ.get('CLONE_DIR')
     except KeyError:
         print ("Please set the environment variable CLONE_DIR")
         sys.exit(1)
