@@ -107,7 +107,6 @@ if __name__ == '__main__':
 
         #2. Clone and build soca system inside CLONE_DIR------------------------
         print ('-----------Clone and build SOCA system at:',CLONE_DIR)
-        os.system("git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git "+CLONE_DIR+"/src/soca-bundle")
         build_dir=CLONE_DIR+'/build'
         make_dir(build_dir); os.chdir(build_dir)
 
@@ -120,7 +119,6 @@ if __name__ == '__main__':
         #3. Clone and build the UMD-LETKF --------------------------------------
         os.chdir(CLONE_DIR)
         print ('-----------Clone and build the UMD-LETKF at:',CLONE_DIR)
-        os.system("git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git ./src/letkf")
         os.chdir(CLONE_DIR+"/src/letkf")
         os.system("git submodule update --init --recursive")
         make_dir(CLONE_DIR+"/build/letkf")
