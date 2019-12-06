@@ -1,4 +1,4 @@
-1-1. two files can be used to automatically set up GODAS system and run on HERA.
+1-1. two files in this test directory can be used to automatically set up GODAS system and run on HERA.
 
 test.setup_godas.py
 
