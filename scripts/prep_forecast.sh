@@ -26,8 +26,6 @@ restart_interval=${restart_interval:-86400}  # number of seconds for writing res
 
 DATA=${RUNCDATE}/fcst
 
-
-
 echo "CDATE is $CDATE"
 echo "RUNCDATE is ${RUNCDATE}" 
 echo "DATA is ${DATA}"
@@ -123,6 +121,7 @@ if [ ! -d $DATA/OUTPUT ]; then mkdir -p $DATA/OUTPUT; fi
 if [ ! -d $DATA/MOM6_OUTPUT ]; then mkdir -p $DATA/MOM6_OUTPUT; fi
 if [ ! -d $DATA/MOM6_RESTART ]; then mkdir -p $DATA/MOM6_RESTART; fi
 if [ ! -d $DATA/DATM_INPUT ]; then mkdir -p $DATA/DATM_INPUT; fi
+
 
 # Go to Run Directory (DATA)         
 cd $DATA 
@@ -305,7 +304,7 @@ tr_pond_lvl=${tr_pond_lvl:-".true."} # Use level melt ponds tr_pond_lvl=true
 if [ -d $RUNCDATE/../NEXT_IC ]; then
   #continuing run "hot start" 
   RUNTYPE='continue'
-  USE_RESTART_TIME='.true.'
+  USE_RESTART_TIME='.false.'
   restart_pond_lvl=${restart_pond_lvl:-".true."}    
 else 
   #using cold start IC

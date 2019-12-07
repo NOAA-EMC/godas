@@ -50,19 +50,9 @@ case $FCSTMODEL in
        # Get MOM's restart
        mv -f RESTART/MOM.*.nc ./ANA/  # Because checkpoint dumps analysis in RESTART
        ln -s $PWD/Data/cic.socagodas.an.*.nc ./ANA/cice_bkg.nc
-      ;;
+       ;;
    "MOM6CICE5")
-       #mv -f RESTART/MOM.*.nc ./fcst/INPUT/
-       #mkdir -p ../NEXT_IC
-       # Move MOM6 and CICE  analysis to place holder for next forecast
-       #mv -f RESTART/MOM.*.nc ../NEXT_IC/
-
-       # TODO: Insert analysis in CICE restart file
-       # DEBUGGING HACK REMOVE ...
-       #cp /scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/test-initcice5/restart/iced.2011-10-01-64800.nc ../NEXT_IC/cice5_model.res.nc
-       #cp /scratch1/NCEPDEV/stmp2/Guillaume.Vernieres/Guillaume.Vernieres/rundir/fcsttest/2011100100/fcst/cice*.nc ../NEXT_IC
-       #cp -r /scratch1/NCEPDEV/stmp2/Guillaume.Vernieres/Guillaume.Vernieres/rundir/fcsttest/2011100100/fcst/restart ../NEXT_IC
-       #cp /scratch1/NCEPDEV/stmp2/Guillaume.Vernieres/Guillaume.Vernieres/rundir/fcsttest/2011100100/fcst/mediator* ../NEXT_IC
-       #echo './restart/cice5_model.res.nc' > ../NEXT_IC/ice.restart_file
+       mv -f RESTART/MOM.*.nc ./fcst/INPUT/
+       # TODO: Copy sea ice analysis into seaice restart
       ;;
 esac

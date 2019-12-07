@@ -38,7 +38,7 @@ if [ "$DA_SST" = True ]; then
               sst.amsr2_l3u.ghrsst \
               sst.viirs_l3u.nesdis \
               sst.avhrr_l3u.nesdis"
-   
+
    for SSTsource in $ListOfSST
    do
       if [ "$SSTsource" == "sst.avhrr_l3u.nesdis" ]; then
@@ -46,17 +46,16 @@ if [ "$DA_SST" = True ]; then
              SSTsource=sst.${instr}_l3u.nesdis
              source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \
                         -i ${SSTsource}
-   
+
              echo preprocessing of $SSTsource ${instr} done
          done
       else
          source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \
-                        -i ${SSTsource} 
-   
+                        -i ${SSTsource}
+
          echo preprocessing of $SSTsource done
       fi
    done
    echo
 fi
 echo main_obs_prep ends
-

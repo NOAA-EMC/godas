@@ -14,7 +14,7 @@ gridsize: !Select
       NJ: 210
       NK: 75
     Ocean025deg:
-      NI: 1440   
+      NI: 1440
       NJ: 1080
       NK: 75
 
@@ -41,5 +41,4 @@ da_settings_default: &da_settings_default
   DA_SST: True
   DA_TS: False
   DA_ADT: False
-  DA_ICEC: False
-  
+  DA_ICEC: True
