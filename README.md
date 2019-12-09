@@ -10,8 +10,11 @@ During this process, three directories will be created:
 - RUNCDATE     : The directory where the system runs, optionally defined by the user.
 
 # Clone godas
-0. `set CLONE_DIR=PATH/OF/YOUR/CHOICE`
+0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE`
 1. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
+
+   If automatic syetem build/test is prepfered, see the instruction [here](./test/README.md). Otherwise, steps to manually set up the godas system and test cases are as follows:
+
 2. `cd $CLONE_DIR`
 3. `git submodule update --init --recursive`
 
@@ -24,7 +27,6 @@ During this process, three directories will be created:
 
 # Clone the soca-bundle (bundle of repositories necessary to build soca) and build soca
 
-0. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
 1. Create the build directory for SOCA
    `mkdir -p $CLONE_DIR/build` \
    `cd $CLONE_DIR/build`
@@ -46,7 +48,6 @@ During this process, three directories will be created:
 
 # Clone and build the UMD-LETKF
  
-0. `git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git $CLONE_DIR/src/letkf`  
 1. `cd $CLONE_DIR/src/letkf`  
 2. `git submodule update --init --recursive`   
 3. `mkdir -p $CLONE_DIR/build/letkf`
