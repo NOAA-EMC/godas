@@ -17,6 +17,9 @@ suite_defaults: &suite_defaults
   # Rocoto - contains settings specific to Rocoto workflow generation
   Rocoto: &Rocoto
     # workflow_xml - the contents of this variable are written to the Rocoto XML file.
+
+    max_tries: !calc doc.settings.max_job_tries    
+
     workflow_xml: !expand |
       <?xml version="1.0"?>
       <!DOCTYPE workflow [
@@ -25,7 +28,7 @@ suite_defaults: &suite_defaults
         <!ENTITY ROOT_EXP_DIR "{doc.places.EXPDIR}">
         <!ENTITY TASK_THROTTLE "{doc.settings.rocoto_task_throttle}">
         <!ENTITY CYCLE_THROTTLE "{doc.settings.rocoto_cycle_throttle}">
-        <!ENTITY MAX_TRIES "{doc.settings.max_job_tries}">
+        <!ENTITY MAX_TRIES "{suite.Rocoto.max_tries}">
         <!ENTITY EXPDIR "{doc.places.EXPDIR}">
         <!ENTITY LOG_DIR "{doc.places.LOG_DIR}">
         <!ENTITY COM "{doc.places.ROTDIR}">
