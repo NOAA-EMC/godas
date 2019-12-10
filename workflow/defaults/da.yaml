@@ -35,10 +35,10 @@ da_settings_default: &da_settings_default
   NI: !calc doc.gridsize.NI
   NJ: !calc doc.gridsize.NJ
   NK: !calc doc.gridsize.NK
-# Ice model file format
-  ICE_FMT: fms # notfms
 # Observation
   DA_SST: True
   DA_TS: False
   DA_ADT: False
-  DA_ICEC: True
+  DA_ICEC: False
+# Solver
+  NINNER: 2

@@ -58,11 +58,12 @@ config_base:
     export NI="{doc.da_settings.NI}"
     export NJ="{doc.da_settings.NJ}"
     export NK="{doc.da_settings.NK}"
-    export ICE_FMT="{doc.da_settings.ICE_FMT}"
     export DA_SST="{doc.da_settings.DA_SST}"
     export DA_TS="{doc.da_settings.DA_TS}"
     export DA_ADT="{doc.da_settings.DA_ADT}"
     export DA_ICEC="{doc.da_settings.DA_ICEC}"
+
+    export NINNER="{doc.da_settings.NINNER}"
 
     export MOD_PATH="{doc.places.MOD_PATH}"
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"

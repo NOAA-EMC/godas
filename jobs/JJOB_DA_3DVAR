@@ -37,6 +37,8 @@ cat <<EOF
 # Prepare restarting from analysis
 #============================================
 EOF
+# TODO: Move to DA_POST
+
 if [ -d ANA ]; then rm -Rf ANA; fi
 if [ ! -d ANA ]; then mkdir -p ANA; fi
 ln -s $PWD/INPUT_MOM6/* ./ANA/
@@ -52,7 +54,35 @@ case $FCSTMODEL in
        ln -s $PWD/Data/cic.socagodas.an.*.nc ./ANA/cice_bkg.nc
        ;;
    "MOM6CICE5")
+       echo "Prepare ocean analysis" 
        mv -f RESTART/MOM.*.nc ./fcst/INPUT/
-       # TODO: Copy sea ice analysis into seaice restart
+
+       echo "Copy sea ice analysis into seaice restart"
+       icebkg=$(cat $RUNCDATE/fcst/restart/ice.restart_file)
+       iceana=$(ls $PWD/Data/cic.socagodas.an.*.nc)
+       cp $iceana ana.nc
+       cp $PWD/fcst/$icebkg bkg.nc
+       echo $iceana
+       echo $icebkg
+
+       echo "Rename dimension in ana.nc"
+       ncrename -h -d xaxis_1,ni ana.nc
+       ncrename -h -d yaxis_1,nj ana.nc
+       ncrename -h -d zaxis_1,ncat ana.nc
+        
+       echo "Collapse Time dimension"
+       ncwa -a Time ana.nc ana-tmp.nc
+       mv ana-tmp.nc ana.nc
+        
+       echo "Copy analysis to bkg restart"
+       ncks -A -v aicen ana.nc bkg.nc
+       ncks -A -v vicen ana.nc bkg.nc
+       ncks -A -v vsnon ana.nc bkg.nc
+
+       echo "Replace cice restart with analysis restart"
+       cp bkg.nc $PWD/fcst/$icebkg
+
+       echo "Cleanup"
+       rm bkg.nc ana.nc
       ;;
 esac
