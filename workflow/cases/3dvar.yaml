@@ -9,9 +9,9 @@ case:
   da_settings:
     NINNER: 5
     DA_SST: True
-    DA_TS: True
-    DA_ADT: True
-    DA_ICEC: True
+    DA_TS: False
+    DA_ADT: False
+    DA_ICEC: False
 
   places:
     workflow_file: layout/3dvar_only.yaml
