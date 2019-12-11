@@ -281,6 +281,8 @@ sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
 # Rename to proper input ice input name
 mv tmp1 $DATA/INPUT/MOM_input
 
+# TODO: Append to template MOM_override? My (Guillaume) opinion is to keep it empty 
+#       in the static files, and populate it from scratch as needed. 
 #cp $TEMPLATEDIR/MOM_override $DATA/INPUT/MOM_override
 echo 'RESTART_CHECKSUMS_REQUIRED = False' > $DATA/INPUT/MOM_override
 cat $DATA/INPUT/MOM_override
