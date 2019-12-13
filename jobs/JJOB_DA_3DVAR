@@ -37,28 +37,52 @@ cat <<EOF
 # Prepare restarting from analysis
 #============================================
 EOF
+# TODO: Move to DA_POST
+
 if [ -d ANA ]; then rm -Rf ANA; fi
 if [ ! -d ANA ]; then mkdir -p ANA; fi
 ln -s $PWD/INPUT_MOM6/* ./ANA/
-# Unlink old restarts
-rm -f ./ANA/MOM.*.nc
-rm -f $PWD/ANA/cice_bkg.nc
-# Get MOM's restart
-mv -f RESTART/MOM.*.nc ./ANA/  # Because checkpoint dumps analysis in RESTART
-ln -s $PWD/Data/cic.socagodas.an.*.nc ./ANA/cice_bkg.nc
 
-cat <<EOF
-#============================================
-# Run mom6 only forecast
-#============================================
-EOF
-if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
-srun -n $NPE ${SOCA_EXEC}/soca_forecast.x ./yaml/forecast.yml
+case $FCSTMODEL in
+   "MOM6solo")
+       # Input dir for MOM6solo is ANA (instead of INPUT)
+       # Unlink old restarts
+       rm -f $PWD/ANA/MOM.*.nc
+       rm -f $PWD/ANA/cice_bkg.nc
+       # Get MOM's restart
+       mv -f RESTART/MOM.*.nc ./ANA/  # Because checkpoint dumps analysis in RESTART
+       ln -s $PWD/Data/cic.socagodas.an.*.nc ./ANA/cice_bkg.nc
+       ;;
+   "MOM6CICE5")
+       echo "Prepare ocean analysis" 
+       mv -f RESTART/MOM.*.nc ./fcst/INPUT/
 
-cat <<EOF
-#============================================
-# Move ocean and ice restarts to place holder for next cycle
-#============================================
-EOF
-mv ./RESTART ../NEXT_IC
-mv ./ANA/cice_bkg.nc ../NEXT_IC/
+       echo "Copy sea ice analysis into seaice restart"
+       icebkg=$(cat $RUNCDATE/fcst/restart/ice.restart_file)
+       iceana=$(ls $PWD/Data/cic.socagodas.an.*.nc)
+       cp $iceana ana.nc
+       cp $PWD/fcst/$icebkg bkg.nc
+       echo $iceana
+       echo $icebkg
+
+       echo "Rename dimension in ana.nc"
+       ncrename -h -d xaxis_1,ni ana.nc
+       ncrename -h -d yaxis_1,nj ana.nc
+       ncrename -h -d zaxis_1,ncat ana.nc
+        
+       echo "Collapse Time dimension"
+       ncwa -a Time ana.nc ana-tmp.nc
+       mv ana-tmp.nc ana.nc
+        
+       echo "Copy analysis to bkg restart"
+       ncks -A -v aicen ana.nc bkg.nc
+       ncks -A -v vicen ana.nc bkg.nc
+       ncks -A -v vsnon ana.nc bkg.nc
+
+       echo "Replace cice restart with analysis restart"
+       cp bkg.nc $PWD/fcst/$icebkg
+
+       echo "Cleanup"
+       rm bkg.nc ana.nc
+      ;;
+esac

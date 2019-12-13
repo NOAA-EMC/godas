@@ -10,35 +10,59 @@ cat <<EOF
 #================================================================================
 EOF
 
-module purge
-source $MOD_PATH/godas.fcst
-module list
+case $FCSTMODEL in
+   "MOM6solo")
+      module purge
+      source $MOD_PATH/godas.main
+      module list
 
-#TODO: DATA defined multiple places...
-DATA=$RUNCDATE/fcst
-FORECAST_EXE=${ROOT_GODAS_DIR}/src/DATM-MOM6-CICE5.fd/NEMS/exe/nems_datm_mom6_cice5.x
+      cd $RUNCDATE
+      export OOPS_TRACE=0
 
-#TODO: This should be a configuration calculation/currently defined in multiple places 
-#for now all these values should be hardcoded, these are things that should be controld 
-#by global-workflow forecast anyways
-##ATMPETS=${ATMPETS:-"72"}   #Number of ATM Pets
-##OCNPETS=${OCNPETS:-"120"}  #number of ocean pets
-##ICEPETS=${ICEPETS:-"48"}   #number of ice pets
-##NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
+      #============================================
+      # Run mom6 only forecast
+      #============================================
+      if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
+      srun -n $NPE ${SOCA_EXEC}/soca_forecast.x ./yaml/forecast.yml
 
-NPE_FCST=${NTASKS_TOT:-240}
+      #============================================
+      # Move ocean and ice restarts to place holder for next cycle
+      #============================================
+      mv ./RESTART ../NEXT_IC
+      mv ./ANA/cice_bkg.nc ../NEXT_IC/ # Percistance for sea-ice
+      ;;
+   "MOM6CICE5")
+      module purge
+      source $MOD_PATH/godas.fcst
+      module list
+
+      #TODO: DATA defined multiple places...
+      DATA=$RUNCDATE/fcst
+      FORECAST_EXE=${ROOT_GODAS_DIR}/src/DATM-MOM6-CICE5.fd/NEMS/exe/nems_datm_mom6_cice5.x
+
+      #TODO: This should be a configuration calculation/currently defined in multiple places
+      #for now all these values should be hardcoded, these are things that should be controld
+      #by global-workflow forecast anyways
+      ##ATMPETS=${ATMPETS:-"72"}   #Number of ATM Pets
+      ##OCNPETS=${OCNPETS:-"120"}  #number of ocean pets
+      ##ICEPETS=${ICEPETS:-"48"}   #number of ice pets
+      ##NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
+
+      NPE_FCST=${NTASKS_TOT:-240}
 
 
-echo "Forecast Run Directory: $DATA" 
-echo "Forecast exe: $FORECAST_EXE"
-echo "Number of tasks: $NPE_FCST"
-echo "Run command: srun -n $NPE_FCST ${FORECAST_EXE}"
+      echo "Forecast Run Directory: $DATA"
+      echo "Forecast exe: $FORECAST_EXE"
+      echo "Number of tasks: $NPE_FCST"
+      echo "Run command: srun -n $NPE_FCST ${FORECAST_EXE}"
 
-cd $DATA
-srun -n $NPE_FCST ${FORECAST_EXE}
+      cd $DATA
+      srun -n $NPE_FCST ${FORECAST_EXE}
 
-echo "Finished forecast, now copy output using script: ${ROOT_GODAS_DIR}/scripts/post_forecast.sh"
-# Copy ICs for next cycle, copy output to save location, cleanup forecast directory 
-${ROOT_GODAS_DIR}/scripts/post_forecast.sh
+      echo "Finished forecast, now copy output using script: ${ROOT_GODAS_DIR}/scripts/post_forecast.sh"
+      # Copy ICs for next cycle, copy output to save location, cleanup forecast directory
+      ${ROOT_GODAS_DIR}/scripts/post_forecast.sh
 
-echo "End of Forecast for $CDATE" 
+      echo "End of Forecast for $CDATE"
+      ;;
+esac
