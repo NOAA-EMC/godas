@@ -5,7 +5,7 @@ cat <<EOF
 #================================================================================
 #================================================================================
 # JJOB_DA_PREP
-#   Prepare yaml files for SOCA applications 
+#   Prepare yaml files for SOCA applications
 #================================================================================
 #================================================================================
 EOF
@@ -14,7 +14,7 @@ module purge
 source $MOD_PATH/godas.main
 module list
 
-echo  
+echo
 echo "The system runs at $RUNCDATE"
 echo
 echo "Root GODAS " ${ROOT_GODAS_DIR}
@@ -25,8 +25,6 @@ mkdir -p $RUNCDATE
 
 cd $RUNCDATE
 
-# TODO: Hard-coded stuff that needs to be moved/changed
-export MODEL_SCRATCH=/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/${NI}x${NJ}x${NK}
 # TODO: Put the job files for the ensemble to a temporary job-dir
 
 cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
@@ -45,6 +43,17 @@ fi
 # Copy SOCA static files into RUNCDATE
 #---------------------------------------------------
 cp -r $SOCA_STATIC/* $RUNCDATE
+
+# Adjust date in input.nml
+cp $RUNCDATE/input-ymd.nml $RUNCDATE/input.nml
+YYYY=$(echo  $CDATE | cut -c1-4)
+MM=$(echo $CDATE | cut -c5-6)
+DD=$(echo   $CDATE | cut -c7-8)
+HH=$(echo  $CDATE | cut -c9-10)
+sed -i "s/YYYY/${YYYY}/g" $RUNCDATE/input.nml
+sed -i "s/MM/${MM}/g" $RUNCDATE/input.nml
+sed -i "s/DD/${DD}/g" $RUNCDATE/input.nml
+sed -i "s/HH/${HH}/g" $RUNCDATE/input.nml
 
 # Copy SOCA config files into RUNCDATE
 #----------------------------------------------------
@@ -65,15 +74,14 @@ fi
 echo "window_begin="$window_begin
 echo "window_length="$window_length
 echo "bkg_date="$bkg_date
-echo "MODEL_SCRATCH="$MODEL_SCRATCH
 
-## Prep yaml for bump correlation initialization 
+## Prep yaml for bump correlation initialization
 #-----------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/static_SocaError_init.yml  \
       -d ${bkg_date}
 
-## Prep yaml for bump localization initialization 
+## Prep yaml for bump localization initialization
 #------------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/parameters_bump_loc.yml    \
@@ -91,7 +99,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/forecast.yml               \
       -d ${bkg_date}
 
-## Prep yaml for the soca_enspert 
+## Prep yaml for the soca_enspert
 #-----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/genenspert.yml               \
@@ -102,7 +110,7 @@ ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -k NO_ENS_MBR                                \
       -v ${NO_ENS_MBR}
 
-## Prep yaml for the soca_enspert for envar 
+## Prep yaml for the soca_enspert for envar
 #--------------------------------------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/genenspert4envar.yml       \
@@ -118,13 +126,13 @@ ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -k WINDOW_LENGTH                             \
       -v ${window_length}
 
-# Prep yaml for 3dvar 
+# Prep yaml for 3dvar
 #-----------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
       -i $RUNCDATE/yaml/3dvar_godas.yml            \
       -d $RUNCDATE
 
-# Prep yaml for 3denvar 
+# Prep yaml for 3denvar
 #----------------------------------
 ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
       -i $RUNCDATE/yaml/3dhybenvar.yml            \
@@ -143,63 +151,86 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
 
 
 #----------------------------------
-if [ $DA_METHOD = 'letkf' ]; then 
+if [ $DA_METHOD = 'letkf' ]; then
    for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
-      
-      yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml 
+
+      yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml
       cp -r $RUNCDATE/yaml/hofx3d.yml ${yaml_tmp}
-   
+
       ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
          -i ${yaml_tmp}                               \
          -d ${RUNCDATE}                               \
          -n ${mbr}
-      
+
       jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
       cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
       sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
    done
 fi
 
-# TODO: Prep yaml for letkf 
+# TODO: Prep yaml for letkf
 #----------------------------------
+
+cat <<EOF
+#================================================================================
+#================================================================================
+#   Get background/initial conditions
+#================================================================================
+#================================================================================
+EOF
 
 # Get IC
 #-------
 # Check if there was a previous cycle
+# TODO: Split cases, mom6solo and mom6cice5
 if [ -d ../NEXT_IC ]; then
     # Get IC from previous cycle
-    cp ../NEXT_IC/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc  
+    case $FCSTMODEL in
+       "MOM6solo")
+           cp ../NEXT_IC/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+           ;;
+       "MOM6CICE5")
+           icerst=$(cat ../NEXT_IC/restart/ice.restart_file)
+           cp ../NEXT_IC/$icerst $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+           ;;
+    esac
     cp ../NEXT_IC/MOM*.nc $RUNCDATE/INPUT_MOM6/
 
     if [ -d ../NEXT_ENS ]; then
-	mv ../NEXT_ENS/* $RUNCDATE/Data/
+        mv ../NEXT_ENS/* $RUNCDATE/Data/
     fi
     rm -rf ../NEXT_ENS
     rm -rf ../NEXT_IC
-    exit 0
+else
+    # If this is the first cycle, continue below
+    # TODO: This is a hack ... in case you had not noticed!
+    #       Grab IC's from somewhere else ...
+    # Ocean bkg files
+    #----------------
+    case $FCSTMODEL in
+       "MOM6solo")
+           ln -sf $SOCA_STATIC/INPUT/MOM.res*.nc $RUNCDATE/INPUT_MOM6/
+
+           # Initial Ocean and Ice perturbations
+           #---------------------------------------------------
+           ln -sf $SOCA_STATIC/ens/*.nc $RUNCDATE/Data/
+
+           # Sea-ice bkg files
+           #------------------
+           cp $SOCA_STATIC/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+           ;;
+       "MOM6CICE5")
+           cp $RUNCDATE/fcst/INPUT/MOM*.nc $RUNCDATE/INPUT_MOM6/
+           icerst=$(cat $RUNCDATE/fcst/restart/ice.restart_file)
+           cp $RUNCDATE/fcst/$icerst $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+           ;;
+    esac
 fi
 
-# If this is the first cycle, continue below
-# TODO: This is a hack ... in case you had not noticed!
-# Ocean bkg files
-#----------------
-ln -sf $MODEL_SCRATCH/INPUT/MOM.res*.nc $RUNCDATE/INPUT_MOM6/
-
-# Initial Ocean and Ice perturbations
-#---------------------------------------------------
-ln -sf $MODEL_SCRATCH/ens/*.nc $RUNCDATE/Data/
-
-# Sea-ice bkg files
-#------------------
-if [ "${ICE_FMT}" = notfms ]; then
-    # Get bkg sea-ice file. TODO: HH IS HARDCODED!!!!
-    cp $MODEL_SCRATCH/restart/iced.2011-10-01-43200.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-    # Make cice_bkg.nc fms compliant
-    ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-    ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-    ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-    ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-fi
-if [ "${ICE_FMT}" = fms ]; then
-    cp $MODEL_SCRATCH/INPUT/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+# Make cice_bkg.nc fms compliant
+if [ $FCSTMODEL = 'MOM6CICE5' ]; then
+   ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+   ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+   ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+   ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
 fi

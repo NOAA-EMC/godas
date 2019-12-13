@@ -1,26 +1,22 @@
 #default DA model configuration settings
 #
 
-#--------------------------------------------------------------------------------
-## Data cycle / timeslots
-##
-## ENS_SIZE      : number of ensemble members
-## DA_MODE       : data assimilation mode: 
-##                 "none" = No DA (still does observation operator)
-##                 "ekf"  = LETKF only
-##                 "var"  = 3DVar only
-##                 "hyb"  = hybrid (LETKF followed by 3DVar)
-## DA_HYB_ALPHA  : amount of weight to give the variational da when doing hybrid.
-##                 has no effect otherwise.
-## DA_SLOT_LEN   : length (hours) of each observation operator slot.
-##                 (Currently only 24 hours is supported)
-## DA_WNDW_OFST  : length (hours) between start of forecast and start of DA window.
-##                 For an analysis time at the end of the window, this should be 0.
-##                 For analysis time in center of DA window, this should be CYCLE_LEN/2.
-##                 NOTE: currently only multiples of 24 hours supported.
-## DA_TS_ONLY    : if 1, only T/S fields are updated by the LETKF, otherwise
-##                 T/S/U/V will be updated. 3DVar ONLY updates T/S no matter what.
-##--------------------------------------------------------------------------------
+gridsize: !Select
+  select: !calc doc.settings.resolution
+  otherwise: !error "Resolution no implemented: {doc.settings.resolution}"
+  cases:
+    Ocean3deg:
+      NI: 72
+      NJ: 35
+      NK: 25
+    Ocean1deg:
+      NI: 360
+      NJ: 210
+      NK: 75
+    Ocean025deg:
+      NI: 1440
+      NJ: 1080
+      NK: 75
 
 da_settings_default: &da_settings_default
   ENS_SIZE:     1
@@ -33,9 +29,16 @@ da_settings_default: &da_settings_default
   NO_ENS_MBR: 15
   GROUPS: 3
   NMEM_PGRP: !calc ( NO_ENS_MBR // GROUPS )
+# Forecast model (options: MOM6solo, MOM6CICE5)
+#  FCSTMODEL: MOM6solo
 # Model resolution
-  NI: 360 #1440   
-  NJ: 210 #1080
-  NK: 75
-# Ice model file format
-  ICE_FMT: fms # notfms
+  NI: !calc doc.gridsize.NI
+  NJ: !calc doc.gridsize.NJ
+  NK: !calc doc.gridsize.NK
+# Observation
+  DA_SST: True
+  DA_TS: False
+  DA_ADT: False
+  DA_ICEC: False
+# Solver
+  NINNER: 2

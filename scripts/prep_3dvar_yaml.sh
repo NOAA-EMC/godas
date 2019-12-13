@@ -1,8 +1,8 @@
 #!/bin/bash -l
 #
-# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
-#                       Unix Script Documentation 
-# 
+# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * #
+#                       Unix Script Documentation
+#
 # Script Name        :
 #
 # Script Description :
@@ -13,7 +13,7 @@
 #
 # History Log        :
 #
-# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
+# * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * #
 # set -x
 
 echo '#=================================================================#'
@@ -34,6 +34,7 @@ cd ${RUNDIR}
 sed -i "s/WINDOW_BEGIN/${window_begin}/g" ${yamlfile}
 sed -i "s/WINDOW_LENGTH/${window_length}/g" ${yamlfile}
 sed -i "s/BKG_DATE/${bkg_date}/g" ${yamlfile}
+sed -i "s/NINNER/${NINNER}/g" ${yamlfile}
 #
 ## Setup Jo cost function
 ##-----------------------
@@ -45,4 +46,3 @@ ${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh \
 echo '#                                                                 #'
 echo '#                      prep_3dvar_yaml.sh ends                    #'
 echo '#=================================================================#'
- 
