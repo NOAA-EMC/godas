@@ -29,19 +29,19 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_DA_3DENVAR
 
-      #fcst_prep: !Task
-      #  <<: *shared_task_template
-      #  Trigger: !Depend da_3denvar_run
-      #  resources: !calc partition.resources.run_nothing
-      #  config: [ base ]
-      #  J_JOB: JJOB_FCST_PREP
+      fcst_prep: !Task
+        <<: *shared_task_template
+        Trigger: !Depend da_3dvar_run
+        resources: !calc partition.resources.run_fcst_prep
+        config: [ base ]
+        J_JOB: JJOB_FCST_PREP
 
-      #fcst_run: !Task
-      #  <<: *exclusive_task_template
-      #  Trigger: !Depend  fcst_prep
-      #  resources: !calc partition.resources.run_nothing
-      #  config: [ base ]
-      #  J_JOB: JJOB_FORECAST
+      fcst_run: !Task
+        <<: *exclusive_task_template
+        Trigger: !Depend  fcst_prep
+        resources: !calc partition.resources.run_fcst
+        config: [ base ]
+        J_JOB: JJOB_FORECAST
 
       post: !Task
         <<: *shared_task_template

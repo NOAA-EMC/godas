@@ -117,3 +117,41 @@ The workflow can interactively as shown at step 3. below or as cronjob.
 `PROJECT_DIR/workflowtest001/log/`
 1. The the setup files and outputs of the experiment are at
 `${RUNCDATE}` 
+
+# Configuration Options
+The user can change a limited set of parameters in the DA cases availabe under `.../cases/`. The yaml code snipet below shows the test example for the 3DVAR given in ./cases/3dvar.yaml
+
+``` yaml
+case:
+  settings:
+    SDATE: 2011-10-01t12:00:00   # Start Date of the experiment
+    EDATE: 2011-10-02t12:00:00   # End         "         "
+    godas_cyc: 1                 # selection of godas DA window: 1(default)- 24h; 
+                                 #                               2 - 12h; 
+                                 #                               4 - 6h
+                                 # NOTE: ONLY OPTION 1 IS CURRENTLY SUPPORTED.                                 
+    resolution: Ocean1deg        # Other options: Ocean3deg, Ocean025deg
+
+  da_settings:
+    FCSTMODEL: MOM6solo    # Specifies the forecast model, the other option is MOM6CICE5
+    NINNER: 5              # Number of inner iteration in conjugate gradient solver
+    # Observation switches
+    DA_SST: True    # Sea surface temperature
+    DA_TS: True     # T & S Insitu profiles 
+    DA_ADT: True    # Absolute dynamic topography
+    DA_ICEC: True   # Seaice fraction
+
+  places:
+    workflow_file: layout/3dvar_only.yaml
+```
+
+# Currently Supported Models/Resolutions/Da algorithms
+| Cases | Forecast | 3DVAR | 3DHyb-EnVAR | LETKF |
+| ------| :--------| :---- | :---------- |:----- |
+| 3&deg;| :heavy_check_mark:MOM6solo | :heavy_check_mark: MOM6solo | :heavy_check_mark:MOM6solo | :soon:MOM6solo |
+| 1&deg;| :heavy_check_mark:MOM6solo | :heavy_check_mark: MOM6solo | :heavy_check_mark:MOM6solo | :soon:MOM6solo |
+| 0.25&deg;| :x:MOM6solo <br/> :heavy_check_mark:M6-C5|:x:MOM6solo <br/> :heavy_check_mark: M6-C5 | :x:MOM6solo <br/> :soon:M6-C5 | :x:MOM6solo <br/> :soon:M6-C5 |
+
+:heavy_check_mark: Should work <br/>
+:x: No implementation planned <br/>
+:soon: Work in progress

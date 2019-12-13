@@ -9,16 +9,38 @@
 #        and batch system will fill in settings.
 #  a number = use this many threads per MPI rank
 
-godas_resource_table:
-#                ranks  ppn  wallclock              threads MB
-  r3dvar:       [  24,    24, !timedelta "00:10:00", 12,  "3072" ]
-  r3denvar:     [  80,   20, !timedelta "01:00:00", 12,  "3072" ]
-  da_prep:      [  1,      1, !timedelta "00:30:00", 1,   "3072" ]
-  obs_prep:     [  12,    12, !timedelta "00:10:00", 1,   "3072" ]
-  fcst_prep:    [   1,    1, !timedelta "00:20:00", 1,   "3072" ]
-  fcst_025:     [ 240,   40, !timedelta "00:30:00", 1,   "3072" ]
-  letkf_prep:   [  24,    24, !timedelta "00:10:00", 12,  "3072" ]
-
+godas_resource_table: !Select
+  select: !calc doc.settings.resolution
+  otherwise: !error "Resolution doesn't exist: {doc.settings.resolution}"
+  cases:
+    Ocean3deg:
+      #                ranks  ppn  wallclock             threads MB
+      r3dvar:       [  10,    40, !timedelta "00:30:00", 1,   "3072" ]
+      r3denvar:     [  10,    40, !timedelta "01:00:00", 1,   "3072" ]
+      da_prep:      [   1,     1, !timedelta "00:30:00", 1,   "3072" ]
+      obs_prep:     [  12,    12, !timedelta "00:10:00", 1,   "3072" ]
+      fcst_prep:    [   1,     1, !timedelta "00:20:00", 1,   "3072" ]
+      fcst:         [  10,    40, !timedelta "00:30:00", 1,   "3072" ]
+      letkf_prep:   [  12,    24, !timedelta "00:10:00", 12,  "3072" ]
+    Ocean1deg:
+      #                ranks  ppn  wallclock             threads MB
+      r3dvar:       [  24,    40, !timedelta "00:10:00", 1,   "3072" ]
+      r3denvar:     [  80,    40, !timedelta "01:00:00", 1,   "3072" ]
+      da_prep:      [   1,     1, !timedelta "00:30:00", 1,   "3072" ]
+      obs_prep:     [  12,    12, !timedelta "00:10:00", 1,   "3072" ]
+      fcst_prep:    [   1,     1, !timedelta "00:20:00", 1,   "3072" ]
+      fcst:         [  24,    40, !timedelta "00:30:00", 1,   "3072" ]
+      letkf_prep:   [  24,    24, !timedelta "00:10:00", 12,  "3072" ]
+    Ocean025deg:
+      #                ranks  ppn  wallclock             threads MB
+      r3dvar:       [  400,   40, !timedelta "01:30:00", 1,   "3072" ]
+      r3denvar:     [  240,   40, !timedelta "01:00:00", 1,   "3072" ]
+      da_prep:      [    1,    1, !timedelta "00:30:00", 1,   "3072" ]
+      obs_prep:     [   12,   12, !timedelta "00:10:00", 1,   "3072" ]
+      fcst_prep:    [    1,    1, !timedelta "00:20:00", 1,   "3072" ]
+      fcst:         [  240,   40, !timedelta "01:00:00", 1,   "3072" ]
+      letkf_prep:   [   24,   24, !timedelta "00:10:00", 12,  "3072" ]
+        
 default_resources: &default_resources
 
   run_nothing: !JobRequest # Special placeholder for "do nothing"
@@ -51,10 +73,10 @@ default_resources: &default_resources
       max_ppn: !calc doc.godas_resource_table.fcst_prep[1]
 
   run_fcst: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.fcst_025[4]
-      mpi_ranks: !calc doc.godas_resource_table.fcst_025[0]
-      walltime: !calc doc.godas_resource_table.fcst_025[2]
-      max_ppn: !calc doc.godas_resource_table.fcst_025[1]
+    - batch_memory: !calc doc.godas_resource_table.fcst[4]
+      mpi_ranks: !calc doc.godas_resource_table.fcst[0]
+      walltime: !calc doc.godas_resource_table.fcst[2]
+      max_ppn: !calc doc.godas_resource_table.fcst[1]
 
   run_3denvar: !JobRequest
     - batch_memory: !calc doc.godas_resource_table.r3denvar[4]
