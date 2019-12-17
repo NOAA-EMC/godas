@@ -112,6 +112,19 @@ The workflow can interactively as shown at step 3. below or as cronjob.
    `python rocoto_viewer.py -w workflow.xml -d workflow.db`
 5. Repeat step 4 until all jobs are completed. 
 
+# Updating resource settings of the workflow
+resource_sum.yaml inside EXPDIR serves as a central place of resource settings. Changing the values(PET count, wall time) inside it and rerun CROW with the -f option could change the resource setting for this experiment.
+
+./setup_case.sh -p HERA ../cases/3dvar.yaml test3dv
+./make_rocoto_xml_for.sh /scratch1/NCEPDEV/global/Jian.Kuang/expdir/test3dvar
+
+There will be a resource_sum.yaml in EXPDIR named test3dv. Changing resource allocation values (time, npe) there and redo CROW:
+
+./setup_case.sh -p HERA -f ../cases/3dvar.yaml test3dv
+./make_rocoto_xml_for.sh /scratch1/NCEPDEV/global/Jian.Kuang/expdir/test3dvar
+
+You could see the resources being updated in workflow.xml as well as config files.
+
 # Check the run and the results
 0. The log files of your experiment are at 
 `PROJECT_DIR/workflowtest001/log/`

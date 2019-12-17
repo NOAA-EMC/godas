@@ -49,28 +49,28 @@ default_resources: &default_resources
       walltime: !timedelta "00:10:00"
 
   run_obs_prep: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.obs_prep[4]
-      mpi_ranks: !calc doc.godas_resource_table.obs_prep[0]
-      walltime: !calc doc.godas_resource_table.obs_prep[2]
-      max_ppn: !calc doc.godas_resource_table.obs_prep[1]
+    - batch_memory: !icalc doc.godas_resource_table.obs_prep[4]
+      mpi_ranks: !icalc doc.godas_resource_table.obs_prep[0]
+      walltime: !icalc doc.godas_resource_table.obs_prep[2]
+      max_ppn: !icalc doc.godas_resource_table.obs_prep[1]
 
   run_da_prep: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.da_prep[4]
-      mpi_ranks: !calc doc.godas_resource_table.da_prep[0]
-      walltime: !calc doc.godas_resource_table.da_prep[2]
-      max_ppn: !calc doc.godas_resource_table.da_prep[1]
+    - batch_memory: !icalc doc.godas_resource_table.da_prep[4]
+      mpi_ranks: !icalc doc.godas_resource_table.da_prep[0]
+      walltime: !icalc doc.godas_resource_table.da_prep[2]
+      max_ppn: !icalc doc.godas_resource_table.da_prep[1]
   
   run_3dvar: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.r3dvar[4]
-      mpi_ranks: !calc doc.godas_resource_table.r3dvar[0]
-      walltime: !calc doc.godas_resource_table.r3dvar[2]
-      max_ppn: !calc doc.godas_resource_table.r3dvar[1]
+    - batch_memory: !icalc doc.godas_resource_table.r3dvar[4]
+      mpi_ranks: !icalc doc.godas_resource_table.r3dvar[0]
+      walltime: !icalc doc.godas_resource_table.r3dvar[2]
+      max_ppn: !icalc doc.godas_resource_table.r3dvar[1]
 
   run_fcst_prep: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.fcst_prep[4]
-      mpi_ranks: !calc doc.godas_resource_table.fcst_prep[0]
-      walltime: !calc doc.godas_resource_table.fcst_prep[2]
-      max_ppn: !calc doc.godas_resource_table.fcst_prep[1]
+    - batch_memory: !icalc doc.godas_resource_table.fcst_prep[4]
+      mpi_ranks: !icalc doc.godas_resource_table.fcst_prep[0]
+      walltime: !icalc doc.godas_resource_table.fcst_prep[2]
+      max_ppn: !icalc doc.godas_resource_table.fcst_prep[1]
 
   run_fcst: !JobRequest
     - batch_memory: !calc doc.godas_resource_table.fcst[4]
@@ -79,13 +79,13 @@ default_resources: &default_resources
       max_ppn: !calc doc.godas_resource_table.fcst[1]
 
   run_3denvar: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.r3denvar[4]
-      mpi_ranks: !calc doc.godas_resource_table.r3denvar[0]
-      walltime: !calc doc.godas_resource_table.r3denvar[2]
-      max_ppn: !calc doc.godas_resource_table.r3denvar[1]
+    - batch_memory: !icalc doc.godas_resource_table.r3denvar[4]
+      mpi_ranks: !icalc doc.godas_resource_table.r3denvar[0]
+      walltime: !icalc doc.godas_resource_table.r3denvar[2]
+      max_ppn: !icalc doc.godas_resource_table.r3denvar[1]
 
   run_letkf_prep: !JobRequest
-    - batch_memory: !calc doc.godas_resource_table.letkf_prep[4]
-      mpi_ranks: !calc doc.godas_resource_table.letkf_prep[0]
-      walltime: !calc doc.godas_resource_table.letkf_prep[2]
-      max_ppn: !calc doc.godas_resource_table.letkf_prep[1]
+    - batch_memory: !icalc doc.godas_resource_table.letkf_prep[4]
+      mpi_ranks: !icalc doc.godas_resource_table.letkf_prep[0]
+      walltime: !icalc doc.godas_resource_table.letkf_prep[2]
+      max_ppn: !icalc doc.godas_resource_table.letkf_prep[1]
