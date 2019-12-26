@@ -1,7 +1,7 @@
 case:
   settings:
     SDATE: 2011-10-01t12:00:00
-    EDATE: 2011-10-02t12:00:00
+    EDATE: 2011-10-01t12:00:00
     godas_cyc: 1 # selection of godas cycle: 1(default)- 24h; 2 - 12h; 4 - 6h
 
   da_settings:
