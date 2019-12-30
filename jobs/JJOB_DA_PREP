@@ -144,6 +144,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
 
 #----------------------------------
 if [ $DA_METHOD = 'letkf' ]; then 
+# Prepare the hofx yml files for each member   
    for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
       
       yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml 
@@ -154,10 +155,16 @@ if [ $DA_METHOD = 'letkf' ]; then
          -d ${RUNCDATE}                               \
          -n ${mbr} 
    done
-fi
 
-# TODO: Prep yaml for letkf 
-#----------------------------------
+# Create the path to run the letkf
+   mkdir -p $RUNCDATE/Data/letkf
+
+# Prep yaml for letkf
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/letkf.yml                  \
+      -k NO_ENS_MBR                                \
+      -v ${NO_ENS_MBR}
+fi
 
 # Get IC
 #-------
