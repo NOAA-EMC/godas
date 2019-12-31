@@ -24,4 +24,10 @@ EOF
 
 srun -n $NPE ${SOCA_EXEC}/letkfdriver ./yaml/letkf.yml
 
+cat <<EOF
+#============================================
+# Run Recenter
+#============================================
+EOF
 
+srun -n $NPE ${SOCA_EXEC}/soca_ensrecenter.x ./yaml/ensrecenter.yml
