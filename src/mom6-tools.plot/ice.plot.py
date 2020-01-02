@@ -1,5 +1,5 @@
 import os, sys
-file_path = '/scratch2/NCEPDEV/marine/Jong.Kim/mom6-tools/mom6_tools'
+file_path = '/scratch2/NCEPDEV/marineda/common/mom6-tools/mom6_tools'
 sys.path.append(os.path.dirname(file_path))
 
 from pathlib import Path
@@ -27,7 +27,6 @@ case_name = 'cic.socagodas.an.2011-10-01~09'
  
 year_start = 1
 year_end = 1
-variables = ['hice']
 author = 'Jong Kim (jong.kim@noaa.gov)'
 
 grd= MOM6grid(args.grid)

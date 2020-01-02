@@ -20,7 +20,7 @@ python sfc.plot.py -grid ocean_geometry.nc -data ocn_2012_01_*_03.nc
 
 -data file: SSH and SST variables are used to make surface plots.
 
-python sfc.time.py -grid ocean_geometry.nc -data ocn_2012_01_*_03.nc
+python sfc.time.plot.py -grid ocean_geometry.nc -data ocn_2012_01_*_03.nc
 
 -grid file: geometry input file should contain geolon and geolat variables.
 
