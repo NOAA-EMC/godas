@@ -1,6 +1,6 @@
-0-1. This directory contains python plotting scripts based mom6-tools. Local cartopy shapefiles are needed in user's own home/.local directory.
+0-1. This directory contains python plotting scripts based on mom6-tools. Local cartopy shapefiles are needed in user's own /home/First.LastNames/.local directory.
 
-If .local/share/cartopy directory does not exist, create one: /home/First.LastNames/.local/share/cartopy/shapefiles/natural_earth/physical
+If /home/First.LastNames/.local/share/cartopy/shapefiles/natural_earth/physical directory does not exist, create one.
 
 mkdir -p /home/First.LastNames/.local/share/cartopy/shapefiles/natural_earth/physical
 
