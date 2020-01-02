@@ -8,20 +8,20 @@ cp /home/Jong.Kim/.local/share/cartopy/shapefiles/natural_earth/physical/* /home
 
 0-2. Python scripts require two input arguments: grid and data file names. Multiple data files can be used with wildcard (*). Examples are:
 
-python -grid ocean_geometry.nc -data cic.socagodas.an.2011-10-*T12:00:00Z.nc 
+python ice.plot.py -grid ocean_geometry.nc -data cic.socagodas.an.2011-10-*T12:00:00Z.nc 
 
--grid file: geolon and geolat are expected in geometry input file.
+-grid file: geometry input file should contain geolon and geolat variables.
 
 -data file: aice and hice variables are used to make hemispheric plots.
 
 python sfc.plot.py -grid ocean_geometry.nc -data ocn_2012_01_*_03.nc
 
--grid file: geolon and geolat are expected in geometry input file.
+-grid file: geometry input file should contain geolon and geolat variables.
 
 -data file: SSH and SST variables are used to make surface plots.
 
 python sfc.time.py -grid ocean_geometry.nc -data ocn_2012_01_*_03.nc
 
--grid file: geolon and geolat are expected in geometry input file.
+-grid file: geometry input file should contain geolon and geolat variables.
 
 -data file: SSH and SST variables are used to make average surface and time-varying statistics plots.
