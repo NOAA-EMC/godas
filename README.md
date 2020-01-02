@@ -169,4 +169,6 @@ case:
 :x: No implementation planned <br/>
 :soon: Work in progress
 
-# Post-processing plotting option will be included in workflow soon: in the meantime, mom6-tools python scripts can be utilized to make plots of diagnostic model outputs: see the instruction [here](./src/mom6-tools.plot/README.md).
+# Post-processing plotting options
+
+0. Not included in workflow yet, but mom6-tools-based python scripts are available to make plots of model diagnostic output files: see the instruction [here](./src/mom6-tools.plot/README.md).
