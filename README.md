@@ -10,8 +10,11 @@ During this process, three directories will be created:
 - RUNCDATE     : The directory where the system runs, optionally defined by the user.
 
 # Clone godas
-0. `set CLONE_DIR=PATH/OF/YOUR/CHOICE`
+0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE`
 1. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
+
+   If automatic syetem build/test is prepfered, see the instruction [here](./test/README.md). Otherwise, steps to manually set up the godas system and test cases are as follows:
+
 2. `cd $CLONE_DIR`
 3. `git submodule update --init --recursive`
 
@@ -24,7 +27,6 @@ During this process, three directories will be created:
 
 # Clone the soca-bundle (bundle of repositories necessary to build soca) and build soca
 
-0. `git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle`
 1. Create the build directory for SOCA
    `mkdir -p $CLONE_DIR/build` \
    `cd $CLONE_DIR/build`
@@ -46,7 +48,6 @@ During this process, three directories will be created:
 
 # Clone and build the UMD-LETKF
  
-0. `git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git $CLONE_DIR/src/letkf`  
 1. `cd $CLONE_DIR/src/letkf`  
 2. `git submodule update --init --recursive`   
 3. `mkdir -p $CLONE_DIR/build/letkf`
@@ -111,8 +112,59 @@ The workflow can interactively as shown at step 3. below or as cronjob.
    `python rocoto_viewer.py -w workflow.xml -d workflow.db`
 5. Repeat step 4 until all jobs are completed. 
 
+# Updating resource settings of the workflow
+resource_sum.yaml inside EXPDIR serves as a central place of resource settings. Changing the values(PET count, wall time) inside it and rerun CROW with the -f option could change the resource setting for this experiment.
+
+./setup_case.sh -p HERA ../cases/3dvar.yaml test3dv
+./make_rocoto_xml_for.sh /scratch1/NCEPDEV/global/Jian.Kuang/expdir/test3dvar
+
+There will be a resource_sum.yaml in EXPDIR named test3dv. Changing resource allocation values (time, npe) there and redo CROW:
+
+./setup_case.sh -p HERA -f ../cases/3dvar.yaml test3dv
+./make_rocoto_xml_for.sh /scratch1/NCEPDEV/global/Jian.Kuang/expdir/test3dvar
+
+You could see the resources being updated in workflow.xml as well as config files.
+
 # Check the run and the results
 0. The log files of your experiment are at 
 `PROJECT_DIR/workflowtest001/log/`
 1. The the setup files and outputs of the experiment are at
 `${RUNCDATE}` 
+
+# Configuration Options
+The user can change a limited set of parameters in the DA cases availabe under `.../cases/`. The yaml code snipet below shows the test example for the 3DVAR given in ./cases/3dvar.yaml
+
+``` yaml
+case:
+  settings:
+    SDATE: 2011-10-01t12:00:00   # Start Date of the experiment
+    EDATE: 2011-10-02t12:00:00   # End         "         "
+    godas_cyc: 1                 # selection of godas DA window: 1(default)- 24h; 
+                                 #                               2 - 12h; 
+                                 #                               4 - 6h
+                                 # NOTE: ONLY OPTION 1 IS CURRENTLY SUPPORTED.                                 
+    resolution: Ocean1deg        # Other options: Ocean3deg, Ocean025deg
+
+  da_settings:
+    FCSTMODEL: MOM6solo    # Specifies the forecast model, the other option is MOM6CICE5
+    NINNER: 5              # Number of inner iteration in conjugate gradient solver
+    # Observation switches
+    DA_SST: True    # Sea surface temperature
+    DA_TS: True     # T & S Insitu profiles 
+    DA_ADT: True    # Absolute dynamic topography
+    DA_ICEC: True   # Seaice fraction
+
+  places:
+    workflow_file: layout/3dvar_only.yaml
+```
+
+# Currently Supported Models/Resolutions/Da algorithms
+| Cases | Forecast | 3DVAR | 3DHyb-EnVAR | LETKF |
+| ------| :--------| :---- | :---------- |:----- |
+| 3&deg;| :heavy_check_mark:MOM6solo | :heavy_check_mark: MOM6solo | :heavy_check_mark:MOM6solo | :soon:MOM6solo |
+| 1&deg;| :heavy_check_mark:MOM6solo | :heavy_check_mark: MOM6solo | :heavy_check_mark:MOM6solo | :soon:MOM6solo |
+| 0.25&deg;| :x:MOM6solo <br/> :heavy_check_mark:M6-C5|:x:MOM6solo <br/> :heavy_check_mark: M6-C5 | :x:MOM6solo <br/> :soon:M6-C5 | :x:MOM6solo <br/> :soon:M6-C5 |
+
+:heavy_check_mark: Should work <br/>
+:x: No implementation planned <br/>
+:soon: Work in progress

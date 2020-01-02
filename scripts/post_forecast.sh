@@ -1,7 +1,7 @@
 #! /bin/sh
 
 
-echo "Entering post run forecast script" 
+echo "Entering post run forecast script"
 
 
 ######################################################################
@@ -18,14 +18,14 @@ DATA=${RUNCDATE}/fcst
 
 mkdir -p $RUNCDATE/../NEXT_IC/restart
 
-echo "Forecast Run Dir is: $DATA" 
+echo "Forecast Run Dir is: $DATA"
 echo "NEXT_IC dir is: $RUNCDATE/../NEXT_IC"
-  
+
 echo "Copy restarts for ice"
 cp $DATA/restart/*  $RUNCDATE/../NEXT_IC/restart/
-echo "Copy mediator restarts" 
+echo "Copy mediator restarts"
 cp $DATA/mediator_* $RUNCDATE/../NEXT_IC/
-echo "Copy MOM6 Restarts" 
+echo "Copy MOM6 Restarts"
 cp $DATA/MOM6_RESTART/* $RUNCDATE/../NEXT_IC/
 
 
@@ -43,7 +43,7 @@ cp $DATA/MOM6_RESTART/* $RUNCDATE/../NEXT_IC/
 # Copy Output:                                                       #
 ######################################################################
 ######################################################################
-#TODO: Where do we store output we want to keep... 
+#TODO: Where do we store output we want to keep...
 
 #  #MOM6 output:
 #  mkdir -p  $ROTDIR/$CDUMP.$PDY/$cyc/MOM6_OUTPUT
@@ -62,7 +62,5 @@ cp $DATA/MOM6_RESTART/* $RUNCDATE/../NEXT_IC/
 ######################################################################
 ######################################################################
 
-#TODO: 
+#TODO:
 #After moving output to other dir, remove $DATA dir
-
-
