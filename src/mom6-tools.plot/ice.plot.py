@@ -13,6 +13,8 @@ import argparse
 import cmocean
 import cartopy.crs as ccrs
 import cartopy.feature
+cartopy.config['data_dir']='/scratch2/NCEPDEV/marineda/common/cartopy/'
+cartopy.config['pre_existing_data_dir']='/scratch2/NCEPDEV/marineda/common/cartopy/'
 
 # required arg
 parser = argparse.ArgumentParser()

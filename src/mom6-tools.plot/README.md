@@ -1,10 +1,4 @@
-0-1. This directory contains python plotting scripts based on mom6-tools. Local cartopy shapefiles are needed in user's own /home/First.LastNames/.local directory.
-
-If /home/First.LastNames/.local/share/cartopy/shapefiles/natural_earth/physical directory does not exist, create one.
-
-mkdir -p /home/First.LastNames/.local/share/cartopy/shapefiles/natural_earth/physical
-
-cp /home/Jong.Kim/.local/share/cartopy/shapefiles/natural_earth/physical/* /home/First.LastNames/.local/share/cartopy/shapefiles/natural_earth/physical/*
+0-1. This directory contains python plotting scripts based on mom6-tools with local cartopy shapefiles in /scratch2/NCEPDEV/marineda/common/cartopy.
 
 0-2. Python scripts require two input arguments: grid and data file names. Multiple data files can be used with wildcard (*). Examples are:
 
