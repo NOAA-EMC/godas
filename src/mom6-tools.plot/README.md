@@ -19,3 +19,5 @@ python sfc.time.plot.py -grid ocean_geometry.nc -data ocn_2012_01_*_03.nc
 -grid file: geometry input file should contain geolon and geolat variables.
 
 -data file: SSH and SST variables are used to make average surface and time-varying statistics plots.
+
+Output of png files: scripts save png figure files along with data files. Time average and time-varying statistics figures will be saved in time_mean sub-directory.
