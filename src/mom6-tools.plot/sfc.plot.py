@@ -16,12 +16,17 @@ class args:
 # required arg
 parser = argparse.ArgumentParser()
 parser.add_argument('-grid', required=True, help='grid/geometry filename: ocean_geometry.nc')
-#parser.add_argument('-data', required=True)               
 parser.add_argument('-data', nargs='*', type=str, required=True, help='diag data filename(s): ocn_*.nc')
+parser.add_argument('-figs_path',help='path to save png files: ./fcst')
 args = parser.parse_args()
 
 print(f'Loading grid... {args.grid}')
 print(f'Loading data... {args.data}')
+
+if args.figs_path is None:
+    print('Creating figures in -data directory ...')
+else:
+    if not os.path.isdir(args.figs_path): os.makedirs(args.figs_path)
 
 grd= MOM6grid(args.grid)
 grd.area_t=grd.Ah
@@ -32,12 +37,12 @@ clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]
 for filename in args.data:
     nc = xr.open_mfdataset(filename , decode_times=False)
     path_ = Path(filename)
-    sst_fig = str(path_.parent.joinpath(path_.stem + '_SST.png'))
-    ssh_fig = str(path_.parent.joinpath(path_.stem + '_SSH.png'))
-
-    path_ = Path(filename)
-    file_sst = str(path_.parent.joinpath(path_.stem + '_sstpng'))
-    file_ssh = str(path_.parent.joinpath(path_.stem + '_ssh.png'))
+    if args.figs_path is None:
+      sst_fig = str(path_.parent.joinpath(path_.stem + '_SST.png'))
+      ssh_fig = str(path_.parent.joinpath(path_.stem + '_SSH.png'))
+    else:
+      sst_fig = str(args.figs_path+'/'+path_.stem + '_SST.png')
+      ssh_fig = str(args.figs_path+'/'+path_.stem + '_SSH.png')
 
     title_sst='SST:'+str(path_.parent.joinpath(path_.stem))
     title_ssh='SSH:'+str(path_.parent.joinpath(path_.stem))

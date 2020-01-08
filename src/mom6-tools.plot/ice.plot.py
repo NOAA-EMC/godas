@@ -20,45 +20,58 @@ cartopy.config['pre_existing_data_dir']='/scratch2/NCEPDEV/marineda/common/carto
 parser = argparse.ArgumentParser()
 parser.add_argument('-grid', required=True, help='grid/geometry filename: ocean_geometry.nc')
 parser.add_argument('-data', nargs='*', type=str, required=True, help='diag data filename(s): ocn_*.nc')
+parser.add_argument('-figs_path',help='path to save png files: ./history')
+parser.add_argument('-var',nargs='*',help='variable names to plot: hice aice or hi_h aice_h')
 args = parser.parse_args()
 
 print(f'Loading grid... {args.grid}')
 print(f'Loading data... {args.data}')
- 
-case_name = 'cic.socagodas.an.2011-10-01~09'
+
+if args.figs_path is None:
+    print('Creating figures in -data directory ...')
+else:
+    if not os.path.isdir(args.figs_path): os.makedirs(args.figs_path)
+
+case_name = ''
  
 year_start = 1
 year_end = 1
 author = 'Jong Kim (jong.kim@noaa.gov)'
 
-grd= MOM6grid(args.grid)
-grd.area_t=grd.Ah
-
 clim_hice=[0, 0.5, 1.0, 1.5, 2.0, 2.5, 3, 3.5, 4.0, 5.0, 6, 9, 12, 15]
 clim_aice=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+if args.var is None:
+    vars_ = ['hice', 'aice']
+else:
+    vars_ = args.var
+
+grd= MOM6grid(args.grid)
+grd.area_t= grd.Ah
+
 clmap_=cmocean.cm.ice
 
 for filename in args.data:
     nc = xr.open_mfdataset(filename, decode_times=False)
-    hice = np.ma.masked_invalid(nc['hice'].data)
-    hice_sh = np.ma.masked_where(grd.geolat > 0., hice[0,:,:])
-    hice_nh = np.ma.masked_where(grd.geolat < 0., hice[0,:,:])    
-    aice = np.ma.masked_invalid(nc['aice'].data)
-    aice_sh = np.ma.masked_where(grd.geolat > 0., aice[0,:,:])
-    aice_nh = np.ma.masked_where(grd.geolat < 0., aice[0,:,:])
+    for var in vars_:
+        ice = np.ma.masked_invalid(nc[var].data)
+        ice_sh = np.ma.masked_where(grd.geolat > 0., ice[0,:,:])
+        ice_nh = np.ma.masked_where(grd.geolat < 0., ice[0,:,:])    
 
-    path_ = Path(filename)
-    file_hice_nh = str(path_.parent.joinpath(path_.stem + '_hice_nh.png'))
-    file_hice_sh = str(path_.parent.joinpath(path_.stem + '_hice_sh.png'))
-    file_aice_nh = str(path_.parent.joinpath(path_.stem + '_aice_nh.png'))
-    file_aice_sh = str(path_.parent.joinpath(path_.stem + '_aice_sh.png'))
+        path_ = Path(filename)
+        if args.figs_path is None:
+            file_ice_nh = str(path_.parent.joinpath(path_.stem + '_'+var+'_nh.png'))
+            file_ice_sh = str(path_.parent.joinpath(path_.stem + '_'+var+'_sh.png'))
+        else:
+            file_ice_nh = str(args.figs_path+'/'+path_.stem + '_'+var+'_nh.png')
+            file_ice_sh = str(args.figs_path+'/'+path_.stem + '_'+var+'_sh.png')
 
-    title_hice='hice:'+str(path_.parent.joinpath(path_.stem))
-    title_aice='aice:'+str(path_.parent.joinpath(path_.stem))
+        title_ice=var+':'+str(path_.parent.joinpath(path_.stem))
 
-    polarplot(hice_sh, grd, proj='SP', title=title_hice, debug=True, clim=clim_hice, colormap=clmap_,save=file_hice_sh)
-    polarplot(hice_nh, grd, proj='NP', title=title_hice, debug=True, clim=clim_hice, colormap=clmap_,save=file_hice_nh)
-    polarplot(aice_sh, grd, proj='SP', title=title_aice, debug=True, clim=clim_aice, colormap=clmap_,save=file_aice_sh)
-    polarplot(aice_nh, grd, proj='NP', title=title_aice, debug=True, clim=clim_aice, colormap=clmap_,save=file_aice_nh)
+        if var == 'hice' or var == 'hi_h': clim_ = clim_hice
+        if var == 'aice' or var == 'aice_h': clim_ = clim_aice
+
+        polarplot(ice_sh, grd, proj='SP', title=title_ice, debug=True, clim=clim_, colormap=clmap_,save=file_ice_sh)
+        polarplot(ice_nh, grd, proj='NP', title=title_ice, debug=True, clim=clim_, colormap=clmap_,save=file_ice_nh)
 
 

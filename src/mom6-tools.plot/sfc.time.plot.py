@@ -34,8 +34,9 @@ if __name__ == "__main__":
 
   # required arg  
   parser = argparse.ArgumentParser()
-  parser.add_argument('-grid', required=True)
-  parser.add_argument('-data', nargs='*', type=str, required=True)
+  parser.add_argument('-grid', required=True, help='grid/geometry filename: ocean_geometry.nc')
+  parser.add_argument('-data', nargs='*', type=str, required=True, help='diag data filenames: ocn_*.nc')
+  parser.add_argument('-figs_path',help='path to save png files: ../time_mean')
   args = parser.parse_args()
 
   print(f'Loading grid... {args.grid}')
@@ -78,10 +79,12 @@ if __name__ == "__main__":
   grd.area_t=grd.Ah
 
   # set data and fig file path 
-  head, tail = os.path.split(args.data[0])
-  save_path = str(head + '/time_mean')
-  if not os.path.isdir(save_path): os.makedirs(save_path)
-  args.savefigs_path = save_path
+  if args.figs_path is None:
+     head, tail = os.path.split(args.data[0])
+     save_path = str(head + '/time_mean')
+     args.figs_path = save_path
+
+  if not os.path.isdir(args.figs_path): os.makedirs(args.figs_path)
 
   # set external time stamp from data filename
   for filename in args.data:
