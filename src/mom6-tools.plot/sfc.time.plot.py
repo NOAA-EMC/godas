@@ -11,21 +11,36 @@ import datetime
 import re
 import warnings
 
-def get_ocn_hours(filename,ref_date):
-  ymd  = re.search(r'\d{4}_\d{2}_\d{2}', filename)
+def date_parse(filename):
   ymdh = re.search(r'\d{4}_\d{2}_\d{2}_\d{2}', filename)
+  if not (ymdh is None):
+    ymdh_= format(ymdh.group(0))
+    ymd_dform = ymdh_.replace('_', "-")
+    hr = ymd_dform[-2:]
+    ymd_dform = ymd_dform[:-3]
+    tdate = datetime.datetime.strptime(ymd_dform+' '+hr+':00','%Y-%m-%d %H:%M')
+    return tdate
 
-  ymd_=format(ymd.group(0))
-  ymd_dform=ymd_.replace('_', "-")
+  ymdh = re.search(r'\d{4}_\d{2}_\d{2}', filename)
+  if not (ymdh is None):
+    ymdh_=format(ymdh.group(0))
+    ymd_dform=ymdh_.replace('_', "-")
+    tdate=datetime.datetime.strptime(ymd_dform+' 00:00','%Y-%m-%d %H:%M')
+    return tdate
 
-  ymdh_=format(ymdh.group(0))
-  hour_=ymdh_.replace(ymd_+'_', "")
+  ymdh = re.search(r'\d{4}-\d{2}-\d{2}-\d{2}', filename)
+  if not (ymdh is None):
+    ymdh_= format(ymdh.group(0))
+    hr = ymdh_[-2:]
+    ymdh_ = ymd_dform[:-3]
+    tdate = datetime.datetime.strptime(ymdh_+' '+hr+':00','%Y-%m-%d %H:%M')
+    return tdate
 
-  dateform=datetime.datetime.strptime(ymd_dform+' 00:00','%Y-%m-%d %H:%M').date()
-  delta = dateform - ref_date
-  filename_hours= delta.days*24+int(hour_)
-
-  return filename_hours
+  ymdh = re.search(r'\d{4}-\d{2}-\d{2}', filename)
+  if not (ymdh is None):
+    ymdh_=format(ymdh.group(0))
+    tdate=datetime.datetime.strptime(ymdh_+' 00:00','%Y-%m-%d %H:%M')
+    return tdate
 
 if __name__ == "__main__":
   warnings.filterwarnings("ignore")
@@ -42,18 +57,17 @@ if __name__ == "__main__":
   print(f'Loading grid... {args.grid}')
   print(f'Loading data... {args.data}')
 
+#  print(parse( args.data[0], tzinfo=tzutc() ))
+#  parse('2018-04-29T17:45:25Z')
   # case name
   case_name = ''
 
   # initial and final years for computing time mean
-  nc = xr.open_mfdataset(args.data[0], decode_times=False)
-  year_start=nc['time'].values
-  nc = xr.open_mfdataset(args.data[len(args.data)-1], decode_times=False)
-  year_end=nc['time'].values
+  t_start = date_parse(args.data[0])
+  t_end   = date_parse(args.data[len(args.data)-1])
 
   # set ref date and time xlabel
-  ref_date='2011-10-01 00:00'
-  xlabel  ='hours since '+ref_date
+  xlabel   ='days since '+str(t_start.strftime('%Y-%m-%d %H'))
  
   # variables to be processed
   variables = ['SST','SSH']
@@ -64,19 +78,19 @@ if __name__ == "__main__":
 
   # set args to be use in making plots
   args.infile = args.data
-  args.year_start = year_start
-  args.year_end = year_end
+  args.year_start = 0.
+  args.year_end = (t_end-t_start).total_seconds()/3600/24
   args.case_name = case_name
   args.variables = variables
   args.xlabel = xlabel
   args.savefigs = True
   args.time_series = True
   args.filename_times = []
-  args.ref_date = datetime.datetime.strptime(ref_date,'%Y-%m-%d %H:%M').date()
+  args.file_ext = str(t_start.strftime('%Y-%m-%d_%H')+'-'+t_end.strftime('%Y-%m-%d_%H'))
 
   # load mom6 grid
   grd = MOM6grid(args.grid)
-  grd.area_t=grd.Ah
+  grd.area_t = grd.Ah
 
   # set data and fig file path 
   if args.figs_path is None:
@@ -88,8 +102,8 @@ if __name__ == "__main__":
 
   # set external time stamp from data filename
   for filename in args.data:
-    filename_hours = get_ocn_hours(filename, args.ref_date)
-    args.filename_times.append(filename_hours)
+    t_time = date_parse(filename)
+    args.filename_times.append((t_time-t_start).total_seconds()/3600/24)
 
   # do time mean plots
   time_mean_latlon(args,grd)
