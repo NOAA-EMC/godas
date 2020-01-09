@@ -37,8 +37,8 @@ MEMBER_NO=1
 while [[ $MEMBER_NO -le $mbr ]]
 do
    echo "- <<: *_file"  >> recenter_members
-   echo "   ocn_filename: ./Data/ocn.pert.ens."$MEMBER_NO".nc" &>> recenter_members
-   echo "   ice_filename: ./Data/ice.ana."$MEMBER_NO".nc" &>> recenter_members
+   echo "  ocn_filename: ./Data/ocn.pert.ens."$MEMBER_NO".nc" &>> recenter_members
+   echo "  #ice_filename: ./Data/ice.ana."$MEMBER_NO".nc" &>> recenter_members
 
    ((MEMBER_NO = MEMBER_NO + 1))
 done

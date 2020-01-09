@@ -152,7 +152,6 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
 
 #----------------------------------
 if [ $DA_METHOD = 'letkf' ]; then 
-echo HELLO
 # Prepare the yaml for the remapping of each member
 
    ${ROOT_GODAS_DIR}/scripts/prep_recenter_yaml.sh    \

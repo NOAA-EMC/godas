@@ -49,16 +49,16 @@ suite: !Cycle
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
 
-      da_letkf_run: !Task
+      run_letkf: !Task
         <<: *shared_task_template
         Trigger: !Depend  ( da_letkf_prep )
-        resources: !calc partition.resources.run_3dvar
+        resources: !calc partition.resources.run_letkf
         config: [ base ]
         J_JOB: JJOB_DA_LETKF
 
       fcst_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend da_letkf_run
+        Trigger: !Depend run_letkf
         resources: !calc partition.resources.run_nothing
         config: [ base ]
         J_JOB: JJOB_FCST_PREP
