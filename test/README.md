@@ -4,18 +4,18 @@ test.setup_godas.py
 
 test.setup_godas.yaml
 
-1-2. Set CLONE_DIR. For an example:
-
-setenv CLONE_DIR /scratch2/NCEPDEV/marineda/user.id/godas.setup.name
-
-1-2. Edit three variables in test.setup_godas.yaml. In test.setup_godas.py, GODAS system build and project set up options are specified through the yaml file. For an example of test.setup_godas.yaml:
-
+1-2. Edit the test.setup_godas.yaml. In test.setup_godas.py, GODAS system build and project set up options are specified through the yaml file. For an example of test.setup_godas.yaml:
+`
 PROJECT_DIR: /scratch2/NCEPDEV/marineda/Jong.Kim/scrub/sandbox
 
 WORKFLOW_NAME: workflow_test
 
 SKIP_BUILD: False
 
+FIX_SCRUB: True #for setting the root run directory or False for the default run directory, and the SCRUB variable will be ignored. 
+
+SCRUB: #set the root run directory
+`
 1-3. Run test.setup_godas.py: python test.setup_godas.py
 
 1-4. If new GODAS system build is selected with 'SKIP_BUILD: False' in test.setup_godas.yaml, it will ask for your GitHub credentials.
