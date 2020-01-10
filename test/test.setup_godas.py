@@ -80,11 +80,11 @@ if __name__ == '__main__':
     with open('test.setup_godas.yaml') as input_file:
          input = yaml.load(input_file)
     
-    if os.environ.get('CLONE_DIR')==None:
-         CLONE_DIR = input.get('CLONE_DIR')
-    else:
+    if 'CLONE_DIR' is os.environ:
          CLONE_DIR=os.environ.get('CLONE_DIR')
          print ( 'The CLONE_DIR is set as system variable' )
+    else:
+         CLONE_DIR = input.get('CLONE_DIR')
     
     print (CLONE_DIR)
     PROJECT_DIR = input.get('PROJECT_DIR')
