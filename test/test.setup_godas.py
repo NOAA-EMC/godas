@@ -132,7 +132,6 @@ if __name__ == '__main__':
         os.symlink(src_letkf,dst_letkf)
 
         #4. Preparing the mom6tools
-mom6-tools.plot
         src_fl=CLONE_DIR+'/src/mom6-tools.plot/*.py '
         des_fl=CLONE_DIR+'/build/bin/ '
         os.system('cp '+src_fl+des_fl)
