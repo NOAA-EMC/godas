@@ -86,11 +86,9 @@ if __name__ == '__main__':
     FIX_SCRUB= input.get('FIX_SCRUB')
     SCRUB= input.get('SCRUB')
     USER = os.getenv('USER')
-
     os.environ["CLONE_DIR"] = CLONE_DIR
-
-
     path = os.getcwd()
+    
     print ("----- Current work directory is %s" % path)
 
     if not SKIP_BUILD :
