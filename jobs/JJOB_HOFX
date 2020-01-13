@@ -39,8 +39,8 @@ cd $RUNCDATE
 #export ENSEND=$((NMEM_PGRP * ENSGRP))
 #export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
 
-for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
-        echo $MEMBER_NO
+#for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+#        echo $MEMBER_NO
         # Run H(x)
-        srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d$MEMBER_NO.yml
-done
+        srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d.yml
+#done
