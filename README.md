@@ -168,3 +168,7 @@ case:
 :heavy_check_mark: Should work <br/>
 :x: No implementation planned <br/>
 :soon: Work in progress
+
+# Post-processing Plot Options
+
+0. Not included in workflow yet, but mom6-tools-based python scripts are available to make plots of model diagnostic output files: see the instruction [here](./src/mom6-tools.plot/README.md).
