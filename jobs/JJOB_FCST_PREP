@@ -15,16 +15,39 @@ case $FCSTMODEL in
       ;;
    "MOM6CICE5")
        # If first cycle: Prepare hyb-coord and cice IC
-      if [ ! -d $RUNCDATE/../NEXT_IC ]; then
-        # TODO: Point to better IC's!
-        nextic=${RUNCDATE}/../NEXT_IC
-        mkdir -p $nextic
-        cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
-        cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
-        cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+
+      export ENSEND=$((NMEM_PGRP * ENSGRP))
+      export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
+      
+      # TODO: Point to better IC'
+      if [ ! -d $RUNCDATE/../NEXT_IC ] & [ "$NO_ENS_MBR" -le "1" ]; then
+         nextic=$RUNCDATE/../NEXT_IC
+         mkdir -p $nextic
+         cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
+         cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
+         cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+      fi
+      if [ "$NO_ENS_MBR" -gt "1" ]; then
+         for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+            nextic="$RUNCDATE/../NEXT_IC/mem${MEMBER_NO}"
+            if [ ! -d $nextic ]; then
+               mkdir -p $nextic
+               cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
+               cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
+               cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+            fi
+         done
       fi
 
       # Prepare scratch dir to run mom6-cice5 forecast
-      ${ROOT_GODAS_DIR}/scripts/prep_forecast.sh
+      if [ "$NO_ENS_MBR" -le "1" ];then
+         ${ROOT_GODAS_DIR}/scripts/prep_forecast.sh 
+      else
+      # Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
+         for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+            ${ROOT_GODAS_DIR}/scripts/prep_forecast.sh -n $MEMBER_NO
+         done
+      fi
       ;;
+
 esac
