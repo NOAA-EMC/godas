@@ -26,7 +26,7 @@ da_settings_default: &da_settings_default
   DA_WNDW_OFST: 48
   DA_TS_ONLY:   0
 # Number of ensemble members
-  NO_ENS_MBR: 15
+  NO_ENS_MBR: 3 
   GROUPS: 3
   NMEM_PGRP: !calc ( NO_ENS_MBR // GROUPS )
 # Forecast model (options: MOM6solo, MOM6CICE5)
