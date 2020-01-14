@@ -125,7 +125,6 @@ echo "Set up Directories"
 
 #Set up forecast run directory:
  
-#DATA=${RUNCDATE}/fcst
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
 if [ ! -d $DATA/INPUT ]; then mkdir -p $DATA/INPUT; fi
 if [ ! -d $DATA/restart ]; then mkdir -p $DATA/restart; fi
@@ -135,7 +134,6 @@ if [ ! -d $DATA/OUTPUT ]; then mkdir -p $DATA/OUTPUT; fi
 if [ ! -d $DATA/MOM6_OUTPUT ]; then mkdir -p $DATA/MOM6_OUTPUT; fi
 if [ ! -d $DATA/MOM6_RESTART ]; then mkdir -p $DATA/MOM6_RESTART; fi
 if [ ! -d $DATA/DATM_INPUT ]; then mkdir -p $DATA/DATM_INPUT; fi
-
 
 # Go to Run Directory (DATA)         
 cd $DATA 
