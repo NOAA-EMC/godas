@@ -1,14 +1,8 @@
-#! /bin/sh
+#! /bin/sh -l
 
 
 echo "Entering post run forecast script"
 
-
-######################################################################
-######################################################################
-# Copy IC/Restarts:                                                  #
-######################################################################
-######################################################################
 while getopts "n:" opt; do
    case $opt in
       n) mbr=("$OPTARG");;
@@ -16,13 +10,18 @@ while getopts "n:" opt; do
 done
 shift $((OPTIND -1))
 
+
+######################################################################
+######################################################################
+# Copy IC/Restarts:                                                  #
+######################################################################
+######################################################################
+
 if [ -z "$mbr" ]
 then 
-   echo mbr is empty
    DATA=${RUNCDATE}/fcst
    nextic=$RUNCDATE/../NEXT_IC
 else
-   echo mbr has value: $mbr
    DATA=${RUNCDATE}/fcst/mem$mbr
    nextic=$RUNCDATE/../NEXT_IC/mem$mbr
 fi
@@ -31,7 +30,7 @@ fi
 ##  if [ $inistep = 'cold' ]; then
 ##   cp $DATA/mediator_* $ROTDIR/$CDUMP.$PDY/$cyc/
 
-mkdir -p ${next_ic}/restart
+mkdir -p ${nextic}/restart
 
 echo "Forecast Run Dir is: $DATA"
 echo "NEXT_IC dir is: ${nextic}"

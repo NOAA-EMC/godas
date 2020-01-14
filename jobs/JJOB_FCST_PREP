@@ -22,6 +22,9 @@ case $FCSTMODEL in
       # TODO: Point to better IC'
       if [ ! -d $RUNCDATE/../NEXT_IC ] & [ "$NO_ENS_MBR" -le "1" ]; then
          nextic=$RUNCDATE/../NEXT_IC
+cat <<EOF
+# Initial Conditions are copied from the static files
+EOF
          mkdir -p $nextic
          cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
          cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
@@ -31,6 +34,9 @@ case $FCSTMODEL in
          for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
             nextic="$RUNCDATE/../NEXT_IC/mem${MEMBER_NO}"
             if [ ! -d $nextic ]; then
+cat <<EOF
+# Initial Conditions are copied from the static files
+EOF
                mkdir -p $nextic
                cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
                cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
@@ -49,5 +55,4 @@ case $FCSTMODEL in
          done
       fi
       ;;
-
 esac

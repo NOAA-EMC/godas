@@ -7,7 +7,7 @@ case:
     FCSTMODEL: MOM6CICE5 # MOM6solo
   
   da_settings:
-    NO_ENS_MBR: 4
+    NO_ENS_MBR: 2
     GROUPS: 2
   
   places:

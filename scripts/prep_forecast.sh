@@ -22,12 +22,10 @@ shift $((OPTIND -1))
 
 if [ -z "$mbr" ]
 then 
-   echo mbr is empty
    DATA=${RUNCDATE}/fcst
    nextic=$RUNCDATE/../NEXT_IC
    keepic=$RUNCDATE/../${CDATE}_IC
 else
-   echo mbr has value: $mbr
    DATA=${RUNCDATE}"/fcst/mem"$mbr
    nextic=$RUNCDATE/../NEXT_IC/mem$mbr
    keepic=$RUNCDATE/../${CDATE}_IC/   
