@@ -92,6 +92,8 @@ if __name__ == '__main__':
     SKIP_BUILD= input.get('SKIP_BUILD')
     FIX_SCRUB= input.get('FIX_SCRUB')
     SCRUB= input.get('SCRUB')
+    BRANCH_NAME= input.get('BRANCH_NAME')
+    BUILD_COMPILER= input.get('BUILD_COMPILER')
     USER = os.getenv('USER')
     os.environ["CLONE_DIR"] = CLONE_DIR
     path = os.getcwd()
@@ -105,6 +107,8 @@ if __name__ == '__main__':
         print ('-----------Setup GODAS system at:',CLONE_DIR)
         os.system("git clone https://github.com/NOAA-EMC/godas.git "+CLONE_DIR)
         os.chdir(CLONE_DIR)
+        if BRANCH_NAME is not 'develop':
+            os.system("git checkout "+BRANCH_NAME)
         os.system("git submodule update --init --recursive")
 
         os.chdir(CLONE_DIR+"/src")
@@ -118,7 +122,10 @@ if __name__ == '__main__':
         build_dir=CLONE_DIR+'/build'
         make_dir(build_dir); os.chdir(build_dir)
 
-        subprocess.check_call(['bash','-c','module purge; source ../modulefiles/godas.main; module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+        if BUILD_COMPILER is 'intel-19':
+            subprocess.check_call(['bash','-c','module purge; source ../modulefiles/godas.main; module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+        else:     #build with intel-18
+            subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel18; module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
 
         soca_config_path=CLONE_DIR+'/src/soca-bundle/soca-config'
         os.chdir(soca_config_path)
