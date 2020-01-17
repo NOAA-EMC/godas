@@ -92,8 +92,8 @@ if __name__ == '__main__':
     SKIP_BUILD= input.get('SKIP_BUILD')
     FIX_SCRUB= input.get('FIX_SCRUB')
     SCRUB= input.get('SCRUB')
-    BRANCH_NAME= input.get('BRANCH_NAME')
-    BUILD_COMPILER= input.get('BUILD_COMPILER')
+    BRANCH_NAME= strip(input.get('BRANCH_NAME'))
+    BUILD_COMPILER= strip(input.get('BUILD_COMPILER'))
     USER = os.getenv('USER')
     os.environ["CLONE_DIR"] = CLONE_DIR
     path = os.getcwd()
