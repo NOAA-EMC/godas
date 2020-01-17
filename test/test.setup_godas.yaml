@@ -4,5 +4,5 @@ WORKFLOW_NAME: #set the name of your worklflow
 SKIP_BUILD: False
 FIX_SCRUB: True
 SCRUB: #set the root run directory 
-BRANCH_NAME: develop #set a branch name to build
-BUILD_COMPILER: intel-18 #set compiler option: intel-18 or intel-19
+BRANCH_NAME: develop
+BUILD_COMPILER: intel-18

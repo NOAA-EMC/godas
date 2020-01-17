@@ -18,9 +18,9 @@ FIX_SCRUB: True #for setting the root run directory or False for the default run
 
 SCRUB: #set the root run directory`
 
-BRANCH_NAME: develop #set a branch name to build
+BRANCH_NAME: develop #other branch names can be set to test/build
 
-BUILD_COMPILER: intel-18 #set compiler option: intel-18 or intel-19
+BUILD_COMPILER: intel-18 #either intel-18 or intel-19 can be selected.
 
 1-3. Run test.setup_godas.py: python test.setup_godas.py
 
