@@ -17,6 +17,11 @@ SKIP_BUILD: False
 FIX_SCRUB: True #for setting the root run directory or False for the default run directory, and the SCRUB variable will be ignored. `
 
 SCRUB: #set the root run directory`
+
+BRANCH_NAME: develop #other branch names can be set to test/build
+
+BUILD_COMPILER: intel-18 #either intel-18 or intel-19 can be selected.
+
 1-3. Run test.setup_godas.py: python test.setup_godas.py
 
 1-4. If new GODAS system build is selected with 'SKIP_BUILD: False' in test.setup_godas.yaml, it will ask for your GitHub credentials.
