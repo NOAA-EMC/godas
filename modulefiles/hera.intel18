@@ -1,7 +1,4 @@
 #%Module######################################################################
-proc ModulesHelp { } {
-        puts stderr "Loading default modules and Seting up the paths for JEDI"
-}
 
 module load intel
 module load impi
