@@ -13,6 +13,23 @@
 ######################################################################
 ######################################################################
 
+while getopts "n:" opt; do
+   case $opt in
+      n) mbr=("$OPTARG");;
+   esac
+done
+shift $((OPTIND -1))
+
+if [ -z "$mbr" ]
+then 
+   DATA=${RUNCDATE}/fcst
+   nextic=$RUNCDATE/../NEXT_IC
+   keepic=$RUNCDATE/../${CDATE}_IC
+else
+   DATA=${RUNCDATE}"/fcst/mem"$mbr
+   nextic=$RUNCDATE/../NEXT_IC/mem$mbr
+   keepic=$RUNCDATE/../${CDATE}_IC/   
+fi
 #Variables which need to be defined: 
 
 #Generic variables 
@@ -24,8 +41,6 @@ FIXcice=${ROOT_GODAS_DIR}/fix/CICE_FIX_mx025
 FHMAX=${FHMAX:-24} #total forecast length in hours
 restart_interval=${restart_interval:-86400}  # number of seconds for writing restarts (for non-cold start) default to 1 day interval
 
-DATA=${RUNCDATE}/fcst
-
 echo "CDATE is $CDATE"
 echo "RUNCDATE is ${RUNCDATE}" 
 echo "DATA is ${DATA}"
@@ -33,7 +48,6 @@ echo "SCRIPTDIR is $SCRIPTDIR"
 echo "TEMPLATEDIR is $TEMPLATEDIR"
 echo "FHMAX is $FHMAX"
 echo "restart interval is ${restart_interval}"
-
 
 #################################
 # Variables that are for the most part hard coded but could be pulled out and configured/etc. 
@@ -111,7 +125,6 @@ echo "Set up Directories"
 
 #Set up forecast run directory:
  
-DATA=${RUNCDATE}/fcst
 if [ ! -d $DATA ]; then mkdir -p $DATA; fi
 if [ ! -d $DATA/INPUT ]; then mkdir -p $DATA/INPUT; fi
 if [ ! -d $DATA/restart ]; then mkdir -p $DATA/restart; fi
@@ -121,7 +134,6 @@ if [ ! -d $DATA/OUTPUT ]; then mkdir -p $DATA/OUTPUT; fi
 if [ ! -d $DATA/MOM6_OUTPUT ]; then mkdir -p $DATA/MOM6_OUTPUT; fi
 if [ ! -d $DATA/MOM6_RESTART ]; then mkdir -p $DATA/MOM6_RESTART; fi
 if [ ! -d $DATA/DATM_INPUT ]; then mkdir -p $DATA/DATM_INPUT; fi
-
 
 # Go to Run Directory (DATA)         
 cd $DATA 
@@ -303,7 +315,7 @@ tr_pond_lvl=${tr_pond_lvl:-".true."} # Use level melt ponds tr_pond_lvl=true
 # restart_pond_lvl (if tr_pond_lvl=true):
 #   -- if true, initialize the level ponds from restart (if runtype=continue) 
 #   -- if false, re-initialize level ponds to zero (if runtype=initial or continue)  
-if [ -d $RUNCDATE/../NEXT_IC ]; then
+if [ -d $nextic ]; then
   #continuing run "hot start" 
   RUNTYPE='continue'
   USE_RESTART_TIME='.false.'
@@ -437,9 +449,9 @@ echo "Copy mediator restart files"
 if [ $inistep = 'cold' ]; then
   echo "mediator cold start run sequence... error currently not set up for this"
 else
-  if [ -d $RUNCDATE/../NEXT_IC ]; then 
+  if [ -d $nextic ]; then 
     #cp $ROTDIR/$CDUMP.$PDY/$cyc/mediator_* $DATA/
-    cp $RUNCDATE/../NEXT_IC/mediator_* $DATA/
+    cp $nextic/mediator_* $DATA/
   else 
     if [ $NEARESTCDATE = '2011100100' ]; then
       echo "Copying mediator restarts for $NEARESTCDATE from regtest area"
@@ -459,10 +471,10 @@ fi
 echo "Copy MOM6 ICs" 
 
 # Copy MOM6 ICs
-if [ -d $RUNCDATE/../NEXT_IC ]; then
+if [ -d $nextic ]; then
     # Get IC from previous cycle
     ##cp ../NEXT_IC/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-    cp $RUNCDATE/../NEXT_IC/MOM*.nc $DATA/INPUT/
+    cp $nextic/MOM*.nc $DATA/INPUT/
 else 
 
   echo "CICE5 IC is being copied from benchmark area for CDATE $CDATE" 
@@ -479,9 +491,9 @@ fi
 
 echo "Copy CICE5 ICs" 
 
-if [ -d $RUNCDATE/../NEXT_IC ]; then
+if [ -d $nextic ]; then
   #cp $ROTDIR/$CDUMP.$PDY/$cyc/$iceic $DATA/restart/
-  cp $RUNCDATE/../NEXT_IC/restart/* $DATA/restart/
+  cp $nextic/restart/* $DATA/restart/
 else 
   echo "CICE5 IC is being copied from benchmark area for CDATE $CDATE" 
   echo "Note these only exist for the 01 and 15 ths of every month" 
@@ -497,8 +509,9 @@ fi
 # 4.4 Remove NEXT_IC DIR                                             #
 ######################################################################
 
-echo "removing NEXT_IC DIR" 
-rm -rf $RUNCDATE/../NEXT_IC
+#echo "removing NEXT_IC DIR"
+
+mv $nextic $keepic
 
 ######################################################################
 #   End of prep_forecast.sh                                          #
