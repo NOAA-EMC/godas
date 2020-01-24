@@ -5,7 +5,7 @@ cat <<EOF
 #================================================================================
 #================================================================================
 # JJOB_HOFX_PREP
-#   Prepare yaml files for SOCA applications
+# Prepare yaml files for SOCA applications
 #================================================================================
 #================================================================================
 EOF
@@ -112,10 +112,3 @@ EOF
 
 cp -p /scratch2/NCEPDEV/marineda/Shastri.Paturi/Shastri.Paturi/rundir/workflowtest_QCexp_SST25/$CDATE/Data/ocn.socagodas.an.${bkg_date}.nc $RUNCDATE/INPUT_MOM6/MOM.res.nc
  
-# Make cice_bkg.nc fms compliant
-#if [ $FCSTMODEL = 'MOM6CICE5' ]; then
-#   ncks -O -C -v aicen,vicen,vsnon ./INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-#   ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-#   ncecat -O -v aicen,vicen,vsnon -u Time $RUNCDATE/INPUT_MOM6/cice_bkg.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-#   ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
-#fi

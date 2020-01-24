@@ -5,7 +5,7 @@ cat <<EOF
 #================================================================================
 #================================================================================
 # JJOB_PREP_SOCA
-#   Prep SOCA Static B and grid
+# Prep SOCA Static B and grid
 #================================================================================
 #================================================================================
 EOF
@@ -38,10 +38,3 @@ echo
 mkdir -p bump
 srun -n $NPE ${SOCA_EXEC}/soca_staticbinit.x ./yaml/static_SocaError_init.yml
 
-# Initialize BUMP localization (computes localization weights)
-if [ ${NO_ENS_MBR}>1 ]; then
-    echo
-    echo 'Initializing BUMP Localization.'
-    echo
-    srun -n $NPE ${SOCA_EXEC}/soca_parameters.x ./yaml/parameters_bump_loc.yml
-fi
