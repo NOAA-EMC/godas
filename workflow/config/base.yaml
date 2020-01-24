@@ -65,6 +65,8 @@ config_base:
 
     export NINNER="{doc.da_settings.NINNER}"
 
+    export SOCA_ANALYSIS="{doc.places.SOCA_ANALYSIS}"
+
     export MOD_PATH="{doc.places.MOD_PATH}"
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"
     export DCOM_ROOT="{doc.places.DCOM_ROOT}"

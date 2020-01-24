@@ -107,8 +107,8 @@ cat <<EOF
 #================================================================================
 EOF
 
-# Copy SOCA analysis from a previous run to run the HOFX
-# This overwrite the MOM.res.nc from ${SOCA_STATIC}
+# Copy SOCA analysis from a previous completed 24h forecast cycle to run the HOFX
+# WARNING: This overwrites the MOM.res.nc from ${SOCA_STATIC}
 
-cp -p /scratch2/NCEPDEV/marineda/Shastri.Paturi/Shastri.Paturi/rundir/workflowtest_QCexp_SST25/$CDATE/Data/ocn.socagodas.an.${bkg_date}.nc $RUNCDATE/INPUT_MOM6/MOM.res.nc
+cp -p ${SOCA_ANALYSIS}/$CDATE/Data/ocn.socagodas.an.${bkg_date}.nc $RUNCDATE/INPUT_MOM6/MOM.res.nc
  
