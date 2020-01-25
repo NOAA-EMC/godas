@@ -47,7 +47,6 @@ else:
     vars_ = args.var
 
 grd= MOM6grid(args.grid)
-grd.area_t= grd.Ah
 
 clmap_=cmocean.cm.ice
 

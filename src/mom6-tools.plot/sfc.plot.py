@@ -29,7 +29,6 @@ else:
     if not os.path.isdir(args.figs_path): os.makedirs(args.figs_path)
 
 grd= MOM6grid(args.grid)
-grd.area_t=grd.Ah
 
 clim_sst=[-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
 clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]

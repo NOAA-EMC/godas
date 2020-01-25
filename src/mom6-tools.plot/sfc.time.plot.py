@@ -90,7 +90,6 @@ if __name__ == "__main__":
 
   # load mom6 grid
   grd = MOM6grid(args.grid)
-  grd.area_t = grd.Ah
 
   # set data and fig file path 
   if args.figs_path is None:
