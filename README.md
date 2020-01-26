@@ -174,4 +174,5 @@ The default is 1 member to 1 group (deterministic run).
 
 # Post-processing Plot Options
 
-0. Not included in workflow yet, but mom6-tools-based python scripts are available to make plots of model diagnostic output files: see the instruction [here](./src/mom6-tools.plot/README.md).
+0. scripts/post_plot.sh has been updated to be included in workflow. However, the line to trigger the script in JJOB_POST is not turned on yet due to memory management issue of hera system. offline.plot.sh in src/mom6-tools directory can be used to generate post processing plots: see the instruction [here](./src/mom6-tools.plot/README.md).
+

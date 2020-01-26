@@ -1,28 +1,37 @@
 #!/bin/bash
 
-#1. set CLONE_DIR and RUN_DIR/PROJECT_NAME containing data files to plot
-export CLONE_DIR=/scratch2/NCEPDEV/marineda/Jong.Kim/godas_wk
-export RUN_DIR=/scratch1/NCEPDEV/stmp2/Jong.Kim/Jong.Kim/rundir
-export PROJECT_NAME=workflow_diag
+CASES_NUM=$#
+#0. check number of input cases
+if [ $CASES_NUM -lt 1 ]; then
+        echo "Path for project name is empty: ./offline.plot.sh path_for_case1 ..."
+        exit 0
+fi
 
-#2. png files: saved in Figures directory of $RUNCDATE/Figures
-export SOCA_EXEC=$CLONE_DIR/build/bin
-export MOD_PATH=$CLONE_DIR/modulefiles
-export ROOT_GODAS_DIR=$CLONE_DIR
-dirs=$(ls $RUN_DIR/$PROJECT_NAME)
+for i in "$@"; do
+  CASE_PATH=$i
+  echo "Creating post processing plots for case: $CASE_PATH"
 
-for f in $dirs; do
-    if [ -d $RUN_DIR/$PROJECT_NAME/${f} ]; then
-	if [[ $f =~ "19" || $f =~ "20" ]]; then
-            export CDATE=$f
-	    echo $CDATE
-	    export RUNCDATE=$RUN_DIR/$PROJECT_NAME/$CDATE
-	    export FiguresDir=$RUNCDATE/Figures
-	    export IceAnlDir=$RUN_DIR/$PROJECT_NAME/$CDATE/Data
-	    export OceanFcstDir=$RUN_DIR/$PROJECT_NAME/$CDATE/fcst
+  #1. set PATHs for case to make plots
+  if [ -f $CASE_PATH/config.base ]; then
+      source $CASE_PATH/config.base
 
-	    source $MOD_PATH/godas.python
-	    source $CLONE_DIR/scripts/post_plot.sh
-	fi
-    fi
+      #2. png files: saved in Figures directory of $RUNCDATE/Figures
+      dirs=$(ls $RUNDIR |  grep '^[0-9]*$' )
+
+      for f in $dirs; do
+	  if [ -d $RUNDIR/${f} ]; then
+              export CDATE=$f
+	      echo $CDATE
+	      export RUNCDATE=$RUNDIR/$CDATE
+	      export FiguresDir=$RUNCDATE/Figures
+	      export IceAnlDir=$RUNDIR/$CDATE/Data
+	      export OceanFcstDir=$RUNDIR/$CDATE/fcst
+
+	      source $MOD_PATH/godas.python
+	      source $ROOT_GODAS_DIR/scripts/post_plot.sh
+	  fi
+      done
+  else
+      echo 'config.base does not exists: '$CASE_PATH
+  fi
 done
