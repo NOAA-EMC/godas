@@ -4,7 +4,7 @@
 
 offline.plot.sh path_for_case1 path_for_case2
 
-If multiple case path inputs are given, the script will go through loops to create figure directories for each run of cases. In $RUNCDATE/Figures, sea ice fraction, SST, SSH, and time_mean figures will be created. Detail instruction to run plotting python scripts are given below:
+If multiple case path inputs are given, the script will go through loops to create figure directories for each run of cases. In $RUNCDATE/Figures, sea ice fraction, SST, SSH, and time_mean figures will be created. Detail instruction to run plotting python scripts is given below:
 
 0-2-1. Python scripts require two input arguments: grid and data file names. Multiple data files can be used with wildcard (*) input for data file names. As of now (01/07/2020), diag_table files are not fully updated for variables needed in mom6-tools modules yet. For the time being, users can utilize ocean_geometry.nc in /scratch2/NCEPDEV/marineda/common. Test runs for plotting examples are:
 
