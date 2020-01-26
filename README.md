@@ -88,8 +88,8 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    Available cases:
    1. 3dvar.yaml
    2. letkf_only_exp.yaml
-   3. fcst_only.yaml 
-
+   3. fcst_only.yaml
+   
    Note: Each case files point to a corresponding layout file at $CLONE_DIR/workflow/layout. 
 
 5. Read output and run suggested command. Should be similar to: \
@@ -153,10 +153,13 @@ case:
     DA_TS: True     # T & S Insitu profiles 
     DA_ADT: True    # Absolute dynamic topography
     DA_ICEC: True   # Seaice fraction
+    NO_ENS_MBR: 2   # Size of ensemble, e.g. two members.
+    GROUPS: 2       # No of groups to run the ensemble, in this case, each member runs in a different group.
 
   places:
     workflow_file: layout/3dvar_only.yaml
 ```
+The default is 1 member to 1 group (deterministic run).
 
 # Currently Supported Models/Resolutions/Da algorithms
 | Cases | Forecast | 3DVAR | 3DHyb-EnVAR | LETKF |
