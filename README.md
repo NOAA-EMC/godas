@@ -172,6 +172,15 @@ The default is 1 member to 1 group (deterministic run).
 :x: No implementation planned <br/>
 :soon: Work in progress
 
+# HofX case as a verification tool
+0. HofX case can be run separately as an independant verification tool.
+1. Instructions on how to run this case are as follows:
+   a. ./setup_case.sh -p HERA ../cases/hofx3d.yaml workflowtest_HOFX
+   b. In the workflow/cases/hofx3d.yaml file, da_settings: DA_ADT: True and the others false.
+   c. In the workflow/defaults/places.yaml file, the user has to update the path for SOCA_ANALYSIS. For this test, please use the default path. This has the 24 hr fcst run from Oct 1-31, 2011 with satellite SST assimilation.
+   d. The results of the run will be in RUNCDATE/Data.
+   e. A scatter plot between the obs_absolute_dynamic_topography@ObsValue and obs_absolute_dynamic_topography@hofx is one-way of looking at the results.
+
 # Post-processing Plot Options
 
 0. Not included in workflow yet, but mom6-tools-based python scripts are available to make plots of model diagnostic output files: see the instruction [here](./src/mom6-tools.plot/README.md).
