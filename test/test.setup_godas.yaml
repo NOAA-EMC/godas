@@ -1,3 +1,8 @@
-PROJECT_DIR: /scratch2/NCEPDEV/marineda/user.id/scrub/project.directory
-WORKFLOW_NAME: workflow.name
+CLONE_DIR: #set the clone directory 
+PROJECT_DIR: # set the path for the deployment of the workflow
+WORKFLOW_NAME: #set the name of your worklflow
 SKIP_BUILD: False
+FIX_SCRUB: True
+SCRUB: #set the root run directory 
+BRANCH_NAME: develop
+BUILD_COMPILER: intel-18
