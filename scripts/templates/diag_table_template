@@ -34,6 +34,7 @@
  "ocean_model", "MLD_003",   "MLD_003",  "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2 
  "ocean_model", "MLD_0125",  "MLD_0125", "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
  "ocean_model", "vmo",       "vmo",      "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+ "ocean_model", "umo",       "umo",      "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
 
 # save daily SST
  "ocean_model", "geolon",      "geolon",      "SST%4yr%2mo%2dy", "all", .false., "none", 2
