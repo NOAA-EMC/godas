@@ -19,11 +19,12 @@ if [[ -z "$GridFile" ]] ; then
     exit 1
 fi
 
+export QT_QPA_PLATFORM=offscreen
 # 1. Plot Ice analysis
 files2plot=( "$IceAnlDir"/cic.socagodas.an.*.nc )
 if [ -e "${files2plot[0]}" ]; then
     cp -rf $IceAnlDir/cic.socagodas.an.*.nc $OceanFcstDir
-    python $SOCA_EXEC/ice.plot.py                    \
+    ipython -- $SOCA_EXEC/ice.plot.py                    \
            -grid $GridFile                           \
            -data $OceanFcstDir/cic.socagodas.an.*.nc \
            -figs_path $FiguresDir                    \
@@ -33,7 +34,7 @@ fi
 # 2. Plot the ocean fcst 
 files2plot=( "$OceanFcstDir"/ocn_*.nc )
 if [ -e "${files2plot[0]}" ]; then
-    python $SOCA_EXEC/sfc.plot.py                    \
+    ipython -- $SOCA_EXEC/sfc.plot.py                    \
 	   -grid $GridFile                           \
 	   -data $OceanFcstDir/ocn_*.nc              \
 	   -figs_path $FiguresDir 
@@ -44,7 +45,7 @@ fi
 
 files2plot=( "$OceanFcstDir"/ocn_*.nc )
 if [ -e "${files2plot[0]}" ]; then
-    python $SOCA_EXEC/sfc.time.plot.py               \
+    ipython -- $SOCA_EXEC/sfc.time.plot.py               \
            -grid $GridFile                           \
            -data $OceanFcstDir/ocn_*.nc              \
            -figs_path $FiguresDir/time_mean

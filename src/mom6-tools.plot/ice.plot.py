@@ -58,6 +58,7 @@ for filename in args.data:
         ice_nh = np.ma.masked_where(grd.geolat < 0., ice[0,:,:])    
 
         path_ = Path(filename)
+        name_ = Path(filename).name
         if args.figs_path is None:
             file_ice_nh = str(path_.parent.joinpath(path_.stem + '_'+var+'_nh.png'))
             file_ice_sh = str(path_.parent.joinpath(path_.stem + '_'+var+'_sh.png'))
@@ -65,7 +66,7 @@ for filename in args.data:
             file_ice_nh = str(args.figs_path+'/'+path_.stem + '_'+var+'_nh.png')
             file_ice_sh = str(args.figs_path+'/'+path_.stem + '_'+var+'_sh.png')
 
-        title_ice=var+':'+str(path_.parent.joinpath(path_.stem))
+        title_ice=var+':'+str(name_)
 
         if var == 'hice' or var == 'hi_h': clim_ = clim_hice
         if var == 'aice' or var == 'aice_h': clim_ = clim_aice

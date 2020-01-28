@@ -47,7 +47,7 @@ suite: !Cycle
         <<: *shared_task_template
         Trigger: !Depend  fcst_run
         resources: !calc partition.resources.run_fcst_prep
-        rocoto_command: "echo post"
+#        rocoto_command: "echo post"
         config: [ base ]
         J_JOB: JJOB_POST
 
