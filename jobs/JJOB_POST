@@ -26,7 +26,7 @@ case $FCSTMODEL in
        ;;
    "MOM6CICE5")
        # TODO: Keep something from fcst?
-       #if [ -d $RUNCDATE/fcst ]; then rm -rf $RUNCDATE/fcst; fi
+       if [ -d $RUNCDATE/fcst ]; then rm -rf $RUNCDATE/fcst; fi
        if [ -d $RUNCDATE/test-emc-m6c5 ]; then rm -rf $RUNCDATE/test-emc-m6c5; fi
        ;;
 esac
