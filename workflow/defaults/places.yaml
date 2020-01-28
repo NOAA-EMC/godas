@@ -24,5 +24,4 @@ default_places: &default_places
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
   RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory
-  SOCA_ANALYSIS:  "/scratch2/NCEPDEV/marineda/Shastri.Paturi/Shastri.Paturi/rundir/workflowtest_QCexp_SST25"   # SOCA ANALYSIS For HOFX
 
