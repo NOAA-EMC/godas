@@ -23,5 +23,5 @@ default_places: &default_places
   MODEL_SCRATCH: "/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/{NI}x{NJ}x{NK}"
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
-  RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory
-
+  RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN director
+  FIG_DIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}/Figures" # Figure directory
