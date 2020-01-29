@@ -8,8 +8,8 @@ case:
 
   da_settings:
     DA_SST: False
-    DA_TS: True
-    DA_ADT: False
+    DA_TS: False
+    DA_ADT: True
     DA_ICEC: False
 
   places:

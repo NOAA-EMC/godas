@@ -29,6 +29,9 @@ if [ -e "${files2plot[0]}" ]; then
            -data $OceanFcstDir/cic.socagodas.an.*.nc \
            -figs_path $FiguresDir                    \
            -var hice aice
+else
+   echo "Ice Analysis Files" $files2plot "do not exist"
+   echo "No Figures are plotted ..."
 fi
 
 # 2. Plot the ocean fcst 
@@ -38,6 +41,9 @@ if [ -e "${files2plot[0]}" ]; then
 	   -grid $GridFile                           \
 	   -data $OceanFcstDir/ocn_*.nc              \
 	   -figs_path $FiguresDir 
+else
+   echo "Ocean Forecast/Analysis Files" $files2plot "do not exist"
+   echo "No Figures are plotted ..."
 fi
 
 # 3. Plot time averages
@@ -49,4 +55,7 @@ if [ -e "${files2plot[0]}" ]; then
            -grid $GridFile                           \
            -data $OceanFcstDir/ocn_*.nc              \
            -figs_path $FiguresDir/time_mean
+else
+   echo "Ocean Forecast/Analysis Files" $files2plot "do not exist"
+   echo "No Figures are plotted ..."
 fi
