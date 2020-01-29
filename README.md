@@ -60,6 +60,9 @@ During this process, three directories will be created:
    `make -j2`
 7. `ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver`
 
+# Copy the mom6-tools.plot to the bin
+0. cp $CLONE_DIR/src/mom6-tools.plot/*.py $CLONE_DIR/build/bin/ 
+
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
    `mkdir -p PROJECT_DIR`
