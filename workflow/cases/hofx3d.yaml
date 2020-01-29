@@ -7,7 +7,6 @@ case:
     FCSTMODEL: MOM6CICE5
 
   da_settings:
-    NINNER: 100
     DA_SST: False
     DA_TS: True
     DA_ADT: False
@@ -15,4 +14,4 @@ case:
 
   places:
     workflow_file: layout/hofx_only.yaml
-    SOCA_ANALYSIS: "PATH/with/ANALYSIS" # This path has to be updated
+    SOCA_ANALYSIS: "PATH/to/ANALYSIS" # This path has to be user-updated
