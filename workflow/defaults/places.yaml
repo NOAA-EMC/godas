@@ -25,3 +25,4 @@ default_places: &default_places
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
   RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory
   FIG_DIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}/Figures" # Figure directory
+  SOCA_ANALYSIS: !expand "{LONG_TERM_TEMP}"

@@ -43,5 +43,3 @@ suite: !Cycle
         rocoto_command: "echo final"
         rocoto_command: /bin/true
         RUN: gfs # useless but required
-
-
