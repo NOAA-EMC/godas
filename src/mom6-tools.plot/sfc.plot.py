@@ -29,7 +29,6 @@ else:
     if not os.path.isdir(args.figs_path): os.makedirs(args.figs_path)
 
 grd= MOM6grid(args.grid)
-grd.area_t=grd.Ah
 
 clim_sst=[-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
 clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]
@@ -37,6 +36,7 @@ clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]
 for filename in args.data:
     nc = xr.open_mfdataset(filename , decode_times=False)
     path_ = Path(filename)
+    name_ = Path(filename).name
     if args.figs_path is None:
       sst_fig = str(path_.parent.joinpath(path_.stem + '_SST.png'))
       ssh_fig = str(path_.parent.joinpath(path_.stem + '_SSH.png'))
@@ -44,8 +44,8 @@ for filename in args.data:
       sst_fig = str(args.figs_path+'/'+path_.stem + '_SST.png')
       ssh_fig = str(args.figs_path+'/'+path_.stem + '_SSH.png')
 
-    title_sst='SST:'+str(path_.parent.joinpath(path_.stem))
-    title_ssh='SSH:'+str(path_.parent.joinpath(path_.stem))
+    title_sst='SST:'+str(name_)
+    title_ssh='SSH:'+str(name_)
 
     xyplot(nc.SST[0,:,:].to_masked_array(),grd.geolon,grd.geolat,clim=clim_sst,title=title_sst,save=sst_fig)
     xyplot(nc.SSU[0,:,:].to_masked_array(),grd.geolon,grd.geolat,clim=clim_ssh,title=title_ssh,save=ssh_fig)
