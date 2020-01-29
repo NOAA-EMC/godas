@@ -196,8 +196,10 @@ case:
     SOCA_ANALYSIS: "PATH/to/ANALYSIS" # Specifies the path to a completed 24h forecast model 
 
 ```
-The default path is "/scratch2/NCEPDEV/marine/Shastri.Paturi/Shastri.Paturi/rundir/workflowtest_QCexp_SST25"
- 
+- SOCA_ANALYSIS is the run directory of a finished experiment. 
+- The HofX output will be in the RUNCDATE/Data.
+
+
 # Currently Supported Models/Resolutions/Da algorithms
 | Cases | Forecast | 3DVAR | 3DHyb-EnVAR | LETKF |
 | ------| :--------| :---- | :---------- |:----- |
@@ -208,12 +210,6 @@ The default path is "/scratch2/NCEPDEV/marine/Shastri.Paturi/Shastri.Paturi/rund
 :heavy_check_mark: Should work <br/>
 :x: No implementation planned <br/>
 :soon: Work in progress
-
-# HofX case as a verification tool
-0. HofX case can be run separately as an independant verification tool.
-
-1. The results of the run will be in RUNCDATE/Data.
-
 
 # Post-processing Plot Options
 
