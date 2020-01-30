@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_HOFX
+# Run SOCA HOFX
+#================================================================================
+#================================================================================
+EOF
+
+echo ''
+echo 'Date of Analysis: ' $CDATE
+echo 'Run Directory: ' $RUNCDATE
+echo ''
+
+module purge
+source $MOD_PATH/godas.main
+module list
+
+cd $RUNCDATE
+
+# Run H(x)
+srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d.yml
+
