@@ -8,4 +8,4 @@ source $MOD_PATH/godas.main
 source $MOD_PATH/godas.python
 module list
 
-${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
+${ROOT_GODAS_DIR}/scripts/ObsPrep/main_obs_prep.sh
