@@ -12,7 +12,7 @@ if [ "$DA_ADT" = True ]; then
    ADTsource=adt.nesdis
    for sat in j1 j2 c2                         # Placeholder to add more satellites
    do
-      source ${ROOT_GODAS_DIR}/scripts/adt_prep_obs.sh \
+      source ${ROOT_GODAS_DIR}/scripts/ObsPrep/ObsPrepadt_prep_obs.sh \
                        -i ${ADTsource} \
                        -d ${sat}
    done
@@ -21,13 +21,13 @@ fi
 # Prep T&S profile obs
 echo "Prep T&S profile obs: $DA_TS"
 if [ "$DA_TS" = True ]; then
-   source ${ROOT_GODAS_DIR}/scripts/fnmoc_prep_obs.sh
+   source ${ROOT_GODAS_DIR}/scripts/ObsPrep/fnmoc_prep_obs.sh
 fi
 
 # Prep ice concentration obs
 echo "Prep ice concentration obs: $DA_ICEC"
 if [ "$DA_ICEC" = True ]; then
-   source ${ROOT_GODAS_DIR}/scripts/icec_prep_obs.sh
+   source ${ROOT_GODAS_DIR}/scripts/ObsPrep/icec_prep_obs.sh
 fi
 
 # Prep sst obs
@@ -44,13 +44,13 @@ if [ "$DA_SST" = True ]; then
       if [ "$SSTsource" == "sst.avhrr_l3u.nesdis" ]; then
          for instr in avhrr19 avhrrmta; do
              SSTsource=sst.${instr}_l3u.nesdis
-             source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \
+             source ${ROOT_GODAS_DIR}/scripts/ObsPrep/sst_prep_obs.sh \
                         -i ${SSTsource}
 
              echo preprocessing of $SSTsource ${instr} done
          done
       else
-         source ${ROOT_GODAS_DIR}/scripts/sst_prep_obs.sh \
+         source ${ROOT_GODAS_DIR}/scripts/ObsPrep/sst_prep_obs.sh \
                         -i ${SSTsource}
 
          echo preprocessing of $SSTsource done
