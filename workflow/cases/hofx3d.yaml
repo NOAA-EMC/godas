@@ -13,5 +13,5 @@ case:
     DA_ICEC: False
 
   places:
-    workflow_file: lnayout/hofx_only.yaml
+    workflow_file: layout/hofx_only.yaml
     SOCA_ANALYSIS: "PATH/to/ANALYSIS" # This path has to be user-updated
