@@ -7,8 +7,8 @@ case:
     FCSTMODEL: MOM6CICE5 # MOM6solo
   
   da_settings:
-    NO_ENS_MBR: 2
-    GROUPS: 2
+    NO_ENS_MBR: 1
+    GROUPS: 1
   
   places:
     workflow_file: layout/fcst_only.yaml

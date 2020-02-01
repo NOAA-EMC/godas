@@ -28,7 +28,7 @@ then
 else
    DATA=${RUNCDATE}"/fcst/mem"$mbr
    nextic=$RUNCDATE/../NEXT_IC/mem$mbr
-   keepic=$RUNCDATE/../${CDATE}_IC/   
+   keepic=$RUNCDATE/../${CDATE}_IC/ 
 fi
 #Variables which need to be defined: 
 

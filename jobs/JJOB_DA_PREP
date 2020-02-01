@@ -151,15 +151,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
 
 
 #----------------------------------
-if [ $DA_METHOD = 'letkf' ]; then 
-# Prepare the yaml for the remapping of each member
-
-   ${ROOT_GODAS_DIR}/scripts/prep_recenter_yaml.sh    \
-      -i $RUNCDATE/yaml/recenter.yml                  \
-      -d ${RUNCDATE}                                  \
-      -n ${NO_ENS_MBR} 
-
-# Prepare the hofx yml files for each member   
+if [ $DA_METHOD = 'letkf' ]; then
    for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
 
       yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml
@@ -168,19 +160,16 @@ if [ $DA_METHOD = 'letkf' ]; then
       ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
          -i ${yaml_tmp}                               \
          -d ${RUNCDATE}                               \
-         -n ${mbr} 
+         -n ${mbr}
+
+      jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
+      cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
+      sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
    done
-   
-# Create the path to run the letkf
-   mkdir -p $RUNCDATE/Data/letkf
-
-
-# Prep yaml for letkf
-${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
-      -i $RUNCDATE/yaml/letkf.yml                  \
-      -k NO_ENS_MBR                                \
-      -v ${NO_ENS_MBR}
 fi
+
+# TODO: Prep yaml for letkf
+#----------------------------------
 
 cat <<EOF
 #================================================================================
