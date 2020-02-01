@@ -18,9 +18,11 @@ default_places: &default_places
   SOCA_STATIC: !expand "{GODAS_RC}/soca-static/{doc.da_settings.NI}x{doc.da_settings.NJ}x{doc.da_settings.NK}"
   SOCA_CONFIG:   !expand "{ROOT_GODAS_DIR}/src/soca-bundle/soca-config/emc"             # soca-config path
   DCOM_ROOT: !expand "{GODAS_RC}/ocean_observations/data"         # Observation root path for raw obs
-  IODA_ROOT: !expand "{GODAS_RC}/ioda_observations"               # Processed observations
+  IODA_ROOT: !expand "{GODAS_RC}/ioda_observations"   # Processed observations
   MOD_PATH: !expand "{ROOT_GODAS_DIR}/modulefiles"
   MODEL_SCRATCH: "/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/{NI}x{NJ}x{NK}"
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
   RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory
+  FIG_DIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}/Figures" # Figure directory
+  SOCA_ANALYSIS: !expand "{LONG_TERM_TEMP}"

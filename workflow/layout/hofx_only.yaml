@@ -3,50 +3,37 @@ suite: !Cycle
 
       obs_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | da_3dvar_run.at('-24:00:00'))
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | hofx_run.at('-24:00:00'))
         resources: !calc partition.resources.run_obs_prep
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
 
-      fcst_prep: !Task
+      hofx_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
+        Trigger: !Depend  obs_prep
         resources: !calc partition.resources.run_fcst_prep
         config: [ base ]
-        J_JOB: JJOB_FCST_PREP
-
-      da_prep: !Task
-        <<: *shared_task_template
-        Trigger: !Depend  ( obs_prep & fcst_prep )
-        resources: !calc partition.resources.run_da_prep
-        config: [ base ]
-        J_JOB: JJOB_DA_PREP
+        J_JOB: JJOB_HOFX_PREP
 
       da_prep_soca: !Task
         <<: *shared_task_template
-        Trigger: !Depend  da_prep
+        Trigger: !Depend  hofx_prep
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_PREP_SOCA
 
-      da_3dvar_run: !Task
+      hofx_run: !Task
         <<: *shared_task_template
-        Trigger: !Depend  ( da_prep_soca & obs_prep )
+        Trigger: !Depend  da_prep_soca
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
-        J_JOB: JJOB_DA_3DVAR
-
-      fcst_run: !Task
-        <<: *exclusive_task_template
-        Trigger: !Depend  da_3dvar_run
-        resources: !calc partition.resources.run_fcst
-        config: [ base ]
-        J_JOB: JJOB_FORECAST
+        J_JOB: JJOB_HOFX
 
       post: !Task
         <<: *shared_task_template
-        Trigger: !Depend  fcst_run
+        Trigger: !Depend  hofx_run
         resources: !calc partition.resources.run_fcst_prep
+        rocoto_command: "echo post"
         config: [ base ]
         J_JOB: JJOB_POST
 

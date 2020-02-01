@@ -60,6 +60,9 @@ During this process, three directories will be created:
    `make -j2`
 7. `ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver`
 
+# Copy the mom6-tools.plot to the bin
+0. cp $CLONE_DIR/src/mom6-tools.plot/*.py $CLONE_DIR/build/bin/ 
+
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
    `mkdir -p PROJECT_DIR`
@@ -89,7 +92,8 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    1. 3dvar.yaml
    2. letkf_only_exp.yaml
    3. fcst_only.yaml
-   
+   4. hofx3d_only.yaml
+ 
    Note: Each case files point to a corresponding layout file at $CLONE_DIR/workflow/layout. 
 
 5. Read output and run suggested command. Should be similar to: \
@@ -132,7 +136,10 @@ You could see the resources being updated in workflow.xml as well as config file
 `${RUNCDATE}` 
 
 # Configuration Options
-The user can change a limited set of parameters in the DA cases availabe under `.../cases/`. The yaml code snipet below shows the test example for the 3DVAR given in ./cases/3dvar.yaml
+The user can change a limited set of parameters in the DA cases availabe under `.../cases/`. 
+
+--------------------------------------------------------------
+The yaml code snipet below shows the test example for the 3DVAR given in ./cases/3dvar.yaml
 
 ``` yaml
 case:
@@ -161,6 +168,38 @@ case:
 ```
 The default is 1 member to 1 group (deterministic run).
 
+--------------------------------------------------------------
+The yaml code snipet below shows the test example for the hofx given in ./cases/hofx.yaml
+
+``` yaml
+case:
+  settings:
+    SDATE: 2011-10-01t12:00:00   # Start Date of the experiment
+    EDATE: 2011-10-02t12:00:00   # End         "         "
+    godas_cyc: 1                 # selection of godas DA window: 1(default)- 24h; 
+                                 #                               2 - 12h; 
+                                 #                               4 - 6h
+                                 # NOTE: ONLY OPTION 1 IS CURRENTLY SUPPORTED.                                 
+    resolution: Ocean025deg      # Other options: Ocean3deg, Ocean025deg
+    FCSTMODEL: MOM6CICE5         # Specifies the forecast model, the other option is MOM6solo
+
+
+  da_settings:
+    # Observation switches
+    DA_SST: False    # Sea surface temperature
+    DA_TS: False     # T & S Insitu profiles 
+    DA_ADT: True    # Absolute dynamic topography
+    DA_ICEC: False   # Seaice fraction
+
+  places:
+    workflow_file: layout/hofx_only.yaml
+    SOCA_ANALYSIS: "PATH/to/ANALYSIS" # Specifies the path to a completed 24h forecast model 
+
+```
+- SOCA_ANALYSIS is the run directory of a finished experiment. 
+- The HofX output will be in the RUNCDATE/Data.
+
+
 # Currently Supported Models/Resolutions/Da algorithms
 | Cases | Forecast | 3DVAR | 3DHyb-EnVAR | LETKF |
 | ------| :--------| :---- | :---------- |:----- |
@@ -174,4 +213,5 @@ The default is 1 member to 1 group (deterministic run).
 
 # Post-processing Plot Options
 
-0. Not included in workflow yet, but mom6-tools-based python scripts are available to make plots of model diagnostic output files: see the instruction [here](./src/mom6-tools.plot/README.md).
+0. scripts/post_plot.sh has been updated and included in rocoto workflow. In post processing run, sea ice fraction, SSH, SST, and time_mean figures will be created in $RUNCDATE/Figures directory. Additional offline post processing and plotting tools are available in src/mom6-tools directory: see the instruction [here](./src/mom6-tools.plot/README.md).
+

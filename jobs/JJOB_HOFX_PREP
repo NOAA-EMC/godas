@@ -1,0 +1,114 @@
+#!/bin/bash
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_HOFX_PREP
+# Prepare yaml files for SOCA applications
+#================================================================================
+#================================================================================
+EOF
+
+module purge
+source $MOD_PATH/godas.main
+module list
+
+echo
+echo "The system runs at $RUNCDATE"
+echo
+echo "Root GODAS " ${ROOT_GODAS_DIR}
+
+mkdir -p $RUNCDATE
+
+cd $RUNCDATE
+
+# TODO: Put the job files for the ensemble to a temporary job-dir
+
+cdate2window_begin(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T00:00:00Z; }  # TODO: Hardcoded for 24hr DA window,
+cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }          # make generic.
+
+# Make sure CDATE is at 12z
+cdate_hh(){ echo  ${1:8:2}; }
+if [ $(cdate_hh $CDATE) -eq 12 ]; then
+    echo "Setting SOCA config for 24hr DA window"
+else
+    echo "Background date needs to be at 12Z"
+    echo "CDATE="$CDATE
+    exit 1
+fi
+
+# Copy SOCA static files into RUNCDATE
+#---------------------------------------------------
+cp -r $SOCA_STATIC/* $RUNCDATE
+
+# Adjust date in input.nml
+cp $RUNCDATE/input-ymd.nml $RUNCDATE/input.nml
+YYYY=$(echo  $CDATE | cut -c1-4)
+MM=$(echo $CDATE | cut -c5-6)
+DD=$(echo   $CDATE | cut -c7-8)
+HH=$(echo  $CDATE | cut -c9-10)
+sed -i "s/YYYY/${YYYY}/g" $RUNCDATE/input.nml
+sed -i "s/MM/${MM}/g" $RUNCDATE/input.nml
+sed -i "s/DD/${DD}/g" $RUNCDATE/input.nml
+sed -i "s/HH/${HH}/g" $RUNCDATE/input.nml
+
+# Copy SOCA config files into RUNCDATE
+#----------------------------------------------------
+mkdir -p $RUNCDATE/yaml
+cp -r $SOCA_CONFIG/*.yml $RUNCDATE/yaml
+
+
+# Prepare SOCA configuration
+#-----------------------------------------
+export window_begin=$(cdate2window_begin $CDATE)
+export bkg_date=$(cdate2bkg_date $CDATE)
+
+if [ $godas_cyc = "1" ]; then
+    export window_length=PT24H
+else
+    echo "godas_cyc not valid"
+    exit 1
+fi
+echo "window_begin="$window_begin
+echo "window_length="$window_length
+echo "bkg_date="$bkg_date
+
+## Prep yaml for bump correlation initialization
+#-----------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/static_SocaError_init.yml  \
+      -d ${bkg_date}
+
+## Prep yaml for bump localization initialization
+#------------------------------------------------
+${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+      -i $RUNCDATE/yaml/parameters_bump_loc.yml    \
+      -d ${bkg_date}
+
+# Prep yaml for SOCA HOFX
+#----------------------------------
+mbr=''
+yaml=$RUNCDATE/yaml/hofx3d.yml
+
+${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
+         -i ${yaml}                               \
+         -d ${RUNCDATE}                               \
+         -n ${mbr}
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+
+cat <<EOF
+#================================================================================
+#================================================================================
+#   Get background/initial conditions
+#================================================================================
+#================================================================================
+EOF
+
+# Copy SOCA analysis from a previous completed 24h forecast cycle to run the HOFX
+# WARNING: This overwrites the MOM.res.nc from ${SOCA_STATIC}
+
+cp -p ${SOCA_ANALYSIS}/$CDATE/Data/ocn.socagodas.an.${bkg_date}.nc $RUNCDATE/INPUT_MOM6/MOM.res.nc
+ 
