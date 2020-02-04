@@ -21,6 +21,29 @@ module list
 
 cd $RUNCDATE
 
-# Run H(x)
-srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d.yml
+# Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
 
+
+if [ "$NO_ENS_MBR" -le "1" ];then
+
+   srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x ./yaml/hofx3d.yml
+
+else
+
+   export ENSEND=$((NMEM_PGRP * ENSGRP))
+   export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
+
+   HOFXDIR=$RUNCDATE/hofx
+
+   for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+
+      echo
+      echo Preparing the hofx for ensemble member $MEMBER_NO
+
+      cd $HOFXDIR/mem${MEMBER_NO}
+
+      srun -n $NPE ${SOCA_EXEC}/soca_hofx3d.x $HOFXDIR/mem${MEMBER_NO}/yaml/hofx3d${MEMBER_NO}.yml
+
+   done
+
+fi

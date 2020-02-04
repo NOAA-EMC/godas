@@ -48,21 +48,89 @@ suite: !Cycle
           ecflow_command: !expand |
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
-      
-      da_prep: !Task
-        <<: *shared_task_template
+
+      hofx_prep: !TaskArray
         Trigger: !Depend ( obs_prep & fcst_run )
-        resources: !calc partition.resources.run_da_prep
-        config: [ base ]
-        J_JOB: JJOB_DA_LETKF_PREP      
-      
-      post: !Task
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_da_prep
+          config: [ base ]
+          J_JOB: JJOB_HOFX_PREP_ENS
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
+
+      hofx_run: !TaskArray
+        Trigger: !Depend ( hofx_prep )
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_3dvar
+          config: [ base ]
+          J_JOB: JJOB_HOFX
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
+
+      letkf_prep_ens: !TaskArray
+        Trigger: !Depend ( hofx_run )
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_obs_prep
+          config: [ base ]
+          J_JOB: JJOB_LETKF_PREP_ENS
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
+
+      letkf_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend  da_prep # Change me
-        resources: !calc partition.resources.run_nothing
-#        rocoto_command: "echo post"
+        Trigger: !Depend  ( hofx_run )
+        resources: !calc partition.resources.run_obs_prep
         config: [ base ]
-        J_JOB: JJOB_POST
+        J_JOB: JJOB_LETKF_PREP
+
+      letkf: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  ( letkf_prep )
+        resources: !calc partition.resources.run_letkf
+        config: [ base ]
+        J_JOB: JJOB_LETKF
+
+
+#      post: !Task
+#        <<: *shared_task_template
+#        Trigger: !Depend  da_prep # Change me
+#        resources: !calc partition.resources.run_nothing
+#        rocoto_command: "echo post"
+#        config: [ base ]
+#        J_JOB: JJOB_POST
 
       final: !Task
         <<: *service_task_template

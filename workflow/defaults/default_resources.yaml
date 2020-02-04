@@ -22,7 +22,7 @@ godas_resource_table: !Select
       fcst_prep:    [   1,     1, !timedelta "00:20:00", 1,   "3072" ]
       fcst:         [  10,    40, !timedelta "00:30:00", 1,   "3072" ]
       letkf_prep:   [  24,    24, !timedelta "00:20:00", 12,  "3072" ]
-      letkf:        [ 400,    40, !timedelta "01:00:00", 1,   "3072" ]
+      letkf:        [  20,    40, !timedelta "01:00:00", 1,   "3072" ]
     Ocean1deg:
       #                ranks  ppn  wallclock             threads MB
       r3dvar:       [  24,    40, !timedelta "00:10:00", 1,   "3072" ]
@@ -32,7 +32,7 @@ godas_resource_table: !Select
       fcst_prep:    [   1,     1, !timedelta "00:20:00", 1,   "3072" ]
       fcst:         [  24,    40, !timedelta "00:30:00", 1,   "3072" ]
       letkf_prep:   [  24,    24, !timedelta "00:20:00", 12,  "3072" ]
-      letkf:        [ 400,    40, !timedelta "01:00:00", 1,   "3072" ]
+      letkf:        [  80,    40, !timedelta "01:00:00", 1,   "3072" ]
     Ocean025deg:
       #                ranks  ppn  wallclock             threads MB
       r3dvar:       [  400,   40, !timedelta "01:30:00", 1,   "3072" ]
@@ -42,7 +42,7 @@ godas_resource_table: !Select
       fcst_prep:    [    1,    1, !timedelta "00:20:00", 1,   "3072" ]
       fcst:         [  240,   40, !timedelta "01:00:00", 1,   "3072" ]
       letkf_prep:   [   24,   24, !timedelta "00:20:00", 12,  "3072" ]
-      letkf:        [  400,   40, !timedelta "01:00:00", 1,   "3072" ]
+      letkf:        [  240,   40, !timedelta "01:00:00", 1,   "3072" ]
      
 default_resources: &default_resources
 

@@ -33,6 +33,10 @@ shift $((OPTIND -1))
 cd ${RUNDIR}
 echo "RUNDIR=" $RUNDIR
 
+if [ -z "$BASEDIR" ]; then
+   BASEDIR=./Data
+fi
+
 ## Set date for hofx
 sed -i "s/WINDOW_BEGIN/${window_begin}/g" ${yamlfile}
 sed -i "s/WINDOW_LENGTH/${window_length}/g" ${yamlfile}
@@ -53,10 +57,16 @@ else
    OUTDIR="$RUNDIR/Data"
 fi
 
-${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh \
-      -i ${yamlfile}                             \
-      -d $RUNDIR                                 \
-      -o $OUTDIR
+${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh   \
+      -i ${yamlfile}                               \
+      -d $RUNDIR
+
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i ${yamlfile}                               \
+      -k OBSDATAOUT                                \
+      -v ${OUTDIR}
+
 
 echo '#                                                                 #'
 echo '#                     prep_hofx3d_yaml.sh                         #'

@@ -5,7 +5,7 @@ cat <<EOF
 #================================================================================
 #================================================================================
 # JJOB_DA_LETKF
-# Run UMD-LETKF, Recenter and Remapping
+# Run UMD-LETKF (Recenter and Remapping)
 #================================================================================
 #================================================================================
 EOF
@@ -14,7 +14,11 @@ module purge
 source $MOD_PATH/godas.main
 module list
 
-cd $RUNCDATE
+echo
+echo "The system runs at $RUNCDATE"
+echo
+echo "The LETKF directory is " ${LETKFDIR}
+cd ${LETKFDIR}
 
 cat <<EOF
 #============================================
@@ -22,12 +26,12 @@ cat <<EOF
 #============================================
 EOF
 
-srun -n $NPE ${SOCA_EXEC}/letkfdriver ./yaml/letkf.yml
+srun -n $NPE ${SOCA_EXEC}/letkfdriver ${LETKFDIR}/yaml/letkf.yml
 
-cat <<EOF
-#============================================
-# Run Recenter
-#============================================
-EOF
+#cat <<EOF
+##============================================
+## Run Recenter
+##============================================
+#EOF
 
-srun -n $NPE ${SOCA_EXEC}/soca_ensrecenter.x ./yaml/ensrecenter.yml
+#srun -n $NPE ${SOCA_EXEC}/soca_ensrecenter.x ./yaml/ensrecenter.yml

@@ -67,7 +67,6 @@ config_base:
     export SOCA_ANALYSIS="{doc.places.SOCA_ANALYSIS}"
     export MOD_PATH="{doc.places.MOD_PATH}"
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"
-    export DCOM_ROOT="{doc.places.DCOM_ROOT}"
     export IODA_ROOT="{doc.places.IODA_ROOT}"
 
     ####################################################
@@ -94,6 +93,7 @@ config_base:
     export ROTDIR="{doc.places.ROTDIR}"
     export RUNDIR="{doc.places.RUNDIR}"
     export RUNCDATE="{doc.places.RUNDIR}/$CDATE"
+    export LETKFDIR="{doc.places.RUNDIR}/$CDATE/letkf"
 
     # DA cycle info
     export godas_cyc={doc.settings.godas_cyc}

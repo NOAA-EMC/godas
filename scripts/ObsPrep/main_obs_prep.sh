@@ -12,7 +12,7 @@ if [ "$DA_ADT" = True ]; then
    ADTsource=adt.nesdis
    for sat in j1 j2 c2                         # Placeholder to add more satellites
    do
-      source ${ROOT_GODAS_DIR}/scripts/ObsPrep/ObsPrepadt_prep_obs.sh \
+      source ${ROOT_GODAS_DIR}/scripts/ObsPrep/adt_prep_obs.sh \
                        -i ${ADTsource} \
                        -d ${sat}
    done
