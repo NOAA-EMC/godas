@@ -18,6 +18,7 @@ echo
 echo "The system runs at $RUNCDATE"
 echo
 echo "The LETKF directory is " ${LETKFDIR}
+
 cd ${LETKFDIR}
 
 cat <<EOF
@@ -26,7 +27,7 @@ cat <<EOF
 #============================================
 EOF
 
-srun -n $NPE ${SOCA_EXEC}/letkfdriver ${LETKFDIR}/yaml/letkf.yml
+srun -n $NPE ${SOCA_EXEC}/letkfdriver ${LETKFDIR}/yaml/letkf.yaml
 
 #cat <<EOF
 ##============================================
