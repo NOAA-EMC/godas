@@ -6,7 +6,6 @@ from pathlib import Path
 from mom6_tools.MOM6grid import MOM6grid
 from mom6_tools.latlon_analysis import time_mean_latlon
 from mom6_tools.m6plot import xyplot, yzplot
-from plot_func import SOCAgrd_Lon
 import matplotlib.pyplot as plt
 import warnings
 import xarray as xr
@@ -36,19 +35,17 @@ grd= MOM6grid(args.grid)
 clim_sst=[-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
 clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]
 
-cross_location_longitude = [ -155, -125, -35, -25, 165, 90, 60] 
+cross_location_latitude = [-50, -30, 0, 30, 50] 
 for filename in args.data:
-    for crs_loc_lon in cross_location_longitude:
-        crs_loc_lon_adj = SOCAgrd_Lon (crs_loc_lon)
-        print ("Cross Location Longitude=" + str(crs_loc_lon_adj))
-        xh_cross = np.argmin(np.abs(grd.xh-crs_loc_lon_adj))
+    for crs_loc_lat in cross_location_latitude:
+        yh_cross = np.argmin(np.abs(grd.yh-crs_loc_lat))
         nc = xr.open_mfdataset(filename , decode_times=False)
         path_ = Path(filename)
         name_ = Path(filename).name
-        if crs_loc_lon < 0:
-           FigFileName = str(abs(crs_loc_lon)) + 'W'
+        if crs_loc_lat < 0:
+           FigFileName = str(abs(crs_loc_lat)) + 'S'
         else:
-           FigFileName = str(abs(crs_loc_lon)) + 'E'
+           FigFileName = str(abs(crs_loc_lat)) + 'N'
 
         if args.figs_path is None:
            file_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
@@ -57,4 +54,4 @@ for filename in args.data:
            file_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
            title_cross='Potential temp (degC at ' + FigFileName + '):' +str(name_)
 
-        yzplot(nc.temp[0,:,:,xh_cross].to_masked_array(), grd.yh, -grd.z_l, plotype='contourf', clim=clim_sst,title=title_cross,save=file_fig)
+        yzplot(nc.temp[0,:,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l, plotype='contourf', clim=clim_sst,title=title_cross,save=file_fig)
