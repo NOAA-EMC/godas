@@ -20,6 +20,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-grid', required=True, help='grid/geometry filename: ocean_geometry.nc')
 parser.add_argument('-data', nargs='*', type=str, required=True, help='diag data filename(s): ocn_*.nc')
 parser.add_argument('-figs_path',help='path to save png files: ./fcst')
+
 args = parser.parse_args()
 
 #print(f'Loading grid... {args.grid}')
@@ -34,6 +35,7 @@ grd= MOM6grid(args.grid)
 
 clim_sst=[-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
 clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]
+clim_sss=[30,31,32,33,34,35,36,37,38,39,40]
 
 cross_location_latitude = [-50, -30, 0, 30, 50] 
 for filename in args.data:
@@ -48,10 +50,17 @@ for filename in args.data:
            FigFileName = str(abs(crs_loc_lat)) + 'N'
 
         if args.figs_path is None:
-           file_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
-           title_cross='Potential temp (degC at ' + FigFileName + '):' +str(name_)
-        else:
-           file_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
-           title_cross='Potential temp (degC at ' + FigFileName + '):' +str(name_)
+           temp_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
+           title_cross_temp='Potential temp (degC at ' + FigFileName + '):' +str(name_)
+           sal_fig = str(args.figs_path+'/'+path_.stem + '_sal_' + FigFileName + '.png')
+           title_cross_sal='Sea Water Salinity (psu at ' + FigFileName + '):' +str(name_)
 
-        yzplot(nc.temp[0,:,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l, plotype='contourf', clim=clim_sst,title=title_cross,save=file_fig)
+        else:
+           temp_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
+           title_cross_temp='Potential temp (degC at ' + FigFileName + '):' +str(name_)
+           sal_fig = str(args.figs_path+'/'+path_.stem + '_sal_' + FigFileName + '.png')
+           title_cross_sal='Sea Water Salinity (psu at ' + FigFileName + '):' +str(name_)
+
+
+        yzplot(nc.temp[0,:,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l, plotype='contourf', clim=clim_sst,title=title_cross_temp,save=temp_fig)
+        yzplot(nc.so[0,:,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l, plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)

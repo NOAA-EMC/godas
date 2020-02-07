@@ -35,6 +35,7 @@ grd= MOM6grid(args.grid)
 
 clim_sst=[-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
 clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]
+clim_sss=[30,31,32,33,34,35,36,37,38,39,40]
 
 cross_location_longitude = [ -155, -125, -35, -25, 165, 90, 60] 
 for filename in args.data:
@@ -51,10 +52,17 @@ for filename in args.data:
            FigFileName = str(abs(crs_loc_lon)) + 'E'
 
         if args.figs_path is None:
-           file_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
-           title_cross='Potential temp (degC at ' + FigFileName + '):' +str(name_)
-        else:
-           file_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
-           title_cross='Potential temp (degC at ' + FigFileName + '):' +str(name_)
+           temp_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
+           title_cross_temp='Potential temp (degC at ' + FigFileName + '):' +str(name_)
+           sal_fig = str(args.figs_path+'/'+path_.stem + '_sal_' + FigFileName + '.png')
+           title_cross_sal='Sea Water Salinity (psu at ' + FigFileName + '):' +str(name_)
 
-        yzplot(nc.temp[0,:,:,xh_cross].to_masked_array(), grd.yh, -grd.z_l, plotype='contourf', clim=clim_sst,title=title_cross,save=file_fig)
+        else:
+           temp_fig = str(args.figs_path+'/'+path_.stem + '_temp_' + FigFileName + '.png')
+           title_cross_temp='Potential temp (degC at ' + FigFileName + '):' +str(name_)
+           sal_fig = str(args.figs_path+'/'+path_.stem + '_sal_' + FigFileName + '.png')
+           title_cross_sal='Sea Water Salinity (psu at ' + FigFileName + '):' +str(name_)
+
+
+        yzplot(nc.temp[0,:,:,xh_cross].to_masked_array(), grd.yh, -grd.z_l, plotype='contourf', clim=clim_sst,title=title_cross_temp,save=temp_fig)
+        yzplot(nc.so[0,:,:,xh_cross].to_masked_array(), grd.yh, -grd.z_l, plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)
