@@ -38,10 +38,17 @@ if [ -e "${files2plot[0]}" ]; then
 	   -grid $GridFile                           \
 	   -data $OceanFcstDir/ocn_*.nc              \
 	   -figs_path $FiguresDir 
+    # 2a. meridional cross section
     ipython -- $SOCA_EXEC/yz.plot.py                    \
 	   -grid $GridFile                           \
 	   -data $OceanFcstDir/ocn_*.nc              \
+	   -figs_path $FiguresDir
+    # 2b. zonal cross section
+    ipython -- $SOCA_EXEC/xz.plot.py                    \
+	   -grid $GridFile                           \
+	   -data $OceanFcstDir/ocn_*.nc              \
 	   -figs_path $FiguresDir 
+ 
 fi
 
 # 3. Plot time averages
