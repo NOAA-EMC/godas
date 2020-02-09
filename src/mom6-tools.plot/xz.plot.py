@@ -37,6 +37,8 @@ clim_sst=[-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]
 clim_ssh=[-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0]
 clim_sss=[30,31,32,33,34,35,36,37,38,39,40]
 
+depth_max=500
+
 cross_location_latitude = [-50, -30, 0, 30, 50] 
 for filename in args.data:
     for crs_loc_lat in cross_location_latitude:
@@ -61,6 +63,11 @@ for filename in args.data:
            sal_fig = str(args.figs_path+'/'+path_.stem + '_sal_' + FigFileName + '.png')
            title_cross_sal='Sea Water Salinity (psu at ' + FigFileName + '):' +str(name_)
 
+#TODO: Make the depth selection elegant
+        ind_depth=np.where(nc.z_l<=depth_max)
 
-        yzplot(nc.temp[0,:,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l, plotype='contourf', clim=clim_sst,title=title_cross_temp,save=temp_fig)
-        yzplot(nc.so[0,:,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l, plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)
+        yzplot(nc.temp[0,np.min(ind_depth):np.max(ind_depth)+1, yh_cross,:].to_masked_array(), grd.xh, -grd.z_l[ind_depth], plotype='contourf', clim=clim_sst,title=title_cross_temp,save=temp_fig)
+
+        yzplot(nc.so[0,np.min(ind_depth):np.max(ind_depth)+1,yh_cross,:].to_masked_array(), grd.xh, -grd.z_[ind_depth]l, plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)
+        
+        plt.close('all')
