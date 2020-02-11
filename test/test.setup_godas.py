@@ -123,9 +123,9 @@ if __name__ == '__main__':
         make_dir(build_dir); os.chdir(build_dir)
 
         if BUILD_COMPILER.strip() is 'intel-19':
-            subprocess.check_call(['bash','-c','module purge; source ../modulefiles/godas.main; module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+            subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.inter19; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
         else:     #build with intel-18
-            subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel18; module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+            subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel18; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
 
         soca_config_path=CLONE_DIR+'/src/soca-bundle/soca-config'
         os.chdir(soca_config_path)
