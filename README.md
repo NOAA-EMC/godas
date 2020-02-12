@@ -32,7 +32,8 @@ During this process, three directories will be created:
    `cd $CLONE_DIR/build`
 2. Load the JEDI modules \
    `module purge` \
-   `source  $CLONE_DIR/modulefiles/godas.main` \ 
+   `source  $CLONE_DIR/modulefiles/hera.intel18` \
+   `source  $CLONE_DIR/modulefiles/hera.setenv` \
    `module list` 
 3. Clone all the necessary repositories to build soca \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
