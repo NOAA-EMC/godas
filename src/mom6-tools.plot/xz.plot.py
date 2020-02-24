@@ -1,6 +1,6 @@
 import os, sys
-file_path = '/scratch2/NCEPDEV/marineda/common/mom6-tools/mom6_tools'
-sys.path.append(os.path.dirname(file_path))
+#file_path = '/scratch2/NCEPDEV/marineda/common/mom6-tools/mom6_tools'
+#sys.path.append(os.path.dirname(file_path))
 
 from pathlib import Path
 from mom6_tools.MOM6grid import MOM6grid
