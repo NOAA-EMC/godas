@@ -4,4 +4,4 @@
 ##
 
 module use -a /scratch2/NCEPDEV/marineda/Jong.Kim/save/modulefiles/
-module load anaconda/anaconda3-5.3.1
+module load anaconda/3.15.1
