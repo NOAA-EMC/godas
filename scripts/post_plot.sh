@@ -24,7 +24,7 @@ export QT_QPA_PLATFORM=offscreen
 files2plot=( "$IceAnlDir"/cic.socagodas.an.*.nc )
 if [ -e "${files2plot[0]}" ]; then
     cp -rf $IceAnlDir/cic.socagodas.an.*.nc $OceanFcstDir
-    ipython -- $SOCA_EXEC/ice.plot.py                    \
+    python -- $SOCA_EXEC/ice.plot.py                    \
            -grid $GridFile                           \
            -data $OceanFcstDir/cic.socagodas.an.*.nc \
            -figs_path $FiguresDir                    \
@@ -34,17 +34,17 @@ fi
 # 2. Plot the ocean fcst 
 files2plot=( "$OceanFcstDir"/ocn_*.nc )
 if [ -e "${files2plot[0]}" ]; then
-    ipython -- $SOCA_EXEC/sfc.plot.py                    \
+    python -- $SOCA_EXEC/sfc.plot.py                    \
 	   -grid $GridFile                           \
 	   -data $OceanFcstDir/ocn_*.nc              \
 	   -figs_path $FiguresDir 
     # 2a. meridional cross section
-    ipython -- $SOCA_EXEC/yz.plot.py                    \
+    python -- $SOCA_EXEC/yz.plot.py                    \
 	   -grid $GridFile                           \
 	   -data $OceanFcstDir/ocn_*.nc              \
 	   -figs_path $FiguresDir
     # 2b. zonal cross section
-    ipython -- $SOCA_EXEC/xz.plot.py                    \
+    python -- $SOCA_EXEC/xz.plot.py                    \
 	   -grid $GridFile                           \
 	   -data $OceanFcstDir/ocn_*.nc              \
 	   -figs_path $FiguresDir 
@@ -56,7 +56,7 @@ fi
 
 files2plot=( "$OceanFcstDir"/ocn_*.nc )
 if [ -e "${files2plot[0]}" ]; then
-    ipython -- $SOCA_EXEC/sfc.time.plot.py               \
+    python -- $SOCA_EXEC/sfc.time.plot.py               \
            -grid $GridFile                           \
            -data $OceanFcstDir/ocn_*.nc              \
            -figs_path $FiguresDir/time_mean
