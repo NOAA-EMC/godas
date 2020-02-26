@@ -65,6 +65,6 @@ for filename in args.data:
 
         yzplot(nc.temp[0,np.min(ind_depth):np.max(ind_depth)+1, yh_cross,:].to_masked_array(), grd.xh, -grd.z_l[ind_depth], plotype='contourf', clim=clim_sst,title=title_cross_temp,save=temp_fig)
 
-        yzplot(nc.so[0,np.min(ind_depth):np.max(ind_depth)+1,yh_cross,:].to_masked_array(), grd.xh, -grd.z_[ind_depth]l, plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)
+        yzplot(nc.so[0,np.min(ind_depth):np.max(ind_depth)+1,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l[ind_depth], plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)
         
         plt.close('all')
