@@ -1,7 +1,4 @@
 import os, sys
-file_path = '/scratch2/NCEPDEV/marineda/common/mom6-tools/mom6_tools'
-sys.path.append(os.path.dirname(file_path))
-
 from pathlib import Path
 from mom6_tools.MOM6grid import MOM6grid
 from mom6_tools.latlon_analysis import time_mean_latlon
@@ -68,6 +65,6 @@ for filename in args.data:
 
         yzplot(nc.temp[0,np.min(ind_depth):np.max(ind_depth)+1, yh_cross,:].to_masked_array(), grd.xh, -grd.z_l[ind_depth], plotype='contourf', clim=clim_sst,title=title_cross_temp,save=temp_fig)
 
-        yzplot(nc.so[0,np.min(ind_depth):np.max(ind_depth)+1,yh_cross,:].to_masked_array(), grd.xh, -grd.z_[ind_depth]l, plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)
+        yzplot(nc.so[0,np.min(ind_depth):np.max(ind_depth)+1,yh_cross,:].to_masked_array(), grd.xh, -grd.z_l[ind_depth], plotype='contourf', clim=clim_sss,title=title_cross_sal,save=sal_fig)
         
         plt.close('all')
