@@ -1,7 +1,4 @@
 import os, sys
-file_path = '/scratch2/NCEPDEV/marineda/common/mom6-tools/mom6_tools'
-sys.path.append(os.path.dirname(file_path))
-
 from pathlib import Path
 from mom6_tools.MOM6grid import MOM6grid
 from mom6_tools.m6plot import polarplot
@@ -13,8 +10,6 @@ import argparse
 import cmocean
 import cartopy.crs as ccrs
 import cartopy.feature
-cartopy.config['data_dir']='/scratch2/NCEPDEV/marineda/common/cartopy/'
-cartopy.config['pre_existing_data_dir']='/scratch2/NCEPDEV/marineda/common/cartopy/'
 
 # required arg
 parser = argparse.ArgumentParser()

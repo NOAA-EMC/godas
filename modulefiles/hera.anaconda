@@ -3,5 +3,5 @@
 ##      Python prerequisites
 ##
 
-module use -a /scratch2/NCEPDEV/marine/Todd.Spindler/save/modulefiles/
-module load anaconda/1.0.0
+module use -a /scratch2/NCEPDEV/marineda/Jong.Kim/save/modulefiles/
+module load anaconda/3.15.1
