@@ -12,7 +12,7 @@ model=${model:-"godas"}
 if [ $model = "godas" ]; then
 
 #if on hera:  (should put on hpss eventually too)
-ln -sf /scratch2/NCEPDEV/marineda/Jessica.Meixner/FIX/* $topdir/../fix/
+ln -sf /scratch2/NCEPDEV/marineda/godas_input/FIX/* $topdir/../fix/
 
 
 fi
