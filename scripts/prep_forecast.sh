@@ -409,7 +409,7 @@ mv tmp1 $DATA/datm_data_table
 
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
 echo "Link DATM forcing files"
-DATMINPUTDIR="/scratch2/NCEPDEV/marineda/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
+DATMINPUTDIR="/scratch2/NCEPDEV/marineda/godas_input/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 
 ######################################################################

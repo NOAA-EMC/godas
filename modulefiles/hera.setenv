@@ -1,0 +1,5 @@
+setenv FC          mpiifort
+setenv CC          mpiicc
+setenv CXX         mpiicpc
+setenv MPIEXEC     /apps/intel/compilers_and_libraries_2017/linux/mpi/intel64/bin/mpirun
+setenv NETCDF_ROOT /apps/netcdf/4.7.0/intel/18.0.5.274/impi/2018.0.4 

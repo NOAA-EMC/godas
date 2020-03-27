@@ -13,14 +13,13 @@ default_places: &default_places
   EXPDIR :     !expand '{PROJECT_DIR}/{doc.names.experiment}'    # EXPDIR location
   LOG_DIR:     !expand "{EXPDIR}/log"                            # place to logs
   ROTDIR: !expand "{LONG_TERM_TEMP}/comrot/{doc.names.experiment}"   # Rotational directory
-  GODAS_RC:   "/scratch2/NCEPDEV/marine/marineda"                 # Root path for external data
+  GODAS_RC:   "/scratch2/NCEPDEV/marineda/godas_input"                 # Root path for external data
   SOCA_EXEC:   !expand "{ROOT_GODAS_DIR}/build/bin"                # soca-bundle executable path
   SOCA_STATIC: !expand "{GODAS_RC}/soca-static/{doc.da_settings.NI}x{doc.da_settings.NJ}x{doc.da_settings.NK}"
   SOCA_CONFIG:   !expand "{ROOT_GODAS_DIR}/src/soca-bundle/soca-config/emc"             # soca-config path
   DCOM_ROOT: !expand "{GODAS_RC}/ocean_observations/data"         # Observation root path for raw obs
   IODA_ROOT: !expand "{GODAS_RC}/ioda_observations"   # Processed observations
   MOD_PATH: !expand "{ROOT_GODAS_DIR}/modulefiles"
-  MODEL_SCRATCH: "/scratch2/NCEPDEV/ocean/Guillaume.Vernieres/mom6-cice5-fv3/{NI}x{NJ}x{NK}"
   SHORT_TERM_TEMP: !calc doc.platform.short_term_temp             # short term storage
   LONG_TERM_TEMP:  !calc doc.platform.long_term_temp              # long term storage
   RUNDIR: !expand "{LONG_TERM_TEMP}/{tools.env('USER')}/rundir/{doc.names.experiment}" # RUN directory
