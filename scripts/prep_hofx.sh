@@ -1,5 +1,5 @@
-#! /bin/sh
-
+#! /bin/sh 
+set -e
 ######################################################################
 ######################################################################
 #                                                                    #
@@ -25,7 +25,6 @@ cice2fms(){
    ncks -O -C -v aicen,vicen,vsnon $path/cice_bkg.nc $path/cice_bkg.nc
    ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $path/cice_bkg.nc
    ncecat -O -v aicen,vicen,vsnon -u Time $path/cice_bkg.nc $path/cice_bkg.nc
-   echo $path
    ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $path/INPUT_MOM6/ice_model.res.nc $path/cice_bkg.nc
 }
 
@@ -129,7 +128,7 @@ echo `ln -sf ${RUNCDATE_GLBL}/Data/ ${HOFXDIR}/Data`
    ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -i ${yamlfile}                                  \
       -k BASE_NAME                                    \
-      -v ./INPUT
+      -v ./
 #      -v ${HOFXDIR} # When the path is long, the run fails
 
    ${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh   \

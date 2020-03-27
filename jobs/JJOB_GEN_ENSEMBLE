@@ -16,30 +16,10 @@ echo $RUNCDATE
 if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
 cd $RUNCDATE
 
+mkdir -p $RUNCDATE/Data
+
 if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 
 # Generate the ensemble using soca_enspert
 
 srun -n $NPE ${SOCA_EXEC}/soca_enspert.x ./yaml/genenspert.yml
-
-# Rename the ensemble members
-cd $RUNCDATE/Data
-
-# Removing softlinks to pertubations from the PREP_DA
-
-find ./ -name 'cic.pert.ens.*.nc' -type l -delete
-find ./ -name 'ocn.pert.ens.*.nc' -type l -delete
-
-rename_func "cic.pert.ens.*.PT0S.nc"
-rename_func "ocn.pert.ens.*.PT0S.nc"
-
-cd $RUNCDATE
-
-# Change of the coordinates
-srun -n $NPE ${SOCA_EXEC}/soca_ensrecenter.x ./yaml/recenter.yml
-
-cd $RUNCDATE/Data
-
-rename_func "ice.pert.ens.*.PT0S.nc"
-rename_func "ocn.pert.ens.*.PT0S.nc"
-
