@@ -104,8 +104,10 @@ if __name__ == '__main__':
         if os.path.isdir(CLONE_DIR): delete_dir(CLONE_DIR)
     
         #1. Setup GODAS system at CLONE_DIR ------------------------------------
-        print ('-----------Setup GODAS system at:',CLONE_DIR)
-        os.system("git clone https://github.com/NOAA-EMC/godas.git "+CLONE_DIR)
+        print ('-----------Setup GODAS system at:',CLONE_DIR);return_value=0
+        return_value=os.system("git clone https://github.com/NOAA-EMC/godas.git "+CLONE_DIR)
+        if (return_value != 0) :
+            sys.exit('-----------Trouble to clone GODAS repo -----------')
         os.chdir(CLONE_DIR)
         if BRANCH_NAME.strip() is not 'develop':
             os.system("git checkout "+BRANCH_NAME)
@@ -117,15 +119,24 @@ if __name__ == '__main__':
         os.system("sh build_DATM-MOM6-CICE5.sh") 
 
         #2. Clone and build soca system inside CLONE_DIR------------------------
-        print ('-----------Clone and build SOCA system at:',CLONE_DIR)
-        os.system("git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git "+CLONE_DIR+"/src/soca-bundle")
+        print ('-----------Clone and build SOCA system at:',CLONE_DIR);return_value=0
+        if os.path.isdir(CLONE_DIR+"/src/soca-bundle"): delete_dir(CLONE_DIR+"/src/soca-bundle")
+        return_value=os.system("git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git "+CLONE_DIR+"/src/soca-bundle")
+        if (return_value != 0) :
+            sys.exit('-----------Trouble to clone SOCA Bundle -----------')        
         build_dir=CLONE_DIR+'/build'
         make_dir(build_dir); os.chdir(build_dir)
 
         if BUILD_COMPILER.strip() is 'intel-19':
-            subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.inter19; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+            try:
+                subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.inter19; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+            except subprocess.CalledProcessError as error:
+                sys.exit('-----------Trouble to build SOCA with intel-19-----------')
         else:     #build with intel-18
-            subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel18; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+            try:
+                subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel18; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+            except subprocess.CalledProcessError as error:
+                sys.exit('-----------Trouble to build SOCA with intel-18-----------')
 
         soca_config_path=CLONE_DIR+'/src/soca-bundle/soca-config'
         os.chdir(soca_config_path)
@@ -133,13 +144,19 @@ if __name__ == '__main__':
          
         #3. Clone and build the UMD-LETKF --------------------------------------
         os.chdir(CLONE_DIR)
-        print ('-----------Clone and build the UMD-LETKF at:',CLONE_DIR)
-        os.system("git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git ./src/letkf")
+        if os.path.isdir(CLONE_DIR+"/src/letkf"): delete_dir(CLONE_DIR+"/src/letkf")
+        print ('-----------Clone and build the UMD-LETKF at:',CLONE_DIR);return_value=0
+        return_value=os.system("git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git ./src/letkf")
+        if (return_value != 0) :
+            sys.exit('-----------Trouble to clone UMD-LETKF repo -----------')
         os.chdir(CLONE_DIR+"/src/letkf")
         os.system("git submodule update --init --recursive")
         make_dir(CLONE_DIR+"/build/letkf")
         os.chdir(CLONE_DIR+"/build/letkf")
-        subprocess.check_call(['csh','-c','module purge; source ../../modulefiles/godas.main; source ../../src/letkf/config/env.hera; cmake -DNETCDF_DIR=$NETCDF ../../src/letkf; make -j2'])
+        try:
+            subprocess.check_call(['csh','-c','module purge; source ../../modulefiles/godas.main; source ../../src/letkf/config/env.hera; cmake -DNETCDF_DIR=$NETCDF ../../src/letkf; make -j2'])
+        except subprocess.CalledProcessError as error:
+            sys.exit('-----------Trouble to build LETKF -----------')
  
         src_letkf=CLONE_DIR+'/build/letkf/bin/letkfdriver'
         dst_letkf=CLONE_DIR+'/build/bin/letkfdriver'
