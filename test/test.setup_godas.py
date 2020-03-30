@@ -12,7 +12,7 @@ import time
 import pathlib
 
 def make_dir(path):
-    if os.path.isdir(path): delete_dir(path) 
+    if os.path.isdir(path): delete_dir(path)
     try:
         os.makedirs(path)
     except OSError:
@@ -47,7 +47,7 @@ def check_job_status(filename):
     with open(filename) as inf:
         for line in inf:
             parts = line.split() # split line into parts
-            if len(parts) > 1:   # if at least 2 parts/columns        
+            if len(parts) > 1:   # if at least 2 parts/columns 
                 jobcycle.append(parts[0])
                 jobtask.append(parts[1])
                 jobstate.append(parts[3])
@@ -123,13 +123,13 @@ if __name__ == '__main__':
         if os.path.isdir(CLONE_DIR+"/src/soca-bundle"): delete_dir(CLONE_DIR+"/src/soca-bundle")
         return_value=os.system("git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git "+CLONE_DIR+"/src/soca-bundle")
         if (return_value != 0) :
-            sys.exit('-----------Trouble to clone SOCA Bundle -----------')        
+            sys.exit('-----------Trouble to clone SOCA Bundle -----------')
         build_dir=CLONE_DIR+'/build'
         make_dir(build_dir); os.chdir(build_dir)
 
         if BUILD_COMPILER.strip() is 'intel-19':
             try:
-                subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.inter19; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+                subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel19; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
             except subprocess.CalledProcessError as error:
                 sys.exit('-----------Trouble to build SOCA with intel-19-----------')
         else:     #build with intel-18
