@@ -84,6 +84,8 @@ DT_DYNAM_MOM6=${DT_DYNAM_MOM6:-"900"}   #MOM6 dynamic time step   [seconds]
 DIAG_TABLE=${DIAG_TABLE:-$TEMPLATEDIR/diag_table_template}
 #input.nml (FMS) 
 MOM6_RESTART_SETTING=${MOM6_RESTART_SETTING:-"r"}  #MOM6 restart setting 'r' or 'n'
+#field_table (for ocean_BGC) X.Liu 03/27/2020 
+FIELD_TABLE=${FIELD_TABLE:-$TEMPLATEDIR/field_table_template}
 
 # CICE5 Ice Variables 
 
@@ -177,7 +179,25 @@ cat > input.nml << EOF
          restart_input_dir = 'INPUT/',
          restart_output_dir = 'MOM6_RESTART/',
          parameter_filename = 'INPUT/MOM_input',
-                              'INPUT/MOM_override' /
+                              'INPUT/MOM_override'
+/
+
+&generic_tracer_nml
+       do_generic_tracer=.true.
+       do_generic_age=.false.
+       do_generic_COBALT=.false.
+       do_generic_BLING=.true.
+       do_generic_miniBLING=.false.
+       do_generic_TOPAZ=.false.
+       force_update_fluxes=.true.
+/
+
+&generic_bling_nml
+      do_carbon=.false.
+      bury_caco3=.false.
+      bury_pop=.false.
+      co2_calc='mocsy'
+/
 EOF
 
 ######################################################################
@@ -193,6 +213,9 @@ MOM6 Forecast
 $SYEAR $SMONTH $SDAY $SHOUR 0 0
 EOF
 cat $DIAG_TABLE >> diag_table
+
+# X.Liu added ocean_BGC registry in field_table 03/27/2020
+cat $FIELD_TABLE >> field_table 
 
 cp $TEMPLATEDIR/data_table.IN $DATA/data_table
 
@@ -295,9 +318,9 @@ mv tmp1 $DATA/INPUT/MOM_input
 
 # TODO: Append to template MOM_override? My (Guillaume) opinion is to keep it empty 
 #       in the static files, and populate it from scratch as needed. 
-#cp $TEMPLATEDIR/MOM_override $DATA/INPUT/MOM_override
-echo 'RESTART_CHECKSUMS_REQUIRED = False' > $DATA/INPUT/MOM_override
-cat $DATA/INPUT/MOM_override
+cp $TEMPLATEDIR/MOM_override $DATA/INPUT/MOM_override # X.Liu uncommented this 03/27/2020
+#echo 'RESTART_CHECKSUMS_REQUIRED = False' > $DATA/INPUT/MOM_override
+#cat $DATA/INPUT/MOM_override
 
 ######################################################################
 # 2.6 CICE input                                                     #

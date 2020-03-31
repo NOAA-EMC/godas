@@ -1,4 +1,8 @@
 ! Blank file in which we can put "overrides" for parameters
-!VERBOSITY = 2 
+VERBOSITY = 2
+RESTART_CHECKSUMS_REQUIRED = False
+USE_generic_tracer = True
+TRACERS_MAY_REINIT = True
+CHL_FROM_FILE = False 
 !----------------------------------
 

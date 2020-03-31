@@ -39,3 +39,17 @@ if [[ ! -d letkf ]] ; then
 else
     echo 'Skip.  Directory letkf already exists.'
 fi
+
+# -------------------------------------------------
+# option to check out generic tracer and bgc modules
+# X.Liu 03/27/2020
+echo ocean biogeochemical modules checkout ... 
+if [[ ! -d DATM-MOM6-CICE5.fd/MOM6/src/ocean_BGC/generic_tracers ]] ; then
+    git clone --single-branch --branch noaa-emc https://github.com/NOAA-EMC/ocean_BGC.git DATM-MOM6-CICE5.fd/MOM6/src/ocean_BGC
+    cd DATM-MOM6-CICE5.fd/MOM6/src/ocean_BGC
+    git submodule update --init --recursive
+    cd ${topdir}
+else
+    echo 'Skip.  Directory ocean_BGC/generic_tracers already exists.'
+fi
+# -------------------------------------------------
