@@ -20,7 +20,7 @@ case $FCSTMODEL in
       export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
       
       # TODO: Point to better IC'
-      if [ ! -d $RUNCDATE/../NEXT_IC ] & [ "$NO_ENS_MBR" -le "1" ]; then
+      if [ ! -d $RUNCDATE/../NEXT_IC ] && [ "$NO_ENS_MBR" -le "1" ]; then
          nextic=$RUNCDATE/../NEXT_IC
 cat <<EOF
 # Initial Conditions are copied from the static files
