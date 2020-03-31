@@ -52,4 +52,6 @@ if [[ ! -d DATM-MOM6-CICE5.fd/MOM6/src/ocean_BGC/generic_tracers ]] ; then
 else
     echo 'Skip.  Directory ocean_BGC/generic_tracers already exists.'
 fi
+# temporary solution: replacing MOM6 compile.sh file for ocean_BGC compiling
+cp -f /scratch2/NCEPDEV/marineda/Xiao.Liu/compile.sh DATM-MOM6-CICE5.fd/MOM6
 # -------------------------------------------------
