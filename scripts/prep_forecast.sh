@@ -66,12 +66,24 @@ ATMPETS=${ATMPETS:-"72"}   #Number of ATM Pets
 # model_configure variables 
 DT_ATMOS=${DT_ATMOS:-900}  #DATM time step [seconds]
 coupling_interval_fast_sec=${coupling_interval_fast_sec:-$DT_ATMOS} #likely can be depricated from DATM
-DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-'cfsr.'} #The prefix of the forcing files for the DATM
-#for cfsr:  (will be different for gefs)
-NFHOUT=${NFHOUT:-6}  #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs    
-IATM=${IATM:-1760}  #dimension of DATM input files, lon     
-JATM=${JATM:-880}   #dimension of DATM input files, lat
+DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-"${FORCING_SRC,,}."} #The prefix of the forcing files for the DATM
 
+#nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs
+#dimension of DATM input files, lon
+#dimension of DATM input files, lat
+
+if [ "${FORCING_SRC,,}" = "cfsr" ]; then
+   NFHOUT=${NFHOUT:-6}
+   IATM=${IATM:-1760}
+   JATM=${JATM:-880}
+elif [ "${FORCING_SRC,,}" = "gefs" ]; then
+   NFHOUT=${NFHOUT:-3}
+   IATM=${IATM:-1536}
+   JATM=${JATM:-768}
+else
+   echo "Unknown forcing, exiting..."
+   exit
+fi
 # MOM6 Ocean Variables 
 
 #resource/basic
@@ -409,7 +421,7 @@ mv tmp1 $DATA/datm_data_table
 
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
 echo "Link DATM forcing files"
-DATMINPUTDIR="/scratch2/NCEPDEV/marineda/godas_input/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
+DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC^^}/${SYEAR}${SMONTH}"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 
 ######################################################################

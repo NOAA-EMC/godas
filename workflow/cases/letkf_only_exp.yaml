@@ -3,7 +3,8 @@ case:
     SDATE: 2011-10-01t12:00:00
     EDATE: 2011-10-02t12:00:00
     godas_cyc: 1 # selection of godas cycle: 1(default)- 24h; 2 - 12h; 4 - 6h
-
+    forcing: CFSR  # CFSR or GEFS
+    
   da_settings:
     DA_METHOD: 'letkf'
 
