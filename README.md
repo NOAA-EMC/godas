@@ -9,8 +9,9 @@ Galbraith, E.D. et al. (2010) Regional impacts of iron-light colimitation in a g
 
 Dunne, J.P. et al. (2020) Simple Global Ocean Biogeochemistry with Light, Iron, Nutrients and Gas version 2 (BLINGv2): Model description and simulation characteristics in GFDL’s CM4.0 (submitted to Journal of Advances in Modeling Earth Systems)
 
+---------------------------
 The following five steps will guide you through the process of cloning, building and 
-running the GODAS workflow. 
+running the GODAS workflow with BLING.
 
 During this process, three directories will be created:
 - CLONE_DIR    : The directory where the system is cloned, user defined path
