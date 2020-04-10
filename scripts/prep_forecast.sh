@@ -12,6 +12,15 @@
 #                                                                    #
 ######################################################################
 ######################################################################
+# Local Functions                                                    #
+function ncdmnsz 
+{ 
+      ncks --trd -m -M ${2}         \
+    | grep -E -i ": ${1}, size ="   \
+    | cut -f 7 -d ' '               \
+    | uniq ; 
+}
+######################################################################
 
 while getopts "n:" opt; do
    case $opt in
@@ -66,12 +75,6 @@ ATMPETS=${ATMPETS:-"72"}   #Number of ATM Pets
 # model_configure variables 
 DT_ATMOS=${DT_ATMOS:-900}  #DATM time step [seconds]
 coupling_interval_fast_sec=${coupling_interval_fast_sec:-$DT_ATMOS} #likely can be depricated from DATM
-DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-'cfsr.'} #The prefix of the forcing files for the DATM
-#for cfsr:  (will be different for gefs)
-NFHOUT=${NFHOUT:-6}  #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs    
-IATM=${IATM:-1760}  #dimension of DATM input files, lon     
-JATM=${JATM:-880}   #dimension of DATM input files, lat
-
 # MOM6 Ocean Variables 
 
 #resource/basic
@@ -113,6 +116,28 @@ SDAY=$(echo   $CDATE | cut -c7-8)
 SHOUR=$(echo  $CDATE | cut -c9-10)
 NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
 NEARESTCDATE=$(echo $CDATE | cut -c1-8)00
+
+####
+DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-"${FORCING_SRC,,}."} #The prefix of the forcing files for the DATM
+DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC^^}/${SYEAR}${SMONTH}" #The path with the forcing
+
+#nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs
+#IATM dimension of DATM input files, lon
+#JATM dimension of DATM input files, lat
+
+ForcingFile="$(ls "${DATMINPUTDIR}""/""${DATM_FILENAME_BASE}"*"nc" | tail -1)"
+
+IATM=${IATM:-$(ncdmnsz "lon" "${ForcingFile}")}
+JATM=${JATM:-$(ncdmnsz "lat" "${ForcingFile}")}
+
+if [ "${FORCING_SRC,,}" = "cfsr" ]; then
+   NFHOUT=${NFHOUT:-6}
+elif [ "${FORCING_SRC,,}" = "gefs" ]; then
+   NFHOUT=${NFHOUT:-3}
+else
+   echo "Unknown forcing, exiting..."
+   exit
+fi
 
 ######################################################################
 ######################################################################
@@ -409,7 +434,6 @@ mv tmp1 $DATA/datm_data_table
 
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
 echo "Link DATM forcing files"
-DATMINPUTDIR="/scratch2/NCEPDEV/marineda/godas_input/DATM_INPUT/CFSR/${SYEAR}${SMONTH}"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 
 ######################################################################

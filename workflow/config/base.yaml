@@ -69,6 +69,7 @@ config_base:
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"
     export DCOM_ROOT="{doc.places.DCOM_ROOT}"
     export IODA_ROOT="{doc.places.IODA_ROOT}"
+    export FORCING_SRC="{doc.settings.forcing}"
 
     ####################################################
     # DO NOT ADD MACHINE DEPENDENT STUFF BELOW THIS LINE
