@@ -1,6 +1,5 @@
 # Introduction
-The following five steps will guide you through the process of cloning, building and 
-running the GODAS workflow. 
+The following five steps will guide you through the process of cloning, building and running the GODAS workflow. 
 
 During this process, three directories will be created:
 - CLONE_DIR    : The directory where the system is cloned, user defined path
@@ -9,11 +8,11 @@ During this process, three directories will be created:
 
 - RUNCDATE     : The directory where the system runs, optionally defined by the user.
 
-# Clone godas
+# Clone GODAS
 0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE`
 1. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
 
-   If automatic syetem build/test is prepfered, see the instruction [here](./test/README.md). Otherwise, steps to manually set up the godas system and test cases are as follows:
+   If automatic system build/test is preferred, see the instructions [here](./test/README.md). Otherwise, steps to manually set up the GODAS and test cases are as follows:
 
 2. `cd $CLONE_DIR`
 3. `git submodule update --init --recursive`
@@ -25,7 +24,8 @@ During this process, three directories will be created:
 2. `sh link.sh godas`
 3. `sh build_DATM-MOM6-CICE5.sh`
 
-# Clone the soca-bundle (bundle of repositories necessary to build soca) and build soca
+# Clone the soca-bundle and build SOCA
+The bundle of repositories is necessary to build SOCA 
 
 1. Create the build directory for SOCA
    `mkdir -p $CLONE_DIR/build` \
@@ -35,7 +35,7 @@ During this process, three directories will be created:
    `source  $CLONE_DIR/modulefiles/hera.intel18` \
    `source  $CLONE_DIR/modulefiles/hera.setenv` \
    `module list` 
-3. Clone all the necessary repositories to build soca \
+3. Clone all the necessary repositories to build SOCA \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
 4. `make -j12`
 5. Unit test the build \
@@ -84,7 +84,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 
 3. `cd $CLONE_DIR/workflow/CROW`
 4. Setup the workflow: \
-   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar: \
+   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3DVAR: \
    `./setup_case.sh -p HERA ../cases/3dvar.yaml workflowtest001`
    
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
@@ -151,10 +151,11 @@ case:
                                  #                               2 - 12h; 
                                  #                               4 - 6h
                                  # NOTE: ONLY OPTION 1 IS CURRENTLY SUPPORTED.                                 
-    resolution: Ocean1deg        # Other options: Ocean3deg, Ocean025deg
+    resolution: Ocean025deg      # Other options: Ocean3deg, Ocean1deg, Ocean025deg
+    forcing: CFSR                # CFSR or GEFS. It supports any forcing that satisfies the DATM-MOM6-CICE5 model and its setup
 
   da_settings:
-    FCSTMODEL: MOM6solo    # Specifies the forecast model, the other option is MOM6CICE5
+    FCSTMODEL: MOM6CICE5     # Specifies the forecast model, the other option is MOM6solo
     NINNER: 5              # Number of inner iteration in conjugate gradient solver
     # Observation switches
     DA_SST: True    # Sea surface temperature

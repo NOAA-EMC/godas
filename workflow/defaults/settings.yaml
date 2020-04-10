@@ -9,6 +9,9 @@ default_settings: &default_setting
 # Model Resolution (Ocean3deg, Ocean1deg, Ocean025deg)
   resolution: Ocean1deg
 
+# Model Forcing
+  forcing: CFSR
+
 # Forecast model (options: MOM6solo, MOM6CICE5)
   FCSTMODEL: MOM6solo
 
