@@ -1,4 +1,14 @@
 # Introduction
+Compared to the develop (default) branch, this feature/bgc_modules branch includes source code updates that support the coupled physical-biogeochemical ocean simulation (MOM6-BLING) within the GODAS framework.
+
+BLING (Biogeochemistry with Light, Iron, Nutrients and Gas; Galbraith et al., 2009; Dunne et al., 2020) is a six-tracer biogeochemistry model that includes a simplified representation of steady state phytoplankton and zooplankton dynamics. BLING provides a computationally-light means to simulate large scale patterns in biogeochemical states by adding less than 20% computational costs to the physical simulation in MOM6. BLING is developed at NOAA GFDL and used in GFDL's CM4 contribution to CMIP6. The NOAA-EMC/ocean_BGC repository that includes BLING source code is forked from GFDL's CM4 repository.
+
+References:
+
+Galbraith, E.D. et al. (2010) Regional impacts of iron-light colimitation in a global biogeochemical model. Biogeosciences, 7(3), 1043-1064.
+
+Dunne, J.P. et al. (2020) Simple Global Ocean Biogeochemistry with Light, Iron, Nutrients and Gas version 2 (BLINGv2): Model description and simulation characteristics in GFDL’s CM4.0 (submitted to Journal of Advances in Modeling Earth Systems)
+
 The following five steps will guide you through the process of cloning, building and 
 running the GODAS workflow. 
 
