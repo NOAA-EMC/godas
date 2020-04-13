@@ -8,7 +8,7 @@ During this process, three directories will be created:
 
 - MACHINE_ID   : The name of the HPC that the system is installed, currently supported hera and orion
 
-- COMPILER     : Set the compiler that you would like to use. The options are intel18(Hera) or intel19 (Hera Orion), depending on the machine. 
+- BUILD_COMPILER     : Set the compiler that you would like to use. The options are intel18(Hera) or intel19 (Hera Orion), depending on the machine. 
 
 - PROJECT_DIR  : The directory where the workflow is deployed, user defined path
 
@@ -33,18 +33,19 @@ During this process, three directories will be created:
 3. `sh build_DATM-MOM6-CICE5.sh`
 
 # Clone the soca-bundle and build SOCA
-The bundle of repositories is necessary to build SOCA 
+The bundle of repositories necessary to build SOCA 
 
 1. Create the build directory for SOCA
    `mkdir -p $CLONE_DIR/build` \
    `cd $CLONE_DIR/build`
 2. Load the JEDI modules \
    `module purge` \
+   `source  $CLONE_DIR/modulefiles/$MACHINE_ID.$BUILD_COMPILER` \
    `source  $CLONE_DIR/modulefiles/$MACHINE_ID.setenv` \
-   `source  $CLONE_DIR/modulefiles/$MACHINE_ID.$COMPILER` \
    `module list` 
 3. Clone all the necessary repositories to build SOCA \
-   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
+   Hera: `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`  
+   Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../src/soca-bundle`
 4. `make -j12`
 5. Unit test the build \
    `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
@@ -62,7 +63,7 @@ The bundle of repositories is necessary to build SOCA
 3. `mkdir -p $CLONE_DIR/build/letkf`
 3. `cd $CLONE_DIR/build/letkf`
 4. Setup the environment at the HPC that you work on, e.g. at Hera  
-   `source $CLONE_DIR/src/letkf/config/env.hera`
+   `source $CLONE_DIR/src/letkf/config/env.$MACHINE_ID`
 5. Run the cmake:  
    `cmake -DNETCDF_DIR=$NETCDF  $CLONE_DIR/src/letkf`  
 6. Compile the code:   

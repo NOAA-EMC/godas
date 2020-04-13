@@ -6,3 +6,4 @@ FIX_SCRUB: True
 SCRUB: #set the root run directory 
 BRANCH_NAME: develop
 BUILD_COMPILER: intel-18
+MACHINE_ID : hera #hera or orion

@@ -94,6 +94,7 @@ if __name__ == '__main__':
     SCRUB= input.get('SCRUB')
     BRANCH_NAME= input.get('BRANCH_NAME')
     BUILD_COMPILER= input.get('BUILD_COMPILER')
+    MACHINE_ID=input.get('MACHINE_ID')
     USER = os.getenv('USER')
     os.environ["CLONE_DIR"] = CLONE_DIR
     path = os.getcwd()
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 
         os.chdir(CLONE_DIR+"/src")
         os.system("sh checkout.sh godas")
-        os.system("sh link.sh godas")
+        os.system("sh link.sh godas "+MACHINE_ID)
         os.system("sh build_DATM-MOM6-CICE5.sh") 
 
         #2. Clone and build soca system inside CLONE_DIR------------------------
