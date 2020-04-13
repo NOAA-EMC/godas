@@ -1,5 +1,5 @@
 #!/bin/sh
-set -xue
+set -ue
 
 topdir=$(pwd)
 echo $topdir
@@ -27,5 +27,6 @@ if [ $model = "godas" ]; then
   *)
   #TODO generalize  (should put on hpss eventually too)
     echo "The HPC is unknown, please add the location of the FIX files, exiting..."
-    exit 
+    exit
+esac
 fi

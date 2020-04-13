@@ -1,27 +1,35 @@
 # Introduction
 The following five steps will guide you through the process of cloning, building and running the GODAS workflow. 
 
+The instructions below are for csh and bash. 
+
 During this process, three directories will be created:
 - CLONE_DIR    : The directory where the system is cloned, user defined path
 
+- MACHINE_ID   : The name of the HPC that the system is installed, currently supported hera and orion
+
+- COMPILER     : Set the compiler that you would like to use. The options are intel18(Hera) or intel19 (Hera Orion), depending on the machine. 
+
 - PROJECT_DIR  : The directory where the workflow is deployed, user defined path
 
-- RUNCDATE     : The directory where the system runs, optionally defined by the user.
+- RUNCDATE     : The directory where the system runs, optionally defined by the user
 
 # Clone GODAS
-0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE`
-1. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
+0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE` or `export CLONE_DIR=PATH/OF/YOUR/CHOICE`
+1. `setenv MACHINE_ID hera` or `export MACHINE_ID=orion`
+
+2. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
 
    If automatic system build/test is preferred, see the instructions [here](./test/README.md). Otherwise, steps to manually set up the GODAS and test cases are as follows:
 
-2. `cd $CLONE_DIR`
-3. `git submodule update --init --recursive`
+3. `cd $CLONE_DIR`
+4. `git submodule update --init --recursive`
 
 # Clone and build model
 
 0. `cd $CLONE_DIR/src`
 1. `sh checkout.sh godas`
-2. `sh link.sh godas`
+2. `sh link.sh godas $MACHINE_ID`
 3. `sh build_DATM-MOM6-CICE5.sh`
 
 # Clone the soca-bundle and build SOCA
@@ -32,8 +40,8 @@ The bundle of repositories is necessary to build SOCA
    `cd $CLONE_DIR/build`
 2. Load the JEDI modules \
    `module purge` \
-   `source  $CLONE_DIR/modulefiles/hera.intel18` \
-   `source  $CLONE_DIR/modulefiles/hera.setenv` \
+   `source  $CLONE_DIR/modulefiles/$MACHINE_ID.setenv` \
+   `source  $CLONE_DIR/modulefiles/$MACHINE_ID.$COMPILER` \
    `module list` 
 3. Clone all the necessary repositories to build SOCA \
    `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
