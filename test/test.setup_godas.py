@@ -128,16 +128,13 @@ if __name__ == '__main__':
         build_dir=CLONE_DIR+'/build'
         make_dir(build_dir); os.chdir(build_dir)
 
-        if BUILD_COMPILER.strip() is 'intel-19':
-            try:
-                subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel19; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+        subprocess.check_call(['csh','-c','module purge; source ../modulefiles/'MACHINE_ID'.'BUILD_COMPILER'; source ../modulefiles/hera.setenv module list'])
+
+        if MACHINE_ID.strip() is 'hera'
+            try: 
+                subprocess.check_call(['csh', 'ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
             except subprocess.CalledProcessError as error:
-                sys.exit('-----------Trouble to build SOCA with intel-19-----------')
-        else:     #build with intel-18
-            try:
-                subprocess.check_call(['csh','-c','module purge; source ../modulefiles/hera.intel18; source ../modulefiles/hera.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
-            except subprocess.CalledProcessError as error:
-                sys.exit('-----------Trouble to build SOCA with intel-18-----------')
+                sys.exit('-----------Trouble to build SOCA with ' BUILD_COMPILER 'at' MACHINE_ID '-----------')
 
         soca_config_path=CLONE_DIR+'/src/soca-bundle/soca-config'
         os.chdir(soca_config_path)
@@ -150,19 +147,11 @@ if __name__ == '__main__':
         return_value=os.system("git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git ./src/letkf")
         if (return_value != 0) :
             sys.exit('-----------Trouble to clone UMD-LETKF repo -----------')
-        os.chdir(CLONE_DIR+"/src/letkf")
-        os.system("git submodule update --init --recursive")
-        make_dir(CLONE_DIR+"/build/letkf")
-        os.chdir(CLONE_DIR+"/build/letkf")
         try:
-            subprocess.check_call(['csh','-c','module purge; source ../../modulefiles/godas.main; source ../../src/letkf/config/env.hera; cmake -DNETCDF_DIR=$NETCDF ../../src/letkf; make -j2'])
+            os.system("sh letkf_build.sh") 
         except subprocess.CalledProcessError as error:
             sys.exit('-----------Trouble to build LETKF -----------')
  
-        src_letkf=CLONE_DIR+'/build/letkf/bin/letkfdriver'
-        dst_letkf=CLONE_DIR+'/build/bin/letkfdriver'
-        os.symlink(src_letkf,dst_letkf)
-
         #4. Preparing the mom6tools
         src_fl=CLONE_DIR+'/src/mom6-tools.plot/*.py '
         des_fl=CLONE_DIR+'/build/bin/ '

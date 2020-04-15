@@ -17,13 +17,14 @@ During this process, three directories will be created:
 # Clone GODAS
 0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE` or `export CLONE_DIR=PATH/OF/YOUR/CHOICE`
 1. `setenv MACHINE_ID hera` or `export MACHINE_ID=orion`
+   `setenv BUILD_COMPILER intel18` or `export BUILD_COMPILER=intel19` 
 
 2. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
 
    If automatic system build/test is preferred, see the instructions [here](./test/README.md). Otherwise, steps to manually set up the GODAS and test cases are as follows:
 
 3. `cd $CLONE_DIR`
-4. `git submodule update --init --recursive`
+4. `git submodule update --init --recursive` 
 
 # Clone and build model
 
@@ -57,18 +58,8 @@ The bundle of repositories necessary to build SOCA
     or alternatively, checkout your own branch or the branch you need to test with.
 
 # Clone and build the UMD-LETKF
- 
-1. `cd $CLONE_DIR/src/letkf`  
-2. `git submodule update --init --recursive`   
-3. `mkdir -p $CLONE_DIR/build/letkf`
-3. `cd $CLONE_DIR/build/letkf`
-4. Setup the environment at the HPC that you work on, e.g. at Hera  
-   `source $CLONE_DIR/src/letkf/config/env.$MACHINE_ID`
-5. Run the cmake:  
-   `cmake -DNETCDF_DIR=$NETCDF  $CLONE_DIR/src/letkf`  
-6. Compile the code:   
-   `make -j2`
-7. `ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver`
+For detail instructions on how to install LETKF at any machine, see the [LETKF repository](https://github.com/NOAA-EMC/UMD-LETKF). For GODAS, just run the following script:
+`sh $CLONE_DIR/src/letkf_build.sh` 
 
 # Copy the mom6-tools.plot to the bin
 0. cp $CLONE_DIR/src/mom6-tools.plot/*.py $CLONE_DIR/build/bin/ 
@@ -93,7 +84,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 
 3. `cd $CLONE_DIR/workflow/CROW`
 4. Setup the workflow: \
-   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3DVAR: \
+   Select the machine name in upper case, e.g. HERA, a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3DVAR: \
    `./setup_case.sh -p HERA ../cases/3dvar.yaml workflowtest001`
    
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
@@ -129,7 +120,7 @@ The workflow can interactively as shown at step 3. below or as cronjob.
 # Updating resource settings of the workflow
 resource_sum.yaml inside EXPDIR serves as a central place of resource settings. Changing the values(PET count, wall time) inside it and rerun CROW with the -f option could change the resource setting for this experiment.
 
-./setup_case.sh -p HERA ../cases/3dvar.yaml test3dv
+./setup_case.sh -p HERA ../cases/3dvar.yaml test3dvar
 ./make_rocoto_xml_for.sh /scratch1/NCEPDEV/global/Jian.Kuang/expdir/test3dvar
 
 There will be a resource_sum.yaml in EXPDIR named test3dv. Changing resource allocation values (time, npe) there and redo CROW:
