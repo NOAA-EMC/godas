@@ -68,6 +68,7 @@ config_base:
     export MOD_PATH="{doc.places.MOD_PATH}"
     export SOCA_EXEC="{doc.places.SOCA_EXEC}"
     export IODA_ROOT="{doc.places.IODA_ROOT}"
+    export FORCING_SRC="{doc.settings.forcing}"
 
     ####################################################
     # DO NOT ADD MACHINE DEPENDENT STUFF BELOW THIS LINE

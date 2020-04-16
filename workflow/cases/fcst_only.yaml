@@ -5,10 +5,11 @@ case:
     godas_cyc: 1 # selection of godas cycle: 1(default)- 24h; 2 - 12h; 4 - 6h
     resolution: Ocean025deg #Ocean3deg # Ocean1deg or Ocean025deg 
     FCSTMODEL: MOM6CICE5 # MOM6solo
-  
+    forcing: CFSR  # CFSR or GEFS
+
   da_settings:
-    NO_ENS_MBR: 2
-    GROUPS: 2
+    NO_ENS_MBR: 1
+    GROUPS: 1
   
   places:
     workflow_file: layout/fcst_only.yaml

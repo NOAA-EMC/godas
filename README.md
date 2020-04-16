@@ -1,42 +1,52 @@
 # Introduction
-The following five steps will guide you through the process of cloning, building and 
-running the GODAS workflow. 
+The following five steps will guide you through the process of cloning, building and running the GODAS workflow. 
+
+The instructions below are for csh and bash. 
 
 During this process, three directories will be created:
 - CLONE_DIR    : The directory where the system is cloned, user defined path
 
+- MACHINE_ID   : The name of the HPC that the system is installed, currently supported hera and orion
+
+- BUILD_COMPILER     : Set the compiler that you would like to use. The options are intel18(Hera) or intel19 (Hera Orion), depending on the machine. 
+
 - PROJECT_DIR  : The directory where the workflow is deployed, user defined path
 
-- RUNCDATE     : The directory where the system runs, optionally defined by the user.
+- RUNCDATE     : The directory where the system runs, optionally defined by the user
 
-# Clone godas
-0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE`
-1. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
+# Clone GODAS
+0. `setenv CLONE_DIR PATH/OF/YOUR/CHOICE` or `export CLONE_DIR=PATH/OF/YOUR/CHOICE`
+1. `setenv MACHINE_ID hera` or `export MACHINE_ID=orion`
+   `setenv BUILD_COMPILER intel18` or `export BUILD_COMPILER=intel19` 
 
-   If automatic syetem build/test is prepfered, see the instruction [here](./test/README.md). Otherwise, steps to manually set up the godas system and test cases are as follows:
+2. `git clone https://github.com/NOAA-EMC/godas.git $CLONE_DIR`
 
-2. `cd $CLONE_DIR`
-3. `git submodule update --init --recursive`
+   If automatic system build/test is preferred, see the instructions [here](./test/README.md). Otherwise, steps to manually set up the GODAS and test cases are as follows:
+
+3. `cd $CLONE_DIR`
+4. `git submodule update --init --recursive` 
 
 # Clone and build model
 
 0. `cd $CLONE_DIR/src`
 1. `sh checkout.sh godas`
-2. `sh link.sh godas`
+2. `sh link.sh godas $MACHINE_ID`
 3. `sh build_DATM-MOM6-CICE5.sh`
 
-# Clone the soca-bundle (bundle of repositories necessary to build soca) and build soca
+# Clone the soca-bundle and build SOCA
+The bundle of repositories necessary to build SOCA 
 
 1. Create the build directory for SOCA
    `mkdir -p $CLONE_DIR/build` \
    `cd $CLONE_DIR/build`
 2. Load the JEDI modules \
    `module purge` \
-   `source  $CLONE_DIR/modulefiles/hera.intel18` \
-   `source  $CLONE_DIR/modulefiles/hera.setenv` \
+   `source  $CLONE_DIR/modulefiles/$MACHINE_ID.$BUILD_COMPILER` \
+   `source  $CLONE_DIR/modulefiles/$MACHINE_ID.setenv` \
    `module list` 
-3. Clone all the necessary repositories to build soca \
-   `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`
+3. Clone all the necessary repositories to build SOCA \
+   Hera: `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle` 
+   Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../src/soca-bundle`
 4. `make -j12`
 5. Unit test the build \
    `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
@@ -48,18 +58,8 @@ During this process, three directories will be created:
     or alternatively, checkout your own branch or the branch you need to test with.
 
 # Clone and build the UMD-LETKF
- 
-1. `cd $CLONE_DIR/src/letkf`  
-2. `git submodule update --init --recursive`   
-3. `mkdir -p $CLONE_DIR/build/letkf`
-3. `cd $CLONE_DIR/build/letkf`
-4. Setup the environment at the HPC that you work on, e.g. at Hera  
-   `source $CLONE_DIR/src/letkf/config/env.hera`
-5. Run the cmake:  
-   `cmake -DNETCDF_DIR=$NETCDF  $CLONE_DIR/src/letkf`  
-6. Compile the code:   
-   `make -j2`
-7. `ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver`
+For detail instructions on how to install LETKF at any machine, see the [LETKF repository](https://github.com/NOAA-EMC/UMD-LETKF). For GODAS, just run the following script:
+`sh $CLONE_DIR/src/letkf_build.sh` 
 
 # Copy the mom6-tools.plot to the bin
 0. cp $CLONE_DIR/src/mom6-tools.plot/*.py $CLONE_DIR/build/bin/ 
@@ -84,7 +84,7 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
 
 3. `cd $CLONE_DIR/workflow/CROW`
 4. Setup the workflow: \
-   Select a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3dvar: \
+   Select the machine name in upper case, e.g. HERA, a name for the workflow path, e.g. workflowtest001 and a case, e.g. the 3DVAR: \
    `./setup_case.sh -p HERA ../cases/3dvar.yaml workflowtest001`
    
    This will setup the workflow in `workflowtest001` for the 3DVAR case on Hera.
@@ -120,7 +120,7 @@ The workflow can interactively as shown at step 3. below or as cronjob.
 # Updating resource settings of the workflow
 resource_sum.yaml inside EXPDIR serves as a central place of resource settings. Changing the values(PET count, wall time) inside it and rerun CROW with the -f option could change the resource setting for this experiment.
 
-./setup_case.sh -p HERA ../cases/3dvar.yaml test3dv
+./setup_case.sh -p HERA ../cases/3dvar.yaml test3dvar
 ./make_rocoto_xml_for.sh /scratch1/NCEPDEV/global/Jian.Kuang/expdir/test3dvar
 
 There will be a resource_sum.yaml in EXPDIR named test3dv. Changing resource allocation values (time, npe) there and redo CROW:
@@ -151,10 +151,11 @@ case:
                                  #                               2 - 12h; 
                                  #                               4 - 6h
                                  # NOTE: ONLY OPTION 1 IS CURRENTLY SUPPORTED.                                 
-    resolution: Ocean1deg        # Other options: Ocean3deg, Ocean025deg
+    resolution: Ocean025deg      # Other options: Ocean3deg, Ocean1deg, Ocean025deg
+    forcing: CFSR                # CFSR or GEFS. It supports any forcing that satisfies the DATM-MOM6-CICE5 model and its setup
 
   da_settings:
-    FCSTMODEL: MOM6solo    # Specifies the forecast model, the other option is MOM6CICE5
+    FCSTMODEL: MOM6CICE5     # Specifies the forecast model, the other option is MOM6solo
     NINNER: 5              # Number of inner iteration in conjugate gradient solver
     # Observation switches
     DA_SST: True    # Sea surface temperature
