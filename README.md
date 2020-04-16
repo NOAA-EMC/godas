@@ -45,7 +45,7 @@ The bundle of repositories necessary to build SOCA
    `source  $CLONE_DIR/modulefiles/$MACHINE_ID.setenv` \
    `module list` 
 3. Clone all the necessary repositories to build SOCA \
-   Hera: `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle`  
+   Hera: `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle` 
    Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../src/soca-bundle`
 4. `make -j12`
 5. Unit test the build \
