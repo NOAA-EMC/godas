@@ -2,9 +2,13 @@
 The following five steps will guide you through the process of cloning, building and running the GODAS workflow. 
 
 During this process, three directories will be created:
-- CLONE_DIR    : The directory where the system is cloned, user defined path
+- CLONE_DIR    : The directory where the system is cloned, user defined path.
 
-- PROJECT_DIR  : The directory where the workflow is deployed, user defined path
+- EXPROOT  : The directory where the EXPDIR is created, storing workflow configuration files, user defined path.
+
+- COMROOT  : The directory where input and output of jobs are stored, user defined path.
+
+- DATAROOT : The directory where each job runs, user defined path.
 
 - RUNCDATE     : The directory where the system runs, optionally defined by the user.
 
@@ -72,14 +76,16 @@ The bundle of repositories is necessary to build SOCA
    `cp user.yaml.default user.yaml` \
    edit `user.yaml` \
 Update the following fields in the `user.yaml` and save the file \
-   `PROJECT_DIR: !error Please select a project directory.` \
-   `FIX_SCRUB: False` \
-   `SCRUB: none # Please select a scrub space when FIX_SCRUB is True` \
+   `EXPROOT: !error Please select a project directory.` \
+   `FIX_SCRUB: True` \
+   `COMROOT: !error Please select your COMROOT directory` \
+   `DATAROOT: !error Please select your DATAROOT directory` \
+
    `user_email: none` \
    `cpu_project: !error Please select your cpu project` \
    `hpss_project: !error Please select your hpss project`
 
-If the variable FIX_SCRUB is true, the RUNCDATE directory will be created in the SCRUB.
+If the variable FIX_SCRUB is true, the RUNCDATE directory will be created in the COMROOT.
 Otherwise the RUNCDATE is created automatically at stmpX directory of the user. 
 
 3. `cd $CLONE_DIR/workflow/CROW`
