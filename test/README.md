@@ -8,15 +8,15 @@ test.setup_godas.yaml
 
 `CLONE_DIR: 
 
-PROJECT_DIR: 
+EXPROOT:
+
+COMROOT:
+
+DATAROOT: 
 
 WORKFLOW_NAME: 
 
 SKIP_BUILD: False
-
-FIX_SCRUB: True #for setting the root run directory or False for the default run directory, and the SCRUB variable will be ignored. `
-
-SCRUB: #set the root run directory`
 
 BRANCH_NAME: develop #other branch names can be set to test/build
 

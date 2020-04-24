@@ -70,7 +70,7 @@ For detail instructions on how to install LETKF at any machine, see the [LETKF r
 
 # Preparing the workflow
 0. Create the directory that the workflow will be deployed:
-   `mkdir -p PROJECT_DIR`
+   `mkdir -p EXPROOT`
 1. `cd $CLONE_DIR/workflow` 
 2. Create/Edit `user.yaml` based on `user.yaml.default` \
    `cp user.yaml.default user.yaml` \
@@ -104,14 +104,14 @@ Otherwise the RUNCDATE is created automatically at stmpX directory of the user.
    Note: Each case files point to a corresponding layout file at $CLONE_DIR/workflow/layout. 
 
 5. Read output and run suggested command. Should be similar to: \
-   `./make_rocoto_xml_for.sh PROJECT_DIR/workflowtest001` 
+   `./make_rocoto_xml_for.sh EXPROOT/workflowtest001` 
 
 # Running the workflow
 Assumption: All the subsystems have been compiled.
 The workflow can interactively as shown at step 3. below or as cronjob.
 
 1. Go into the test directory \
-   `cd PROJECT_DIR/workflowtest001`
+   `cd EXPROOT/workflowtest001`
 2. Load module rocoto \
    `module load rocoto`
 3. Start rocoto \
@@ -138,7 +138,7 @@ You could see the resources being updated in workflow.xml as well as config file
 
 # Check the run and the results
 0. The log files of your experiment are at 
-`PROJECT_DIR/workflowtest001/log/`
+`EXPROOT/workflowtest001/log/`
 1. The the setup files and outputs of the experiment are at
 `${RUNCDATE}` 
 
