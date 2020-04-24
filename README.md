@@ -8,7 +8,7 @@ During this process, three directories will be created:
 
 - MACHINE_ID   : The name of the HPC that the system is installed, currently supported hera and orion
 
-- BUILD_COMPILER     : Set the compiler that you would like to use. The options are intel18(Hera) or intel19 (Hera Orion), depending on the machine. 
+- BUILD_COMPILER     : Set the compiler that you would like to use. The options are intel18(Hera) or intel19 (Orion), depending on the machine. 
 
 - EXPROOT  : The directory where the EXPDIR is created, storing workflow configuration files, user defined path.
 
