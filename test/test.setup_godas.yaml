@@ -1,9 +1,9 @@
-CLONE_DIR: #set the clone directory 
-PROJECT_DIR: # set the path for the deployment of the workflow
+CLONE_DIR: #set the clone directory of the system build
+EXPROOT: # set the path for the experiment directory, storing workflow configuration files
+COMROOT: # set the path for the directory where input and output of jobs are stored
+DATAROOT: # set the path for the directory where each job runs
 WORKFLOW_NAME: #set the name of your worklflow
 SKIP_BUILD: False
-FIX_SCRUB: True
-SCRUB: #set the rundirectory path
 BRANCH_NAME: develop
 BUILD_COMPILER: intel18
 MACHINE_ID : hera #hera or orion

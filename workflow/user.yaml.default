@@ -1,7 +1,8 @@
 user_places: &user_places
-  PROJECT_DIR: !error Please select a project directory.
-  FIX_SCRUB: False
-  SCRUB: none # Please select a scrub space when FIX_SCRUB is True
+  EXPROOT: !error Please select a project directory.
+  FIX_SCRUB: True
+  COMROOT: !error Please select your COMROOT directory
+  DATAROOT: !error Please select your DATAROOT directory
 
 accounting: &accounting
   user_email: none
