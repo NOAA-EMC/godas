@@ -102,11 +102,11 @@ if __name__ == '__main__':
     else:
         CLONE_DIR = input.get('CLONE_DIR')
 
-    PROJECT_DIR = input.get('PROJECT_DIR')
+    EXPROOT = input.get('EXPROOT')
+    COMROOT = input.get('COMROOT')
+    DATAROOT = input.get('DATAROOT')
     WORKFLOW_NAME = input.get('WORKFLOW_NAME')
     SKIP_BUILD = input.get('SKIP_BUILD')
-    FIX_SCRUB = input.get('FIX_SCRUB')
-    SCRUB = input.get('SCRUB')
     BRANCH_NAME = input.get('BRANCH_NAME')
     BUILD_COMPILER = input.get('BUILD_COMPILER')
     MACHINE_ID = input.get('MACHINE_ID')
@@ -212,23 +212,23 @@ if __name__ == '__main__':
     os.chdir(CLONE_DIR + "/workflow")
     shutil.copyfile('user.yaml.default', 'user.yaml')
     subprocess.call(
-        ["sed", "-i", r'/PROJECT_DIR/c\  PROJECT_DIR: ' + PROJECT_DIR, "user.yaml"])
+        ["sed", "-i", r'/EXPROOT/c\  EXPROOT: ' + EXPROOT, "user.yaml"])
+    subprocess.call(
+        ["sed", "-i", r'/COMROOT/c\  COMROOT: ' + COMROOT, "user.yaml"])
+    subprocess.call(
+        ["sed", "-i", r'/DATAROOT/c\  DATAROOT: ' + DATAROOT, "user.yaml"])
     subprocess.call(
         ["sed", "-i", r'/cpu_project/c\  cpu_project: marine-cpu', "user.yaml"])
     subprocess.call(
         ["sed", "-i", r'/hpss_project/c\  hpss_project: emc-marine', "user.yaml"])
 
-    if os.path.isdir(PROJECT_DIR):
-        delete_dir(PROJECT_DIR)
-    make_dir(PROJECT_DIR)
+    if os.path.isdir(EXPROOT):
+        delete_dir(EXPROOT)
+    make_dir(EXPROOT)
     comrot_dir = '/scratch1/NCEPDEV/stmp2/' + USER + '/comrot/' + WORKFLOW_NAME
 
-    if FIX_SCRUB:
-        subprocess.call(
-            ["sed", "-i", r'/FIX_SCRUB:/c\  FIX_SCRUB: True', "user.yaml"])
-        subprocess.call(
-            ["sed", "-i", r'/SCRUB: none/c\  SCRUB: ' + SCRUB, "user.yaml"])
-        comrot_dir = SCRUB + USER + '/comrot/' + WORKFLOW_NAME
+    subprocess.call(
+        ["sed", "-i", r'/FIX_SCRUB:/c\  FIX_SCRUB: True', "user.yaml"])
 
     if os.path.isdir(comrot_dir):
         delete_dir(comrot_dir)
@@ -239,9 +239,9 @@ if __name__ == '__main__':
     subprocess.check_call(
                 ['bash', '-c', './setup_case.sh -p ' + MACHINE_ID.upper() + ' ../cases/3dvar.yaml ' + WORKFLOW_NAME])
     subprocess.check_call(
-        ['bash', '-c', './make_rocoto_xml_for.sh ' + PROJECT_DIR + '/' + WORKFLOW_NAME])
+        ['bash', '-c', './make_rocoto_xml_for.sh ' + EXPROOT + '/' + WORKFLOW_NAME])
 
-    run_dir = PROJECT_DIR + '/' + WORKFLOW_NAME
+    run_dir = EXPROOT + '/' + WORKFLOW_NAME
     os.chdir(run_dir)
 
     # 6. Runing the rocoto workflow and checking run status ------------------
@@ -267,6 +267,6 @@ if __name__ == '__main__':
         count_runs += 1
 
     # 7. Checking the log file to validate run result-------------------------
-    run_dir = PROJECT_DIR + '/' + WORKFLOW_NAME + '/log'
+    run_dir = EXPROOT + '/' + WORKFLOW_NAME + '/log'
     for filename in pathlib.Path('run_dir').glob('*.log'):
         check_log(filename, 'exit code 0:0')

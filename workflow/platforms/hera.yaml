@@ -33,6 +33,8 @@ platform: !Platform
   # the paths to certain programs and scripts.
   NWPROD: "/scratch1/NCEPDEV/global/glopara"
 
+  GODAS_RC: "/scratch2/NCEPDEV/marineda/godas_input"                 # Root path for external data
+
   config_base_extras: !expand |
     export NDATE="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/ndate"
     export NHOUR="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
@@ -132,33 +134,13 @@ platform: !Platform
       nodes: !calc |
         tools.node_tool_for(scheduler_settings.node_type, scheduler_settings)
 
-  # Path to pan_df, the program used to get Panasas disk usage information:
-  pan_df: pan_df
-
   # Automatically detect the least used scrub area the user can access:
-  least_used_temp: !Immediate 
-    - !FirstTrue
-      - do: !expand "{doc.user_places.SCRUB}"
-        when: !calc doc.user_places.FIX_SCRUB
-      - otherwise: !FirstMax
-        - do: /scratch1/NCEPDEV/stmp2
-          when: !calc ( int(tools.can_write(do)) and tools.panasas_gb(do) )
-        - do: /scratch1/NCEPDEV/stmp4
-          when: !calc ( int(tools.can_write(do)) and tools.panasas_gb(do) )
-        - do: /scratch2/NCEPDEV/stmp1
-          when: !calc ( int(tools.can_write(do)) and tools.panasas_gb(do) )
-        - do: /scratch2/NCEPDEV/stmp3
-          when: !calc ( int(tools.can_write(do)) and tools.panasas_gb(do) )
-        - do: !expand "{doc.user_places.PROJECT_DIR}"
-          when: !calc tools.panasas_gb(do)/4
-          message: "{do}: use project directory as scrub space"
-
   # long_term_temp - area for storage of data that must be passed
   # between jobs or shared with programs external to this workflow.
-  long_term_temp: !expand "{doc.platform.least_used_temp}/{tools.env('USER')}"
+  COMROOT: !expand "{doc.user_places.COMROOT}"
 
-  # short_term_temp - area for data that is only needed within one job:
-  short_term_temp: !expand "{doc.platform.least_used_temp}/{tools.env('USER')}"
+  # DATAROOT - area for data that is only needed within one job:
+  DATAROOT: !expand "{doc.user_places.DATAROOT}"
 
-  # EXP_PARENT_DIR - Parent directory  of the expdir (experiment directory)
-  EXP_PARENT_DIR: !expand "{doc.user_places.PROJECT_DIR}"
+  # EXPROOT - Parent directory  of the expdir (experiment directory)
+  EXPROOT: !expand "{doc.user_places.EXPROOT}"

@@ -37,14 +37,8 @@ platform: !Platform
 
   # DMPDIR - location of the global dump data.  This is used by the observation
   # processing scripts, which are not included in the public release.
-  DMPDIR: !calc doc.user_places.PROJECT_DIR
+  DMPDIR: !calc doc.user_places.COMROOT
   #"/Users/jiankuang/Documents/Eclipse_workspace/ecfutils_007"
-  #DMPDIR: !FirstTrue
-  #  - do: "/gpfs/gp1/emc/globaldump"
-  #    when: !calc tools.isdir(do)
-  #  - do: "/gpfs/tp1/emc/globaldump"
-  #    when: !calc tools.isdir(do)
-  #  - otherwise: !error "Cannot find globaldump directory."
 
   # RTMFIX - location of the CRTM fixed data files used by the GSI data
   # assimilation.  The data assimilation is not included in this public release
@@ -102,9 +96,6 @@ platform: !Platform
       exclusive_accounting_ref:
         project: !calc metasched.varref(doc.accounting.cpu_project)
 
-      bigmem_accounting_ref:
-        project: !calc metasched.varref(doc.accounting.cpu_project)
-
       # Queues to use for each job type.  This logic automatically
       # switches between development queues on the backup machine and
       # development queues on the production machine based on whether the
@@ -132,6 +123,6 @@ platform: !Platform
       nodes: !calc |
         tools.node_tool_for(scheduler_settings.node_type, scheduler_settings)
 
-  long_term_temp: !calc doc.user_places.PROJECT_DIR 
-  short_term_temp: !calc doc.user_places.PROJECT_DIR 
-  EXP_PARENT_DIR: !calc doc.user_places.PROJECT_DIR
+  COMROOT: !expand "{doc.user_places.COMROOT}" 
+  DATAROOT: !expand "{doc.user_places.DATAROOT}"
+  EXPROOT: !expand "{doc.user_places.EXPROOT}"
