@@ -41,8 +41,8 @@ config_base:
 
     export ROOT_GODAS_DIR="{doc.places.ROOT_GODAS_DIR}"
     export GODAS_RC="{doc.places.GODAS_RC}"
-    export STMP="{doc.places.SHORT_TERM_TEMP}/$USER"
-    export PTMP="{doc.places.LONG_TERM_TEMP}/$USER"
+    export STMP="{doc.places.DATAROOT}/$USER"
+    export PTMP="{doc.places.COMROOT}/$USER"
 
     export SOCA_EXEC="{doc.places.ROOT_GODAS_DIR}/build/bin/"
     export SOCA_STATIC="{doc.places.SOCA_STATIC}"
