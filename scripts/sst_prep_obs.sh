@@ -1,5 +1,8 @@
-#!/bin/bash -l 
-set -e
+#!/bin/ksh
+
+set -xe
+
+echo "sst_prep_obs.sh started"
 
 while getopts "i:" opt; do
    case $opt in
