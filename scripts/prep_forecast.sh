@@ -436,6 +436,22 @@ mv tmp1 $DATA/datm_data_table
 echo "Link DATM forcing files"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 
+# Create scrip.nc
+
+cp -rf ${SCRIPTDIR}/make_scripgrid.ncl ./
+
+gridsrc=$DATA/DATM_INPUT/
+gridfile=${FORCING_SRC,,}.${CDATE}.nc
+
+sed -i "s+FORCING_SRC+${FORCING_SRC,,}+g" make_scripgrid.ncl
+sed -i "s+GRIDSRC+${gridsrc}+g" make_scripgrid.ncl
+sed -i "s+GRIDFILE+${gridfile}+g" make_scripgrid.ncl
+sed -i "s+DIROUT+${gridsrc}+g" make_scripgrid.ncl
+
+module load ncl
+ncl < make_scripgrid.ncl
+module unload ncl
+
 ######################################################################
 # 3.2 Link MOM6 fix files                                            #
 ######################################################################
