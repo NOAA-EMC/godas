@@ -12,19 +12,19 @@ EARTH_attributes::
 MED_model:                      @[med_model]
 MED_petlist_bounds:             @[med_petlist_bounds]
 MED_attributes::
-  Verbosity = 0
   DumpFields = @[DumpFields]
   DumpRHs = false
   coldstart = @[coldstart]
-  restart_interval = @[restart_interval]
+  restart_interval = @[RESTART_INTERVAL]
   ProfileMemory = false
+  AoMedFlux = true
 ::
 
 # ATM #
 ATM_model:                      @[atm_model]
 ATM_petlist_bounds:             @[atm_petlist_bounds]
 ATM_attributes::
-  Verbosity = 0
+  coldstart = @[coldstart]
   DumpFields = @[DumpFields]
   ProfileMemory = false
 ::
@@ -33,31 +33,28 @@ ATM_attributes::
 OCN_model:                      @[ocn_model]
 OCN_petlist_bounds:             @[ocn_petlist_bounds]
 OCN_attributes::
-  Verbosity = 0
-  DumpFields = @[DumpFields]
+  DumpFields = false
+  restart_option = nseconds
+  restart_n = @[RESTART_INTERVAL]
   ProfileMemory = false
-  restart_interval = @[restart_interval]
 ::
 
 # ICE #
 ICE_model:                      @[ice_model]
 ICE_petlist_bounds:             @[ice_petlist_bounds]
 ICE_attributes::
-  Verbosity = 0
-  DumpFields = @[DumpFields]
+  DumpFields = false
   ProfileMemory = false
 ::
 
 # Run Sequence #
 runSeq::
-  @@[CPL_SLOW]
+  @@[coupling_interval_slow_sec]
     MED MedPhase_prep_ocn
     MED -> OCN :remapMethod=redist
     OCN
-    @@[CPL_FAST]
+    @@[coupling_interval_fast_sec]
       MED MedPhase_prep_ice
-      MED MedPhase_prep_atm
-      MED -> ATM :remapMethod=redist
       MED -> ICE :remapMethod=redist
       ATM
       ICE

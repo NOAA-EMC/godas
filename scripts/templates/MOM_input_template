@@ -31,7 +31,7 @@ DT_THERM = DT_THERM_MOM6        !   [s] default = 900.0
                                 ! THERMO_SPANS_COUPLING is true, in which case DT_THERM
                                 ! can be an integer multiple of the coupling timestep.  By
                                 ! default DT_THERM is set to DT.
-THERMO_SPANS_COUPLING = True    !   [Boolean] default = False
+THERMO_SPANS_COUPLING = False   !   [Boolean] default = False
                                 ! If true, the MOM will take thermodynamic and tracer
                                 ! timesteps that can be longer than the coupling timestep.
                                 ! The actual thermodynamic timestep that is used in this
@@ -72,7 +72,7 @@ BAD_VAL_SST_MAX = 65.0          !   [deg C] default = 45.0, PTripp: changed from
 BAD_VAL_SST_MIN = -3.0          !   [deg C] default = -2.1
                                 ! The value of SST below which a bad value message is
                                 ! triggered, if CHECK_BAD_SURFACE_VALS is true.
-WRITE_GEOM = 1                  ! default = 1
+WRITE_GEOM = 2                  ! default = 1
                                 ! If =0, never write the geometry and vertical grid files.
                                 ! If =1, write the geometry and vertical grid files only for
                                 ! a new simulation. If =2, always write the geometry and
@@ -192,7 +192,7 @@ PARALLEL_RESTARTFILES = True    !   [Boolean] default = False
                                 ! otherwise a single restart file is generated
 
 ! === module MOM_tracer_flow_control ===
-USE_IDEAL_AGE_TRACER = False     !   [Boolean] default = False
+USE_IDEAL_AGE_TRACER = False    !   [Boolean] default = False
                                 ! If true, use the ideal_age_example tracer package.
 
 ! === module ideal_age_example ===
@@ -591,6 +591,11 @@ MLE_MLD_DECAY_TIME = 2.592E+06  !   [s] default = 0.0
                                 ! is instantaneously set to the current MLD.
 
 ! === module MOM_diag_to_Z ===
+!Z_OUTPUT_GRID_FILE = "analysis_vgrid_lev35.v1.nc" ! default = ""
+!Z_OUTPUT_GRID_FILE = "interpolate_zgrid_40L.nc"
+                                ! The file that specifies the vertical grid for
+                                ! depth-space diagnostics, or blank to disable
+                                ! depth-space output.
 !NK_ZSPACE (from file) = 35     !   [nondim]
                                 ! The number of depth-space levels.  This is determined
                                 ! from the size of the variable zw in the output grid file.
@@ -833,8 +838,7 @@ OCEAN_SURFACE_STAGGER = "A"     ! default = "C"
                                 ! staggering of the surface velocity field that is
                                 ! returned to the coupler.  Valid values include
                                 ! 'A', 'B', or 'C'.
-
-ENERGYSAVEDAYS = 0.25           !   [days] default = 1.0
+ENERGYSAVEDAYS = 1.00           !   [days] default = 1.0
                                 ! The interval in units of TIMEUNIT between saves of the
                                 ! energies of the run and other globally summed diagnostics.
 
@@ -845,7 +849,6 @@ ICEBERGS_APPLY_RIGID_BOUNDARY = False !   [Boolean] default = False
                                 ! If true, allows icebergs to change boundary condition felt by ocean
 
 ! === module MOM_surface_forcing ===
-WIND_STAGGER = "A"              ! JW bug fixing (Denise)
 MAX_P_SURF = 0.0                !   [Pa] default = -1.0
                                 ! The maximum surface pressure that can be exerted by the
                                 ! atmosphere and floating sea-ice or ice shelves. This is
@@ -853,6 +856,10 @@ MAX_P_SURF = 0.0                !   [Pa] default = -1.0
                                 ! limit the water that can be frozen out of the ocean and
                                 ! the ice-ocean heat fluxes are treated explicitly.  No
                                 ! limit is applied if a negative value is used.
+WIND_STAGGER = "A"              ! default = "C"
+                                ! A case-insensitive character string to indicate the
+                                ! staggering of the input wind stress field.  Valid
+                                ! values are 'A', 'B', or 'C'.
 CD_TIDES = 0.0018               !   [nondim] default = 1.0E-04
                                 ! The drag coefficient that applies to the tides.
 GUST_CONST = 0.0                !   [Pa] default = 0.02
@@ -863,10 +870,16 @@ USE_RIGID_SEA_ICE = True        !   [Boolean] default = False
 SEA_ICE_RIGID_MASS = 100.0      !   [kg m-2] default = 1000.0
                                 ! The mass of sea-ice per unit area at which the sea-ice
                                 ! starts to exhibit rigidity
-
+LIQUID_RUNOFF_FROM_DATA = MOM6_RIVER_RUNOFF  !   [Boolean] default = False
+                                ! If true, allows liquid river runoff to be specified via
+                                ! the data_table using the component name 'OCN'.
 ! === module MOM_restart ===
 
 ! === module MOM_sum_output ===
+CALCULATE_APE = False           !   [Boolean] default = True
+                                ! If true, calculate the available potential energy of
+                                ! the interfaces.  Setting this to false reduces the
+                                ! memory footprint of high-PE-count models dramatically.
 MAXTRUNC = 100000               !   [truncations save_interval-1] default = 0
                                 ! The run will be stopped, and the day set to a very
                                 ! large value if the velocity is truncated more than
