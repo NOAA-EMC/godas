@@ -295,9 +295,10 @@ echo "Creating MOM_input and MOM_override"
 cp $TEMPLATEDIR/MOM_input_template tmp1
 # Replace values in template
 sed -i -e "s;DT_THERM_MOM6;${DT_THERM_MOM6};g" tmp1
+sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
 sed -i -e "s;'ENERGYSAVEDAYS = 1.00';'ENERGYSAVEDAYS = 0.25';g" tmp1
 sed -i -e "s;'WRITE_GEOM = 2';${WRITE_GEOM};g" tmp1
-sed -i -e "s;'MOM6_RIVER_RUNOFF';' true';g" tmp1 
+sed -i -e "s;MOM6_RIVER_RUNOFF;true;g" tmp1 
 # Rename to proper input ice input name
 mv tmp1 $DATA/INPUT/MOM_input
 
