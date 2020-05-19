@@ -192,24 +192,6 @@ echo "creating input.nml"
 cp $TEMPLATEDIR/input.mom6.nml.IN $DATA/input.nml
 sed -i -e "s;@\[MOM6_RESTART_SETTING\];${MOM6_RESTART_SETTING};g" input.nml
 sed -i -e "s;@\[RESTART\];MOM6_RESTART;g" input.nml
-#
-##MOM6 with DATM input.nml: 
-#cat > input.nml << EOF
-#&fms_nml
-#            clock_grain='ROUTINE'
-#            clock_flags='NONE'
-#            domains_stack_size = 5000000
-#            stack_size =0
-#/
-#
-#&MOM_input_nml
-#         output_directory = 'MOM6_OUTPUT/',
-#         input_filename = '${MOM6_RESTART_SETTING:-"r"}'
-#         restart_input_dir = 'INPUT/',
-#         restart_output_dir = 'MOM6_RESTART/',
-#         parameter_filename = 'INPUT/MOM_input',
-#                              'INPUT/MOM_override' /
-#EOF
 
 ######################################################################
 # 2.2 diag_table and data_table                                      #
@@ -252,31 +234,6 @@ sed -i -e "s;@\[JATM\];${JATM};g" model_configure
 sed -i -e "s;@\[CDATE\];${CDATE};g" model_configure
 sed -i -e "s;@\[NFHOUT\];${NFHOUT};g" model_configure
 sed -i -e "s;@\[FILENAME_BASE\];${DATM_FILENAME_BASE};g" model_configure
-
-#
-#cat > model_configure <<EOF
-#total_member:              ${ENS_NUM:-1}
-#print_esmf:                ${print_esmf:-.true.}
-#PE_MEMBER01:               $NTASKS_TOT
-#start_year:                $SYEAR
-#start_month:               $SMONTH
-#start_day:                 $SDAY
-#start_hour:                $SHOUR
-#start_minute:              0
-#start_second:              0
-#nhours_fcst:               $FHMAX
-#RUN_CONTINUE:              ${RUN_CONTINUE:-".false."}
-#ENS_SPS:                   ${ENS_SPS:-".false."}
-#
-#dt_atmos:                  ${DT_ATMOS}
-#atm_coupling_interval_sec: ${coupling_interval_fast_sec}
-#
-#iatm:                      ${IATM}
-#jatm:                      ${JATM}
-#cdate0:                    ${CDATE}
-#nfhout:                    ${NFHOUT} 
-#filename_base:             ${DATM_FILENAME_BASE}
-#EOF
 
 ######################################################################
 # 2.4 nems_configure                                                 #
