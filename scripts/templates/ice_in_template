@@ -16,7 +16,7 @@
   , lcdf64         = .false.
   , restart_dir    = './restart/'
   , restart_file   = 'iced'
-  , pointer_file   = './ice.restart_file'
+  , pointer_file   = './restart/ice.restart_file'
   , dumpfreq       = 'DUMPFREQ'
   , dumpfreq_n     =  DUMPFREQ_N
   , dump_last      = .false.  

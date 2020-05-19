@@ -191,7 +191,7 @@ echo "creating input.nml"
 
 cp $TEMPLATEDIR/input.mom6.nml.IN $DATA/input.nml
 sed -i -e "s;@\[MOM6_RESTART_SETTING\];${MOM6_RESTART_SETTING};g" input.nml
-
+sed -i -e "s;@\[RESTART\];MOM6_RESTART;g" input.nml
 #
 ##MOM6 with DATM input.nml: 
 #cat > input.nml << EOF
@@ -238,7 +238,7 @@ echo "Creating model_configure"
 
 # More info on variables: https://vlab.ncep.noaa.gov/redmine/projects/emc_nemsdatacomps/wiki/Input_File_Descriptions#model_configure
 
-cp $TEMPLATEDIR/model_configure $DATA/model_configure
+cp $TEMPLATEDIR/model_configure.IN $DATA/model_configure
 sed -i -e "s;@\[TASKS\];${NTASKS_TOT};g" model_configure
 sed -i -e "s;@\[SYEAR\];${SYEAR};g" model_configure
 sed -i -e "s;@\[SMONTH\];${SMONTH};g" model_configure
@@ -338,9 +338,9 @@ echo "Creating MOM_input and MOM_override"
 cp $TEMPLATEDIR/MOM_input_template tmp1
 # Replace values in template
 sed -i -e "s;DT_THERM_MOM6;${DT_THERM_MOM6};g" tmp1
-sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
+sed -i -e "s;'ENERGYSAVEDAYS = 1.00';'ENERGYSAVEDAYS = 0.25';g" tmp1
 sed -i -e "s;'WRITE_GEOM = 2';${WRITE_GEOM};g" tmp1
-
+sed -i -e "s;'MOM6_RIVER_RUNOFF';' true';g" tmp1 
 # Rename to proper input ice input name
 mv tmp1 $DATA/INPUT/MOM_input
 
