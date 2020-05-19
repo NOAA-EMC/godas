@@ -1,3 +1,5 @@
+YMD.SHOURZ.C96.64bit.non-mono
+SYEAR SMONTH SDAY SHOUR 0 0
 
 ######################
 "ocn%4yr%2mo%2dy%2hr",      6,  "hours", 1, "hours", "time", 6, "hours", "1901 1 1 0 0 0"
@@ -21,7 +23,6 @@
  "ocean_model", "cos_rot",     "cos_rot",     "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
  "ocean_model", "area_t",      "area_t",      "ocn%4yr%2mo%2dy%2hr", "all", .false., "none", 2
 
-
 # ocean output TSUV and others
  "ocean_model", "SSH",       "SSH",      "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
  "ocean_model", "SST",       "SST",      "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
@@ -39,10 +40,20 @@
 # save daily SST
  "ocean_model", "geolon",      "geolon",      "SST%4yr%2mo%2dy", "all", .false., "none", 2
  "ocean_model", "geolat",      "geolat",      "SST%4yr%2mo%2dy", "all", .false., "none", 2
+# "ocean_model", "geolon_c",    "geolon_c",    "SST%4yr%2mo%2dy", "all", .false., "none", 2
+# "ocean_model", "geolat_c",    "geolat_c",    "SST%4yr%2mo%2dy", "all", .false., "none", 2
+# "ocean_model", "geolon_u",    "geolon_u",    "SST%4yr%2mo%2dy", "all", .false., "none", 2
+# "ocean_model", "geolat_u",    "geolat_u",    "SST%4yr%2mo%2dy", "all", .false., "none", 2
+# "ocean_model", "geolon_v",    "geolon_v",    "SST%4yr%2mo%2dy", "all", .false., "none", 2
+# "ocean_model", "geolat_v",    "geolat_v",    "SST%4yr%2mo%2dy", "all", .false., "none", 2
  "ocean_model", "SST",         "sst",         "SST%4yr%2mo%2dy", "all", .true.,  "none", 2
 
 # Z-Space Fields Provided for CMIP6 (CMOR Names):
 #===============================================
+# "ocean_model_zold","uo","uo"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_zold","vo","vo"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_zold","so","so"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
+# "ocean_model_zold","temp","temp"  ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
  "ocean_model_z","uo","uo"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
  "ocean_model_z","vo","vo"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
  "ocean_model_z","so","so"      ,"ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
@@ -64,8 +75,7 @@
  "ocean_model", "LwLatSens", "LwLatSens",                "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
  "ocean_model", "Heat_PmE",  "Heat_PmE",                 "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
  "ocean_model", "hfds",      "hfds",                     "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
- "ocean_model", "PRCmE",      "PRCmE",                   "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
-
+ "ocean_model", "PRCmE",     "PRCmE",                    "ocn%4yr%2mo%2dy%2hr","all",.true.,"none",2
 
 #=============================================================================================
 #=============================================================================================

@@ -83,6 +83,7 @@ OCNPETS=${OCNPETS:-"120"}  #number of ocean pets
 #MOM_input 
 DT_THERM_MOM6=${DT_THERM_MOM6:-"1800"}  #MOM6 thermodynamic time step  [seconds]
 DT_DYNAM_MOM6=${DT_DYNAM_MOM6:-"900"}   #MOM6 dynamic time step   [seconds]
+WRITE_GEOM=${WRITE_GEOM:-"WRITE_GEOM = 2"}
 #diag table (FMS) 
 DIAG_TABLE=${DIAG_TABLE:-$TEMPLATEDIR/diag_table_template}
 #input.nml (FMS) 
@@ -109,7 +110,8 @@ DumpFields=${NEMSDumpFields:-false}   #Dump diagnostic netcdf fields from compon
 CPL_SLOW=${CPL_SLOW:-$DT_THERM_MOM6}  #slow coupling time step
 CPL_FAST=${CPL_FAST:-$DT_ATMOS}       #fast coupling time step 
 
-#Calculated Variables: 
+#Calculated Variables:
+MDY=$(echo    $CDATE | cut -c1-8) 
 SYEAR=$(echo  $CDATE | cut -c1-4)
 SMONTH=$(echo $CDATE | cut -c5-6)
 SDAY=$(echo   $CDATE | cut -c7-8)
@@ -187,23 +189,9 @@ cd $DATA
 #Input.nml is an FMS file used by both FV3 and MOM6 
 echo "creating input.nml"
 
-#MOM6 with DATM input.nml: 
-cat > input.nml << EOF
-&fms_nml
-            clock_grain='ROUTINE'
-            clock_flags='NONE'
-            domains_stack_size = 5000000
-            stack_size =0
-/
-
-&MOM_input_nml
-         output_directory = 'MOM6_OUTPUT/',
-         input_filename = '${MOM6_RESTART_SETTING:-"r"}'
-         restart_input_dir = 'INPUT/',
-         restart_output_dir = 'MOM6_RESTART/',
-         parameter_filename = 'INPUT/MOM_input',
-                              'INPUT/MOM_override' /
-EOF
+cp $TEMPLATEDIR/input.mom6.nml.IN $DATA/input.nml
+sed -i -e "s;@\[MOM6_RESTART_SETTING\];${MOM6_RESTART_SETTING};g" input.nml
+sed -i -e "s;@\[RESTART\];MOM6_RESTART;g" input.nml
 
 ######################################################################
 # 2.2 diag_table and data_table                                      #
@@ -213,11 +201,13 @@ EOF
 echo "Creating diag_table and data_table"
 
 # build the diag_table with the experiment name and date stamp
-cat > diag_table << EOF
-MOM6 Forecast
-$SYEAR $SMONTH $SDAY $SHOUR 0 0
-EOF
-cat $DIAG_TABLE >> diag_table
+cp $DIAG_TABLE  $DATA/diag_table
+
+sed -i "s+MDY+${MDY}+g" diag_table
+sed -i "s+SYEAR+${SYEAR}+g" diag_table
+sed -i "s+SMONTH+${SMONTH}+g" diag_table
+sed -i "s+SDAY+${SDAY}+g" diag_table
+sed -i "s+SHOUR+${SHOUR}+g" diag_table
 
 cp $TEMPLATEDIR/data_table.IN $DATA/data_table
 
@@ -230,29 +220,20 @@ echo "Creating model_configure"
 
 # More info on variables: https://vlab.ncep.noaa.gov/redmine/projects/emc_nemsdatacomps/wiki/Input_File_Descriptions#model_configure
 
-cat > model_configure <<EOF
-total_member:              ${ENS_NUM:-1}
-print_esmf:                ${print_esmf:-.true.}
-PE_MEMBER01:               $NTASKS_TOT
-start_year:                $SYEAR
-start_month:               $SMONTH
-start_day:                 $SDAY
-start_hour:                $SHOUR
-start_minute:              0
-start_second:              0
-nhours_fcst:               $FHMAX
-RUN_CONTINUE:              ${RUN_CONTINUE:-".false."}
-ENS_SPS:                   ${ENS_SPS:-".false."}
-
-dt_atmos:                  ${DT_ATMOS}
-atm_coupling_interval_sec: ${coupling_interval_fast_sec}
-
-iatm:                      ${IATM}
-jatm:                      ${JATM}
-cdate0:                    ${CDATE}
-nfhout:                    ${NFHOUT} 
-filename_base:             ${DATM_FILENAME_BASE}
-EOF
+cp $TEMPLATEDIR/model_configure.IN $DATA/model_configure
+sed -i -e "s;@\[TASKS\];${NTASKS_TOT};g" model_configure
+sed -i -e "s;@\[SYEAR\];${SYEAR};g" model_configure
+sed -i -e "s;@\[SMONTH\];${SMONTH};g" model_configure
+sed -i -e "s;@\[SDAY\];${SDAY};g" model_configure
+sed -i -e "s;@\[SHOUR\];${SHOUR};g" model_configure
+sed -i -e "s;@\[FHMAX\];${FHMAX};g" model_configure
+sed -i -e "s;@\[DT_ATMOS\];${DT_ATMOS};g" model_configure
+sed -i -e "s;@\[coupling_interval_fast_sec\];${coupling_interval_fast_sec};g" model_configure
+sed -i -e "s;@\[IATM\];${IATM};g" model_configure
+sed -i -e "s;@\[JATM\];${JATM};g" model_configure
+sed -i -e "s;@\[CDATE\];${CDATE};g" model_configure
+sed -i -e "s;@\[NFHOUT\];${NFHOUT};g" model_configure
+sed -i -e "s;@\[FILENAME_BASE\];${DATM_FILENAME_BASE};g" model_configure
 
 ######################################################################
 # 2.4 nems_configure                                                 #
@@ -293,9 +274,9 @@ if [ $cplflx = .true. ]; then
    sed -i -e "s;@\[ocn_petlist_bounds\];$ocn_petlist_bounds;g" tmp1
    sed -i -e "s;@\[DumpFields\];$DumpFields;g" tmp1
    sed -i -e "s;@\[coldstart\];$medcoldstart;g"   tmp1
-   sed -i -e "s;@\[restart_interval\];$restart_interval_write;g" tmp1
-   sed -i -e "s;@\[CPL_SLOW\];$CPL_SLOW;g" tmp1
-   sed -i -e "s;@\[CPL_FAST\];$CPL_FAST;g" tmp1
+   sed -i -e "s;@\[RESTART_INTERVAL\];$restart_interval_write;g" tmp1
+   sed -i -e "s;@\[coupling_interval_slow_sec\];$CPL_SLOW;g" tmp1
+   sed -i -e "s;@\[coupling_interval_fast_sec\];$CPL_FAST;g" tmp1
 fi
 if [ $cplice = .true. ]; then
    sed -i -e "s;@\[ice_model\];$icemod;g" tmp1
@@ -315,6 +296,9 @@ cp $TEMPLATEDIR/MOM_input_template tmp1
 # Replace values in template
 sed -i -e "s;DT_THERM_MOM6;${DT_THERM_MOM6};g" tmp1
 sed -i -e "s;DT_DYNAM_MOM6;${DT_DYNAM_MOM6};g" tmp1
+sed -i -e "s;'ENERGYSAVEDAYS = 1.00';'ENERGYSAVEDAYS = 0.25';g" tmp1
+sed -i -e "s;'WRITE_GEOM = 2';${WRITE_GEOM};g" tmp1
+sed -i -e "s;MOM6_RIVER_RUNOFF;true;g" tmp1 
 # Rename to proper input ice input name
 mv tmp1 $DATA/INPUT/MOM_input
 
@@ -354,6 +338,7 @@ fi
 
 dumpfreq_n=${dumpfreq_n:-"${restart_interval}"} 
 dumpfreq=${dumpfreq:-"s"} #  "s" or "d" or "m" for restarts at intervals of "seconds", "days" or "months"
+cice_hist_avg=${cice_hist_avg:-".true."}
 
 iceres=${iceres:-"mx025"}
 ice_grid_file=${ice_grid_file:-"grid_cice_NEMS_${iceres}.nc"}
@@ -392,13 +377,14 @@ sed -i -e "s;RUNTYPE;${RUNTYPE};g" tmp1
 sed -i -e "s;USE_RESTART_TIME;${USE_RESTART_TIME};g" tmp1
 sed -i -e "s;DUMPFREQ_N;${dumpfreq_n};g" tmp1
 sed -i -e "s;DUMPFREQ;${dumpfreq};g" tmp1
+sed -i -e "s;CICE_HIST_AVG;${CICE_HIST_AVG};g" tmp1
 sed -i -e "s;FRAZIL_FWSALT;${FRAZIL_FWSALT};g" tmp1
 sed -i -e "s;TR_POND_LVL;${tr_pond_lvl};g" tmp1
 sed -i -e "s;RESTART_POND_LVL;${restart_pond_lvl};g" tmp1
 sed -i -e "s;ICE_GRID_FILE;${ice_grid_file};g" tmp1
 sed -i -e "s;ICE_KMT_FILE;${ice_kmt_file};g" tmp1
 
-# Rename to proper input ice input name
+# Rename to proper input ice true.input name
 mv tmp1 ice_in 
 
 ######################################################################
@@ -435,6 +421,22 @@ mv tmp1 $DATA/datm_data_table
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc 
 echo "Link DATM forcing files"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
+
+# Create scrip.nc
+
+cp -rf ${SCRIPTDIR}/make_scripgrid.ncl ./
+
+gridsrc=$DATA/DATM_INPUT/
+gridfile=${FORCING_SRC,,}.${CDATE}.nc
+
+sed -i "s+FORCING_SRC+${FORCING_SRC,,}+g" make_scripgrid.ncl
+sed -i "s+GRIDSRC+${gridsrc}+g" make_scripgrid.ncl
+sed -i "s+GRIDFILE+${gridfile}+g" make_scripgrid.ncl
+sed -i "s+DIROUT+${gridsrc}+g" make_scripgrid.ncl
+
+module load ncl
+ncl < make_scripgrid.ncl
+module unload ncl
 
 ######################################################################
 # 3.2 Link MOM6 fix files                                            #
