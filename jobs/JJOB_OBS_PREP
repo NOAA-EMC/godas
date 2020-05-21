@@ -9,6 +9,4 @@ status=$?
 
 export OPT=/home/rmahajan/opt
 
-which ncks
-
 ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh

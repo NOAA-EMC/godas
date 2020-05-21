@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ksh
 set -e
 
 #================================================================================
@@ -11,9 +11,9 @@ echo 'Date of Analysis: ' $CDATE
 echo 'Run Directory: ' $RUNCDATE
 echo ''
 
-module purge
-source $MOD_PATH/godas.main
-module list
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
 
 rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; done }
 

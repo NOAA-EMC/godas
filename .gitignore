@@ -3,6 +3,7 @@
 **/src/DATM-MOM6-CICE5.fd
 **/src/checkout-DATM-MOM6-CICE5.log
 workflow/user.yaml
+src/letkf
 **/fix/CICE_FIX_mx025
 **/fix/MOM6_FIX_mx025
 # Do not ignore the following files

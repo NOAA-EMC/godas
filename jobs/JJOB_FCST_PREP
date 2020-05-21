@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/ksh
 set -e
 
 cat <<EOF
@@ -10,9 +10,9 @@ cat <<EOF
 #================================================================================
 EOF
 
-module purge
-source $MOD_PATH/godas.main
-module list
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
 
 case $FCSTMODEL in
    "MOM6solo")
@@ -32,9 +32,9 @@ cat <<EOF
 # Initial Conditions are copied from the static files
 EOF
          mkdir -p $nextic
-         cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
-         cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
-         cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+         cp $SOCA_STATIC/test-emc-m6c5/mediator_* $nextic
+         cp $SOCA_STATIC/test-emc-m6c5/MOM*.nc $nextic
+         cp -r $SOCA_STATIC/test-emc-m6c5/restart $nextic
       fi
       if [ "$NO_ENS_MBR" -gt "1" ]; then
          for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
@@ -44,9 +44,9 @@ cat <<EOF
 # Initial Conditions are copied from the static files
 EOF
                mkdir -p $nextic
-               cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
-               cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
-               cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+               cp $SOCA_STATIC/test-emc-m6c5/mediator_* $nextic
+               cp $SOCA_STATIC/test-emc-m6c5/MOM*.nc $nextic
+               cp -r $SOCA_STATIC/test-emc-m6c5/restart $nextic
             fi
          done
       fi

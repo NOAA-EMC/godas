@@ -16,10 +16,12 @@ if [[ -d /scratch1 ]] ; then
     # We are on NOAA Hera
 	module load hera.anaconda
         module load hera.intel18
+        module load hera.fcst
 elif [[ -d /work ]] ; then
     # We are on MSU Orion
 	module load orion.anaconda
         module load orion.intel19
+        module load orion.fcst
 else
     echo WARNING: UNKNOWN PLATFORM 
 fi

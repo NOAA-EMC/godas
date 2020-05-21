@@ -1,4 +1,4 @@
-#!/bin/bash -l 
+#!/bin/ksh
 
 while getopts "i:d:" opt; do
    case $opt in
