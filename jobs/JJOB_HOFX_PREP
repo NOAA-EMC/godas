@@ -43,15 +43,15 @@ fi
 cp -r $SOCA_STATIC/* $RUNCDATE
 
 # Adjust date in input.nml
-cp $RUNCDATE/input-ymd.nml $RUNCDATE/input.nml
+cp $RUNCDATE/input-ymd.nml $RUNCDATE/input-mom6.nml
 YYYY=$(echo  $CDATE | cut -c1-4)
 MM=$(echo $CDATE | cut -c5-6)
 DD=$(echo   $CDATE | cut -c7-8)
 HH=$(echo  $CDATE | cut -c9-10)
-sed -i "s/YYYY/${YYYY}/g" $RUNCDATE/input.nml
-sed -i "s/MM/${MM}/g" $RUNCDATE/input.nml
-sed -i "s/DD/${DD}/g" $RUNCDATE/input.nml
-sed -i "s/HH/${HH}/g" $RUNCDATE/input.nml
+sed -i "s/YYYY/${YYYY}/g" $RUNCDATE/input-mom6.nml
+sed -i "s/MM/${MM}/g" $RUNCDATE/input-mom6.nml
+sed -i "s/DD/${DD}/g" $RUNCDATE/input-mom6.nml
+sed -i "s/HH/${HH}/g" $RUNCDATE/input-mom6.nml
 
 # Copy SOCA config files into RUNCDATE
 #----------------------------------------------------
@@ -111,4 +111,3 @@ EOF
 # WARNING: This overwrites the MOM.res.nc from ${SOCA_STATIC}
 
 cp -p ${SOCA_ANALYSIS}/$CDATE/Data/ocn.socagodas.an.${bkg_date}.nc $RUNCDATE/INPUT_MOM6/MOM.res.nc
- 

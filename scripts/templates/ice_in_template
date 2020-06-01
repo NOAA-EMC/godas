@@ -7,6 +7,7 @@
   , npt            = NPT
   , ndtd           = 1
   , runtype        = 'RUNTYPE' 
+  , runid          = 'RUNID' 
   , ice_ic         = 'ICE_IC_NAME'
   , restart        = .true.
   , restart_ext    = .false.
@@ -31,7 +32,7 @@
   , dbug           = .false.
   , histfreq       = 'm','d','h','x','x'
   , histfreq_n     =  0 , 0 , 6 , 1 , 1
-  , hist_avg       = .true.
+  , hist_avg       = CICE_HIST_AVG
   , history_dir    = './history/'
   , history_file   = 'iceh'
   , write_ic       = .true.
