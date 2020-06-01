@@ -76,13 +76,13 @@ echo "bkg_date="$bkg_date
 
 ## Prep yaml for bump correlation initialization
 #-----------------------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/static_SocaError_init.yml  \
       -d ${bkg_date}
 
 ## Prep yaml for bump localization initialization
 #------------------------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/parameters_bump_loc.yml    \
       -d ${bkg_date}
 
@@ -91,7 +91,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
 mbr=''
 yaml=$RUNCDATE/yaml/hofx3d.yml
 
-${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
+sh ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
          -i ${yaml}                               \
          -d ${RUNCDATE}                               \
          -n ${mbr}

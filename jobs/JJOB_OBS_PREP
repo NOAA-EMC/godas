@@ -7,6 +7,4 @@ echo $CDATE
 status=$?
 [[ $status -ne 0 ]] && exit $status
 
-export OPT=/home/rmahajan/opt
-
-${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
+sh ${ROOT_GODAS_DIR}/scripts/main_obs_prep.sh
