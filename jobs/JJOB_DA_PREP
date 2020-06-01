@@ -77,64 +77,64 @@ echo "bkg_date="$bkg_date
 
 ## Prep yaml for bump correlation initialization
 #-----------------------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/static_SocaError_init.yml  \
       -d ${bkg_date}
 
 ## Prep yaml for bump localization initialization
 #------------------------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/parameters_bump_loc.yml    \
       -d ${bkg_date}
 
 ## Prep yaml for checkpointing 3DVAR analysis
 #--------------------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/checkpointmodel.yml        \
       -d ${bkg_date}
 
 ## Prep yaml for running mom6 only forecast
 #------------------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/forecast.yml               \
       -d ${bkg_date}
 
 ## Prep yaml for the soca_enspert
 #-----------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/genenspert.yml               \
       -d ${bkg_date}
 
-${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+sh ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -i $RUNCDATE/yaml/genenspert.yml               \
       -k NO_ENS_MBR                                \
       -v ${NO_ENS_MBR}
 
 ## Prep yaml for the soca_enspert for envar
 #--------------------------------------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/genenspert4envar.yml       \
       -d ${bkg_date}
 
-${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+sh ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -i $RUNCDATE/yaml/genenspert4envar.yml       \
       -k NO_ENS_MBR                                \
       -v ${NO_ENS_MBR}
 
-${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+sh ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
       -i $RUNCDATE/yaml/genenspert4envar.yml       \
       -k WINDOW_LENGTH                             \
       -v ${window_length}
 
 # Prep yaml for 3dvar
 #-----------------------------
-${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
+sh ${ROOT_GODAS_DIR}/scripts/prep_3dvar_yaml.sh       \
       -i $RUNCDATE/yaml/3dvar_godas.yml            \
       -d $RUNCDATE
 
 # Prep yaml for 3denvar
 #----------------------------------
-${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
       -i $RUNCDATE/yaml/3dhybenvar.yml            \
       -m $RUNCDATE/yaml/envar_member.yml          \
       -d $RUNCDATE                                \
@@ -143,7 +143,7 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
 # Prep yaml for ensemble variance
 #------------------------------------------------
 # TODO: Not clean, using prep_3denvar_yaml.sh to create ens. variance yaml
-${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
+sh ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
       -i $RUNCDATE/yaml/ensvariance.yml            \
       -m $RUNCDATE/yaml/ensvariance_member.yml          \
       -d $RUNCDATE                                \
@@ -157,7 +157,7 @@ if [ $DA_METHOD = 'letkf' ]; then
       yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml
       cp -r $RUNCDATE/yaml/hofx3d.yml ${yaml_tmp}
 
-      ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
+      sh ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
          -i ${yaml_tmp}                               \
          -d ${RUNCDATE}                               \
          -n ${mbr}
