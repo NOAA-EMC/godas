@@ -39,6 +39,8 @@ config_base:
 
     # GLOBAL static environment parameters
 
+    export OPT=/home/rmahajan/opt
+
     export ROOT_GODAS_DIR="{doc.places.ROOT_GODAS_DIR}"
     export GODAS_RC="{doc.places.GODAS_RC}"
     export STMP="{doc.places.DATAROOT}/$USER"
