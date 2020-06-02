@@ -164,7 +164,7 @@ if __name__ == '__main__':
                      'module purge; source ../modulefiles/' +
                       MACHINE_ID + '.' + BUILD_COMPILER +
                      '; source ../modulefiles/' + MACHINE_ID +
-                     '.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+                     '.setenv; module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
             except subprocess.CalledProcessError as error:
                 sys.exit(
                     '-----------Trouble to build SOCA with ' + 
@@ -196,10 +196,19 @@ if __name__ == '__main__':
         return_value = 0
         return_value = os.system(
             "git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git ./src/letkf")
+        os.chdir(CLONE_DIR + "/src/letkf")
+        os.system("git submodule update --init --recursive")
+        make_dir(CLONE_DIR + "/build/letkf")
+        os.chdir(CLONE_DIR + "/build/letkf")
+
         if (return_value != 0):
             sys.exit('-----------Trouble to clone UMD-LETKF repo -----------')
         try:
-            os.system("sh " + CLONE_DIR + "/src/letkf_build.sh")
+            subprocess.check_call(
+                ['csh',
+                 '-c',
+                 'module purge; source ../../src/letkf/config/env.hera'+
+                 '; cmake -DNETCDF_DIR=$NETCDF ../../src/letkf; make -j2'])
         except subprocess.CalledProcessError as error:
             sys.exit('-----------Trouble to build LETKF -----------')
 
