@@ -172,7 +172,7 @@ if __name__ == '__main__':
         elif MACHINE_ID.strip() in 'orion':
             try:
                 subprocess.check_call(
-                    ['csh',
+                    ['sh',
                      '-c',
                      'module purge; source ../modulefiles/' +
                       MACHINE_ID + '.' + BUILD_COMPILER +
