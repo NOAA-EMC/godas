@@ -107,7 +107,8 @@ if __name__ == '__main__':
     DATAROOT = input.get('DATAROOT')
     WORKFLOW_NAME = input.get('WORKFLOW_NAME')
     SKIP_BUILD = input.get('SKIP_BUILD')
-    BRANCH_NAME = input.get('BRANCH_NAME')
+    GODAS_BRANCH_NAME = input.get('GODAS_BRANCH_NAME')
+    SOCA_BRANCH_NAME = input.get('SOCA_BRANCH_NAME')
     BUILD_COMPILER = input.get('BUILD_COMPILER')
     MACHINE_ID = input.get('MACHINE_ID')
     USER = os.getenv('USER')
@@ -131,8 +132,8 @@ if __name__ == '__main__':
         if (return_value != 0):
             sys.exit('-----------Trouble to clone GODAS repo -----------')
         os.chdir(CLONE_DIR)
-        if BRANCH_NAME.strip() is not 'develop':
-            os.system("git checkout " + BRANCH_NAME)
+        if GODAS_BRANCH_NAME.strip() is not 'develop':
+            os.system("git checkout " + GODAS_BRANCH_NAME)
         os.system("git submodule update --init --recursive")
 
         os.chdir(CLONE_DIR + "/src")
@@ -145,10 +146,16 @@ if __name__ == '__main__':
         return_value = 0
         if os.path.isdir(CLONE_DIR + "/src/soca-bundle"):
             delete_dir(CLONE_DIR + "/src/soca-bundle")
-        return_value = os.system(
-            "git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git " +
-            CLONE_DIR +
-            "/src/soca-bundle")
+        if SOCA_BRANCH_NAME.strip() is not 'develop':
+            return_value = os.system(
+                "git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git " +
+                CLONE_DIR + "/src/soca-bundle")
+            ecbuild_run = 'ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF ../src/soca-bundle'
+        else:
+            return_value = os.system(
+                "git clone https://github.com/JCSDA/soca-bundle.git " +
+                CLONE_DIR + "/src/soca-bundle")
+            ecbuild_run = 'ecbuild --build=release -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF ../src/soca-bundle'
         if (return_value != 0):
             sys.exit('-----------Trouble to clone SOCA Bundle -----------')
         
@@ -164,7 +171,7 @@ if __name__ == '__main__':
                      'module purge; source ../modulefiles/' +
                       MACHINE_ID + '.' + BUILD_COMPILER +
                      '; source ../modulefiles/' + MACHINE_ID +
-                     '.setenv; module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+                     '.setenv; module list; ' + ecbuild_run + '; make -j12'])
             except subprocess.CalledProcessError as error:
                 sys.exit(
                     '-----------Trouble to build SOCA with ' + 
