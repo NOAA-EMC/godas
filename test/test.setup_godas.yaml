@@ -4,6 +4,7 @@ COMROOT: # set the path for the directory where input and output of jobs are sto
 DATAROOT: # set the path for the directory where each job runs
 WORKFLOW_NAME: #set the name of your worklflow
 SKIP_BUILD: False
-BRANCH_NAME: develop
+GODAS_BRANCH_NAME: develop
+SOCA_BRANCH_NAME: stable.nightly #stable.nightly or develop
 BUILD_COMPILER: intel18
 MACHINE_ID : hera #hera or orion
