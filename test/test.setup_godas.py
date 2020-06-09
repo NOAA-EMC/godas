@@ -146,7 +146,7 @@ if __name__ == '__main__':
         return_value = 0
         if os.path.isdir(CLONE_DIR + "/src/soca-bundle"):
             delete_dir(CLONE_DIR + "/src/soca-bundle")
-        if SOCA_BRANCH_NAME.strip() is not 'develop':
+        if SOCA_BRANCH_NAME.strip() is 'stable.nightly':
             return_value = os.system(
                 "git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git " +
                 CLONE_DIR + "/src/soca-bundle")
