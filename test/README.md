@@ -18,7 +18,9 @@ WORKFLOW_NAME:
 
 SKIP_BUILD: False
 
-BRANCH_NAME: develop #other branch names can be set to test/build
+GODAS_BRANCH_NAME: develop #other branch names can be set to test/build
+
+SOCA_BRANCH_NAME: stable.nightly #stable.nightly or develop
 
 BUILD_COMPILER: intel-18 #either intel-18 or intel-19 can be selected.
 
