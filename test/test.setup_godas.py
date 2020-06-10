@@ -132,7 +132,7 @@ if __name__ == '__main__':
         if (return_value != 0):
             sys.exit('-----------Trouble to clone GODAS repo -----------')
         os.chdir(CLONE_DIR)
-        if GODAS_BRANCH_NAME.strip() is not 'develop':
+        if GODAS_BRANCH_NAME.strip() != 'develop':
             os.system("git checkout " + GODAS_BRANCH_NAME)
         os.system("git submodule update --init --recursive")
 
@@ -146,16 +146,13 @@ if __name__ == '__main__':
         return_value = 0
         if os.path.isdir(CLONE_DIR + "/src/soca-bundle"):
             delete_dir(CLONE_DIR + "/src/soca-bundle")
-        if SOCA_BRANCH_NAME.strip() is 'stable.nightly':
+        if SOCA_BRANCH_NAME.strip() == 'stable.nightly':
             return_value = os.system(
                 "git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git " +
                 CLONE_DIR + "/src/soca-bundle")
-            ecbuild_run = 'ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF ../src/soca-bundle'
         else:
             return_value = os.system(
-                "git clone https://github.com/JCSDA/soca-bundle.git " +
-                CLONE_DIR + "/src/soca-bundle")
-            ecbuild_run = 'ecbuild --build=release -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF ../src/soca-bundle'
+                "git clone https://github.com/JCSDA/soca-bundle.git " + CLONE_DIR + "/src/soca-bundle")
         if (return_value != 0):
             sys.exit('-----------Trouble to clone SOCA Bundle -----------')
         
@@ -163,6 +160,7 @@ if __name__ == '__main__':
         make_dir(build_dir)
         os.chdir(build_dir)
 
+        ecbuild_run = 'ecbuild --build=release -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF ../src/soca-bundle'
         if MACHINE_ID.strip() in 'hera':
             try:
                 subprocess.check_call(
