@@ -75,7 +75,7 @@ The bundle of repositories necessary to build SOCA
 
 # Clone and build the UMD-LETKF
 For detail instructions on how to install LETKF at any machine, see the [LETKF repository](https://github.com/NOAA-EMC/UMD-LETKF). For GODAS, just run the following script:
-`sh $CLONE_DIR/src/letkf_build.sh`, , which executes the following build procedures.
+`sh $CLONE_DIR/src/letkf_build.sh`, which executes the following build procedures.
 
 'mkdir -p $CLONE_DIR/build/letkf'
 
