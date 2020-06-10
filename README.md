@@ -50,12 +50,19 @@ The bundle of repositories necessary to build SOCA
    `module list` 
 
 3. Clone all the necessary repositories to build SOCA: SOCA develop and stable nightly branches can be cloned in building GODAS system. For each branch, slignthly different ecbuild options are currently applied to avoid issues of HPC compilers and libraries but this will continuously updated.
+
 -'git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle'
+
  Hera: `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=ON ../src/soca-bundle`
+
  Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../src/soca-bundle`
+
 -'git clone https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle'
+
  Hera: 'ecbuild --build=release -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF $CLONE_DIR/src/soca-bundle'
+
  Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON $CLONE_DIR/src/soca-bundle`
+
 4. `make -j12`
 5. Unit test the build \
    `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
