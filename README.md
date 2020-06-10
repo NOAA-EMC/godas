@@ -55,13 +55,13 @@ The bundle of repositories necessary to build SOCA
 
     Hera: `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=ON $CLONE_DIR/src/soca-bundle`
 
-    Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON $CLONE_DIR/src/soca-bundle`
+    Orion: `ecbuild --build=release -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON $CLONE_DIR/src/soca-bundle`
 
    'git clone https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle'
 
     Hera: 'ecbuild --build=release -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF $CLONE_DIR/src/soca-bundle'
 
-    Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON $CLONE_DIR/src/soca-bundle`
+    Orion: `ecbuild --build=release -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON $CLONE_DIR/src/soca-bundle`
 
 4. `make -j12`
 5. Unit test the build \
@@ -89,12 +89,13 @@ For detail instructions on how to install LETKF at any machine, see the [LETKF r
 
 'module purge'
 
-'source $CLONE_DIR/src/letkf/config/env.hera'
+'source $CLONE_DIR/src/letkf/config/env.$MACHINE_ID'
 
 'cmake -DNETCDF_DIR=$NETCDF $CLONE_DIR/src/letkf'
 
 'make -j2'
 
+'ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver'x
 
 # Copy the mom6-tools.plot to the bin
 0. cp $CLONE_DIR/src/mom6-tools.plot/*.py $CLONE_DIR/build/bin/ 

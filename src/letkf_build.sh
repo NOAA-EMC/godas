@@ -1,4 +1,4 @@
-#! /bin/csh
+#! /bin/bash
 
 cd $CLONE_DIR/src/letkf  
 git submodule update --init --recursive  
