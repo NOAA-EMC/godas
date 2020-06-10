@@ -75,7 +75,26 @@ The bundle of repositories necessary to build SOCA
 
 # Clone and build the UMD-LETKF
 For detail instructions on how to install LETKF at any machine, see the [LETKF repository](https://github.com/NOAA-EMC/UMD-LETKF). For GODAS, just run the following script:
-`sh $CLONE_DIR/src/letkf_build.sh` 
+`sh $CLONE_DIR/src/letkf_build.sh`, , which executes the following build procedures.
+
+'mkdir -p $CLONE_DIR/build/letkf'
+
+'git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git $CLONE_DIR/src/letkf'
+
+'cd $CLONE_DIR/src/letkf'
+
+'git submodule update --init --recursive'
+
+'cd $CLONE_DIR/build/letkf'
+
+'module purge'
+
+'source $CLONE_DIR/src/letkf/config/env.hera'
+
+'cmake -DNETCDF_DIR=$NETCDF $CLONE_DIR/src/letkf'
+
+'make -j2'
+
 
 # Copy the mom6-tools.plot to the bin
 0. cp $CLONE_DIR/src/mom6-tools.plot/*.py $CLONE_DIR/build/bin/ 
