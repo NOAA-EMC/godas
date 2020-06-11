@@ -209,8 +209,11 @@ if __name__ == '__main__':
         if (return_value != 0):
             sys.exit('-----------Trouble to clone UMD-LETKF repo -----------')
         try:
+            shell_intrp = 'csh'
+            if MACHINE_ID.strip() in 'orion':
+                shell_intrp = 'sh'            
             subprocess.check_call(
-                ['sh',
+                [shell_intrp,
                  '-c', 
                  'module purge; source ../../src/letkf/config/env.'+ MACHINE_ID +
                  '; cmake -DNETCDF_DIR=$NETCDF ../../src/letkf; make -j2'])
