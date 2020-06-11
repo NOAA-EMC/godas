@@ -177,7 +177,7 @@ if __name__ == '__main__':
         elif MACHINE_ID.strip() in 'orion':
             try:
                 subprocess.check_call(
-                    ['csh',
+                    ['sh',
                      '-c',
                      'module purge; source ../modulefiles/' +
                       MACHINE_ID + '.' + BUILD_COMPILER +
@@ -210,9 +210,9 @@ if __name__ == '__main__':
             sys.exit('-----------Trouble to clone UMD-LETKF repo -----------')
         try:
             subprocess.check_call(
-                ['csh',
-                 '-c',
-                 'module purge; source ../../src/letkf/config/env.hera'+
+                ['sh',
+                 '-c', 
+                 'module purge; source ../../src/letkf/config/env.'+ MACHINE_ID +
                  '; cmake -DNETCDF_DIR=$NETCDF ../../src/letkf; make -j2'])
         except subprocess.CalledProcessError as error:
             sys.exit('-----------Trouble to build LETKF -----------')
@@ -239,21 +239,23 @@ if __name__ == '__main__':
     if os.path.isdir(EXPROOT):
         delete_dir(EXPROOT)
     make_dir(EXPROOT)
-    comrot_dir = '/scratch1/NCEPDEV/stmp2/' + USER + '/comrot/' + WORKFLOW_NAME
 
     subprocess.call(
         ["sed", "-i", r'/FIX_SCRUB:/c\  FIX_SCRUB: True', "user.yaml"])
 
-    if os.path.isdir(comrot_dir):
-        delete_dir(comrot_dir)
-
     crow_path = CLONE_DIR + "/workflow/CROW"
     os.chdir(crow_path)
-    
-    subprocess.check_call(
-                ['bash', '-c', './setup_case.sh -p ' + MACHINE_ID.upper() + ' ../cases/3dvar.yaml ' + WORKFLOW_NAME])
-    subprocess.check_call(
-        ['bash', '-c', './make_rocoto_xml_for.sh ' + EXPROOT + '/' + WORKFLOW_NAME])
+   
+    if MACHINE_ID.strip() in 'orion':
+        subprocess.check_call(
+            ['sh','-c','./setup_case.sh -p ' + MACHINE_ID.upper() + ' ../cases/3dvar.yaml ' + WORKFLOW_NAME])
+        subprocess.check_call(
+            ['sh','-c','./make_rocoto_xml_for.sh ' + EXPROOT + '/' + WORKFLOW_NAME])
+    else:
+        subprocess.check_call(
+            ['bash', '-c', './setup_case.sh -p ' + MACHINE_ID.upper() + ' ../cases/3dvar.yaml ' + WORKFLOW_NAME])
+        subprocess.check_call(
+            ['bash', '-c', './make_rocoto_xml_for.sh ' + EXPROOT + '/' + WORKFLOW_NAME])
 
     run_dir = EXPROOT + '/' + WORKFLOW_NAME
     os.chdir(run_dir)
@@ -268,10 +270,17 @@ if __name__ == '__main__':
         print(
             '---------- rocotorun submit counts: %s ---------- ' %
             count_runs_)
-        subprocess.check_call(
-            ['bash', '-c', 'module load rocoto && rocotorun -w workflow.xml -d workflow.db'])
-        subprocess.check_call(
-            ['bash', '-c', 'module load rocoto && rocotostat -v 10 -w workflow.xml -d workflow.db > jobstat.log'])
+
+        if MACHINE_ID.strip() in 'orion': 
+            subprocess.check_call(
+                ['sh', '-c', 'module load contrib && module load rocoto/1.3.1 && rocotorun -w workflow.xml -d workflow.db'])
+            subprocess.check_call(
+                ['sh', '-c', 'module load contrib && module load rocoto/1.3.1 && rocotostat -v 10 -w workflow.xml -d workflow.db > jobstat.log'])
+        else:
+            subprocess.check_call(
+                ['bash', '-c', 'module load rocoto && rocotorun -w workflow.xml -d workflow.db'])
+            subprocess.check_call(
+                ['bash', '-c', 'module load rocoto && rocotostat -v 10 -w workflow.xml -d workflow.db > jobstat.log'])
         subprocess.call(["sed", "-i", '/==============/d', "jobstat.log"])
         [alljobs_success, lapse_time] = check_job_status('jobstat.log')
 
