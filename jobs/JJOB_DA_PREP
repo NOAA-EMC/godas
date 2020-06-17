@@ -149,28 +149,6 @@ ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
       -d $RUNCDATE                                \
       -n ${NO_ENS_MBR}
 
-
-#----------------------------------
-if [ $DA_METHOD = 'letkf' ]; then
-   for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
-
-      yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml
-      cp -r $RUNCDATE/yaml/hofx3d.yml ${yaml_tmp}
-
-      ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
-         -i ${yaml_tmp}                               \
-         -d ${RUNCDATE}                               \
-         -n ${mbr}
-
-      jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
-      cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
-      sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
-   done
-fi
-
-# TODO: Prep yaml for letkf
-#----------------------------------
-
 cat <<EOF
 #================================================================================
 #================================================================================

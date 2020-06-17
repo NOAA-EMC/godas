@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_LETKF_PREP
+#  -Prepare yaml files UMD-LETKF application
+#  -Prepare the path structure for the analysis
+#================================================================================
+#================================================================================
+EOF
+
+module purge
+source $MOD_PATH/godas.main
+module list
+
+
+# Main 
+# ----------------------------------- 
+
+echo
+echo "The system runs at $RUNCDATE"
+echo
+echo "The LETKF directory is " ${LETKFDIR}
+echo
+echo "SOCA_STATIC="$SOCA_STATIC
+
+mkdir -p ${LETKFDIR}
+
+cd ${LETKFDIR}
+
+${ROOT_GODAS_DIR}/scripts/prep_letkf.sh -n $NO_ENS_MBR
+

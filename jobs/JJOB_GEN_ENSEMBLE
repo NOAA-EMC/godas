@@ -9,6 +9,8 @@ module purge
 source $MOD_PATH/godas.main
 module list
 
+rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; done }
+
 echo $RUNCDATE
 
 if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
