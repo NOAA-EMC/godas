@@ -16,6 +16,8 @@ echo $RUNCDATE
 if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
 cd $RUNCDATE
 
+mkdir -p $RUNCDATE/Data
+
 if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 
 # Generate the ensemble using soca_enspert
