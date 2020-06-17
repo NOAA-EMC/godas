@@ -45,8 +45,14 @@ sed -i "s/Data/INPUT_MOM6/g" ${yamlfile}
 # Setup Jo cost function
 #-----------------------
 
-${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh \
-      -i ${yamlfile}                             \
+if [ "$NO_ENS_MBR" -gt "1" ]; then 
+   OUTDIR="$RUNDIR/hofx/mem${mbr}"
+else
+   OUTDIR="$RUNDIR/Data"
+fi
+
+${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh   \
+      -i ${yamlfile}                               \
       -d $RUNDIR
 
 echo '#                                                                 #'
