@@ -1,0 +1,43 @@
+#!/bin/bash
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_LETKF_PREP
+#  -Prepare yaml files UMD-LETKF application
+#  -Prepare the path structure for the analysis
+#================================================================================
+#================================================================================
+EOF
+
+module purge
+source $MOD_PATH/godas.main
+module list
+
+
+# Main 
+# ----------------------------------- 
+echo
+echo "The system runs at $RUNCDATE"
+echo
+echo "The LETKF directory is " ${LETKFDIR}
+echo
+echo "SOCA_STATIC="$SOCA_STATIC
+
+mkdir -p ${LETKFDIR}
+
+cd ${LETKFDIR}
+
+# Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
+
+export ENSEND=$((NMEM_PGRP * ENSGRP))
+export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
+
+for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+   echo 
+   echo Preparing the hofx for ensemble member $MEMBER_NO
+
+   ${ROOT_GODAS_DIR}/scripts/prep_letkf_ens.sh -n $MEMBER_NO
+
+done

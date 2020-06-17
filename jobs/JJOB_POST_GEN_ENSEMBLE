@@ -1,0 +1,63 @@
+#!/bin/bash
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_POST_GEN_ENSEMBLE
+#   - Checkpoint
+#================================================================================
+#================================================================================
+EOF
+
+module purge
+source $MOD_PATH/godas.main
+module list
+
+# Functions 
+rename_func () { for files in $1; do cp -f $files ${files:0:(${#files}-28)}'nc'; done }
+ciceprep_func () {
+   for files in $1; do
+    #  ncks -O -C -v aicen,vicen,vsnon $files $files
+    #  ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $files
+    #  ncecat -O -v aicen,vicen,vsnon -u Time $files
+    #  ncks -A -v Time,xaxis_1,yaxis_1,zaxis_1 $RUNCDATE/INPUT_MOM6/ice_model.res.nc $RUNCDATE/INPUT_MOM6/cice_bkg.nc
+
+      ncrename -O -d ni,xaxis_1 -d nj,yaxis_1 -d ncat,zaxis_1 $files
+      ncwa -a Time $files "tmp-$files"
+      mv "tmp-$files" $files
+   done
+}
+
+# Main 
+# ----------------------------------- 
+
+echo
+echo "The system runs at $RUNCDATE"
+echo
+
+cd ${RUNCDATE}/Data
+
+rename_func "cic.pert.ens.*.PT0S.nc"
+rename_func "ocn.pert.ens.*.PT0S.nc"
+
+cd ${RUNCDATE}
+
+if [ ! -d RESTART ]; then mkdir -p RESTART; fi
+
+export ENSEND=$((NMEM_PGRP * ENSGRP))
+export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
+
+for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+   echo 
+   echo Running Checkpoint for the $MEMBER_NO
+
+   srun -n $NPE ${SOCA_EXEC}/soca_checkpoint_model.x ./yaml/checkpointmodel$MEMBER_NO.yml
+   
+   # TODO: The ice is not pertubated but eventually, it will.
+   # ciceprep_func "${RUNCDATE}/Data/cic.pert.ens.*.nc"
+
+   mkdir -p ${RUNCDATE}/mem$MEMBER_NO
+   mv -f RESTART/* ${RUNCDATE}/mem$MEMBER_NO
+
+done
