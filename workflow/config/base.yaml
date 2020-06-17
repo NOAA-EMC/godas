@@ -95,6 +95,7 @@ config_base:
     export ROTDIR="{doc.places.ROTDIR}"
     export RUNDIR="{doc.places.RUNDIR}"
     export RUNCDATE="{doc.places.RUNDIR}/$CDATE"
+    export LETKFDIR="{doc.places.RUNDIR}/$CDATE/letkf"
 
     # DA cycle info
     export godas_cyc={doc.settings.godas_cyc}
