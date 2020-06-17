@@ -8,7 +8,7 @@ suite: !Cycle
         J_JOB: JJOB_PREP_GEN_ENSEMBLE
       
       da_prep: !Task
-      <<: *bigmem_task_template
+        <<: *bigmem_task_template
         Trigger: !Depend  ( prep_genens )
         resources: !calc partition.resources.run_da_prep
         config: [ base ]
@@ -16,7 +16,7 @@ suite: !Cycle
 
       da_prep_soca: !Task
         <<: *bigmem_task_template
-        Trigger: !Depend  da_prep
+        Trigger: !Depend  ( da_prep )
         resources: !calc partition.resources.run_3dvar
         config: [ base ]
         J_JOB: JJOB_PREP_SOCA
