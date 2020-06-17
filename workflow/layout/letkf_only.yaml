@@ -1,45 +1,25 @@
 suite: !Cycle
       <<: *suite_defaults
-
+      
       obs_prep: !Task
         <<: *shared_task_template
         Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
         resources: !calc partition.resources.run_obs_prep
         config: [ base ]
         J_JOB: JJOB_OBS_PREP
-
-      da_prep: !Task
-        <<: *shared_task_template
-        Trigger: !Depend  obs_prep
-        resources: !calc partition.resources.run_da_prep
-        config: [ base ]
-        J_JOB: JJOB_DA_PREP
-
-      da_prep_soca: !Task
-        <<: *shared_task_template
-        Trigger: !Depend ( da_prep )
-        resources: !calc partition.resources.run_3dvar
-        config: [ base ]
-        J_JOB: JJOB_PREP_SOCA
-
-      gen_ens_run: !Task
-        <<: *shared_task_template
-        Trigger: !Depend  ( da_prep_soca )
-        resources: !calc partition.resources.run_3dvar
-        config: [ base ]
-        J_JOB: JJOB_GEN_ENSEMBLE
-
-      da_letkf_prep: !TaskArray
-        Trigger: !Depend  ( gen_ens_run & obs_prep )
+      
+#TODO: depend on previous cycle in case cycle is more than 1 day (ie running one really long run)
+      fcst_prep: !TaskArray
+        Trigger: !Depend  ( ~ suite.has_cycle('-24:00:00') | fcst_run.at('-24:00:00'))
         Dimensions:
           groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
-        da_letkf_prep_grp: !TaskElement
+        fcst_prep_grp: !TaskElement
           <<: *shared_task_template
           Foreach: [ groupid ]
           Name: !expand "pgrp{dimval.groupid}"
-          resources: !calc partition.resources.run_letkf_prep
+          resources: !calc partition.resources.run_fcst_prep
           config: [ base ]
-          J_JOB: JJOB_PREP_LETKF
+          J_JOB: JJOB_FCST_PREP
           ENSGRP: !expand "{dimval.groupid:02d}"
           rocoto_command: !expand >-
             {rocoto_load_modules} ;
@@ -49,46 +29,108 @@ suite: !Cycle
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
 
-      da_letkf_run: !Task
-        <<: *shared_task_template
-        Trigger: !Depend  ( da_letkf_prep )
-        resources: !calc partition.resources.run_3dvar
-        config: [ base ]
-        J_JOB: JJOB_DA_LETKF
-
-      fcst_prep: !Task
-        <<: *shared_task_template
-        Trigger: !Depend da_letkf_run
-        resources: !calc partition.resources.run_nothing
-        config: [ base ]
-        J_JOB: JJOB_FCST_PREP
-
       fcst_run: !TaskArray
-        Trigger: !Depend  fcst_prep
+        Trigger: !Depend fcst_prep
         Dimensions:
           groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
-        fcst_run_hrs: !TaskElement
-          <<: *exclusive_task_template
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
           Foreach: [ groupid ]
-          Name: !expand "fgrp{dimval.groupid}"
-          resources: !calc partition.resources.run_nothing
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_fcst
           config: [ base ]
           J_JOB: JJOB_FORECAST
           ENSGRP: !expand "{dimval.groupid:02d}"
           rocoto_command: !expand >-
             {rocoto_load_modules} ;
+            {rocoto_config_source} ;
             /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
           ecflow_command: !expand |
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
 
-      post: !Task
+      hofx_prep: !TaskArray
+        Trigger: !Depend ( obs_prep & fcst_run )
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_da_prep
+          config: [ base ]
+          J_JOB: JJOB_HOFX_PREP_ENS
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
+
+      hofx_run: !TaskArray
+        Trigger: !Depend ( hofx_prep )
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_3dvar
+          config: [ base ]
+          J_JOB: JJOB_HOFX
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
+
+      letkf_prep_ens: !TaskArray
+        Trigger: !Depend ( hofx_run )
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_obs_prep
+          config: [ base ]
+          J_JOB: JJOB_LETKF_PREP_ENS
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
+
+      letkf_prep: !Task
         <<: *shared_task_template
-        Trigger: !Depend  fcst_run
-        resources: !calc partition.resources.run_nothing
-#        rocoto_command: "echo post"
+        Trigger: !Depend  ( hofx_run )
+        resources: !calc partition.resources.run_obs_prep
         config: [ base ]
-        J_JOB: JJOB_POST
+        J_JOB: JJOB_LETKF_PREP
+
+      letkf: !Task
+        <<: *shared_task_template
+        Trigger: !Depend  ( letkf_prep )
+        resources: !calc partition.resources.run_letkf
+        config: [ base ]
+        J_JOB: JJOB_LETKF
+
+
+#      post: !Task
+#        <<: *shared_task_template
+#        Trigger: !Depend  da_prep # Change me
+#        resources: !calc partition.resources.run_nothing
+#        rocoto_command: "echo post"
+#        config: [ base ]
+#        J_JOB: JJOB_POST
 
       final: !Task
         <<: *service_task_template
@@ -97,5 +139,4 @@ suite: !Cycle
         rocoto_command: "echo final"
         rocoto_command: /bin/true
         RUN: gfs # useless but required
-
 
