@@ -7,6 +7,8 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_PREP_GEN_ENSEMBLE
       
+<<<<<<< HEAD
+=======
       da_prep: !Task
         <<: *bigmem_task_template
         Trigger: !Depend  ( prep_genens )
@@ -14,6 +16,7 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_DA_PREP
 
+>>>>>>> 944566d947ffd8d22495baab0cfa57be66ae92ba
       da_prep_soca: !Task
         <<: *bigmem_task_template
         Trigger: !Depend  ( da_prep )
