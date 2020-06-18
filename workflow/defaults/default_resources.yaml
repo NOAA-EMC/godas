@@ -35,7 +35,7 @@ godas_resource_table: !Select
       letkf:        [  80,    40, !timedelta "01:00:00", 1,   "3072" ]
     Ocean025deg:
       #                ranks  ppn  wallclock             threads MB
-      r3dvar:       [  400,   40, !timedelta "01:30:00", 1,   "3072" ]
+      r3dvar:       [  120,   40, !timedelta "01:30:00", 1,   "3072" ]
       r3denvar:     [  240,   40, !timedelta "01:00:00", 1,   "3072" ]
       da_prep:      [    1,    1, !timedelta "00:30:00", 1,   "3072" ]
       obs_prep:     [   12,   12, !timedelta "00:10:00", 1,   "3072" ]
