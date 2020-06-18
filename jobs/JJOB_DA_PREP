@@ -89,6 +89,16 @@ ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
 
 ## Prep yaml for checkpointing 3DVAR analysis
 #--------------------------------------------
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/checkpointmodel.yml        \
+      -k OCN_FILENAME                              \
+      -v ocn.socagodas.an.BKG_DATE.nc
+
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/checkpointmodel.yml        \
+      -k ICE_FILENAME                              \
+      -v cic.socagodas.an.BKG_DATE.nc
+
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/checkpointmodel.yml        \
       -d ${bkg_date}
