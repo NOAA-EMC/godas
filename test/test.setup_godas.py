@@ -107,7 +107,8 @@ if __name__ == '__main__':
     DATAROOT = input.get('DATAROOT')
     WORKFLOW_NAME = input.get('WORKFLOW_NAME')
     SKIP_BUILD = input.get('SKIP_BUILD')
-    BRANCH_NAME = input.get('BRANCH_NAME')
+    GODAS_BRANCH_NAME = input.get('GODAS_BRANCH_NAME')
+    SOCA_BRANCH_NAME = input.get('SOCA_BRANCH_NAME')
     BUILD_COMPILER = input.get('BUILD_COMPILER')
     MACHINE_ID = input.get('MACHINE_ID')
     USER = os.getenv('USER')
@@ -131,8 +132,8 @@ if __name__ == '__main__':
         if (return_value != 0):
             sys.exit('-----------Trouble to clone GODAS repo -----------')
         os.chdir(CLONE_DIR)
-        if BRANCH_NAME.strip() is not 'develop':
-            os.system("git checkout " + BRANCH_NAME)
+        if GODAS_BRANCH_NAME.strip() != 'develop':
+            os.system("git checkout " + GODAS_BRANCH_NAME)
         os.system("git submodule update --init --recursive")
 
         os.chdir(CLONE_DIR + "/src")
@@ -145,10 +146,13 @@ if __name__ == '__main__':
         return_value = 0
         if os.path.isdir(CLONE_DIR + "/src/soca-bundle"):
             delete_dir(CLONE_DIR + "/src/soca-bundle")
-        return_value = os.system(
-            "git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git " +
-            CLONE_DIR +
-            "/src/soca-bundle")
+        if SOCA_BRANCH_NAME.strip() == 'stable.nightly':
+            return_value = os.system(
+                "git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git " +
+                CLONE_DIR + "/src/soca-bundle")
+        else:
+            return_value = os.system(
+                "git clone https://github.com/JCSDA/soca-bundle.git " + CLONE_DIR + "/src/soca-bundle")
         if (return_value != 0):
             sys.exit('-----------Trouble to clone SOCA Bundle -----------')
         
@@ -156,6 +160,7 @@ if __name__ == '__main__':
         make_dir(build_dir)
         os.chdir(build_dir)
 
+        ecbuild_run = 'ecbuild --build=release -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF ../src/soca-bundle'
         if MACHINE_ID.strip() in 'hera':
             try:
                 subprocess.check_call(
@@ -164,7 +169,7 @@ if __name__ == '__main__':
                      'module purge; source ../modulefiles/' +
                       MACHINE_ID + '.' + BUILD_COMPILER +
                      '; source ../modulefiles/' + MACHINE_ID +
-                     '.setenv module list; ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES -DBUILD_CRTM=OFF ../src/soca-bundle; make -j12'])
+                     '.setenv; module list; ' + ecbuild_run + '; make -j12'])
             except subprocess.CalledProcessError as error:
                 sys.exit(
                     '-----------Trouble to build SOCA with ' + 
@@ -172,12 +177,12 @@ if __name__ == '__main__':
         elif MACHINE_ID.strip() in 'orion':
             try:
                 subprocess.check_call(
-                    ['csh',
+                    ['sh',
                      '-c',
                      'module purge; source ../modulefiles/' +
                       MACHINE_ID + '.' + BUILD_COMPILER +
                      '; source ../modulefiles/' + MACHINE_ID +
-                     '.setenv module list; ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../src/soca-bundle; make -j12'])
+                     '.setenv module list; ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../src/soca-bundle; make -j12'])
             except subprocess.CalledProcessError as error:
                 sys.exit(
                     '-----------Trouble to build SOCA with ' + 
@@ -196,10 +201,22 @@ if __name__ == '__main__':
         return_value = 0
         return_value = os.system(
             "git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git ./src/letkf")
+        os.chdir(CLONE_DIR + "/src/letkf")
+        os.system("git submodule update --init --recursive")
+        make_dir(CLONE_DIR + "/build/letkf")
+        os.chdir(CLONE_DIR + "/build/letkf")
+
         if (return_value != 0):
             sys.exit('-----------Trouble to clone UMD-LETKF repo -----------')
         try:
-            os.system("sh " + CLONE_DIR + "/src/letkf_build.sh")
+            shell_intrp = 'csh'
+            if MACHINE_ID.strip() in 'orion':
+                shell_intrp = 'sh'            
+            subprocess.check_call(
+                [shell_intrp,
+                 '-c', 
+                 'module purge; source ../../src/letkf/config/env.'+ MACHINE_ID +
+                 '; cmake -DNETCDF_DIR=$NETCDF ../../src/letkf; make -j2'])
         except subprocess.CalledProcessError as error:
             sys.exit('-----------Trouble to build LETKF -----------')
 
@@ -225,21 +242,23 @@ if __name__ == '__main__':
     if os.path.isdir(EXPROOT):
         delete_dir(EXPROOT)
     make_dir(EXPROOT)
-    comrot_dir = '/scratch1/NCEPDEV/stmp2/' + USER + '/comrot/' + WORKFLOW_NAME
 
     subprocess.call(
         ["sed", "-i", r'/FIX_SCRUB:/c\  FIX_SCRUB: True', "user.yaml"])
 
-    if os.path.isdir(comrot_dir):
-        delete_dir(comrot_dir)
-
     crow_path = CLONE_DIR + "/workflow/CROW"
     os.chdir(crow_path)
-    
-    subprocess.check_call(
-                ['bash', '-c', './setup_case.sh -p ' + MACHINE_ID.upper() + ' ../cases/3dvar.yaml ' + WORKFLOW_NAME])
-    subprocess.check_call(
-        ['bash', '-c', './make_rocoto_xml_for.sh ' + EXPROOT + '/' + WORKFLOW_NAME])
+   
+    if MACHINE_ID.strip() in 'orion':
+        subprocess.check_call(
+            ['sh','-c','./setup_case.sh -p ' + MACHINE_ID.upper() + ' ../cases/3dvar.yaml ' + WORKFLOW_NAME])
+        subprocess.check_call(
+            ['sh','-c','./make_rocoto_xml_for.sh ' + EXPROOT + '/' + WORKFLOW_NAME])
+    else:
+        subprocess.check_call(
+            ['bash', '-c', './setup_case.sh -p ' + MACHINE_ID.upper() + ' ../cases/3dvar.yaml ' + WORKFLOW_NAME])
+        subprocess.check_call(
+            ['bash', '-c', './make_rocoto_xml_for.sh ' + EXPROOT + '/' + WORKFLOW_NAME])
 
     run_dir = EXPROOT + '/' + WORKFLOW_NAME
     os.chdir(run_dir)
@@ -254,10 +273,17 @@ if __name__ == '__main__':
         print(
             '---------- rocotorun submit counts: %s ---------- ' %
             count_runs_)
-        subprocess.check_call(
-            ['bash', '-c', 'module load rocoto && rocotorun -w workflow.xml -d workflow.db'])
-        subprocess.check_call(
-            ['bash', '-c', 'module load rocoto && rocotostat -v 10 -w workflow.xml -d workflow.db > jobstat.log'])
+
+        if MACHINE_ID.strip() in 'orion': 
+            subprocess.check_call(
+                ['sh', '-c', 'module load contrib && module load rocoto/1.3.1 && rocotorun -w workflow.xml -d workflow.db'])
+            subprocess.check_call(
+                ['sh', '-c', 'module load contrib && module load rocoto/1.3.1 && rocotostat -v 10 -w workflow.xml -d workflow.db > jobstat.log'])
+        else:
+            subprocess.check_call(
+                ['bash', '-c', 'module load rocoto && rocotorun -w workflow.xml -d workflow.db'])
+            subprocess.check_call(
+                ['bash', '-c', 'module load rocoto && rocotostat -v 10 -w workflow.xml -d workflow.db > jobstat.log'])
         subprocess.call(["sed", "-i", '/==============/d', "jobstat.log"])
         [alljobs_success, lapse_time] = check_job_status('jobstat.log')
 

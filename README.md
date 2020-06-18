@@ -48,9 +48,17 @@ The bundle of repositories necessary to build SOCA
    `source  $CLONE_DIR/modulefiles/$MACHINE_ID.$BUILD_COMPILER` \
    `source  $CLONE_DIR/modulefiles/$MACHINE_ID.setenv` \
    `module list` 
-3. Clone all the necessary repositories to build SOCA \
-   Hera: `ecbuild --build=release -DMPIEXEC=$MPIEXEC -DMPIEXEC_EXECUTABLE=$MPIEXEC -DBUILD_ECKIT=YES ../src/soca-bundle` 
-   Orion: `ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../ecbuild -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON ../src/soca-bundle`
+
+3. Clone all the necessary repositories to build SOCA: SOCA develop and stable nightly branches can be cloned in building GODAS system.
+
+   'git clone --branch release/stable-nightly https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle'
+
+   'git clone https://github.com/JCSDA/soca-bundle.git $CLONE_DIR/src/soca-bundle'
+
+    Hera: 'ecbuild --build=release -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_ECKIT=ON -DBUILD_CRTM=OFF $CLONE_DIR/src/soca-bundle'
+
+    Orion: `ecbuild --build=release -DBUILD_ECKIT=ON -DBUILD_METIS=ON -DBUILD_CRTM=ON $CLONE_DIR/src/soca-bundle`
+
 4. `make -j12`
 5. Unit test the build \
    `salloc --ntasks 12 --qos=debug --time=00:30:00 --account=marine-cpu` \
@@ -63,7 +71,27 @@ The bundle of repositories necessary to build SOCA
 
 # Clone and build the UMD-LETKF
 For detail instructions on how to install LETKF at any machine, see the [LETKF repository](https://github.com/NOAA-EMC/UMD-LETKF). For GODAS, just run the following script:
-`sh $CLONE_DIR/src/letkf_build.sh` 
+`sh $CLONE_DIR/src/letkf_build.sh`, which executes the following build procedures.
+
+'mkdir -p $CLONE_DIR/build/letkf'
+
+'git clone --recursive https://github.com/NOAA-EMC/UMD-LETKF.git $CLONE_DIR/src/letkf'
+
+'cd $CLONE_DIR/src/letkf'
+
+'git submodule update --init --recursive'
+
+'cd $CLONE_DIR/build/letkf'
+
+'module purge'
+
+'source $CLONE_DIR/src/letkf/config/env.$MACHINE_ID'
+
+'cmake -DNETCDF_DIR=$NETCDF $CLONE_DIR/src/letkf'
+
+'make -j2'
+
+'ln -fs $CLONE_DIR/build/letkf/bin/letkfdriver $CLONE_DIR/build/bin/letkfdriver'x
 
 # Copy the mom6-tools.plot to the bin
 0. cp $CLONE_DIR/src/mom6-tools.plot/*.py $CLONE_DIR/build/bin/ 
