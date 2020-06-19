@@ -6,6 +6,7 @@
 ## load contrib environment
 ## load slurm utils (arbitrary.pl  layout.pl)
 ##
+module use -a /contrib/sutils/modulefiles
 module load contrib sutils
 
 ##
