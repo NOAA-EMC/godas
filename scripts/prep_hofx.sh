@@ -59,16 +59,16 @@ mkdir -p ${RUNCDATE}
 #---------------------------------------------------
 cp -r $SOCA_STATIC/* ${RUNCDATE}
 
-# Adjust date in input.nml
-cp ${RUNCDATE}/input-ymd.nml $RUNCDATE/input.nml
+# Adjust date in input-mom6.nml
+cp ${RUNCDATE}/input-ymd.nml $RUNCDATE/input-mom6.nml
 YYYY=$(echo  $CDATE | cut -c1-4)
 MM=$(echo $CDATE | cut -c5-6)
 DD=$(echo   $CDATE | cut -c7-8)
 HH=$(echo  $CDATE | cut -c9-10)
-sed -i "s/YYYY/${YYYY}/g" $RUNCDATE/input.nml
-sed -i "s/MM/${MM}/g" $RUNCDATE/input.nml
-sed -i "s/DD/${DD}/g" $RUNCDATE/input.nml
-sed -i "s/HH/${HH}/g" $RUNCDATE/input.nml
+sed -i "s/YYYY/${YYYY}/g" $RUNCDATE/input-mom6.nml
+sed -i "s/MM/${MM}/g" $RUNCDATE/input-mom6.nml
+sed -i "s/DD/${DD}/g" $RUNCDATE/input-mom6.nml
+sed -i "s/HH/${HH}/g" $RUNCDATE/input-mom6.nml
 
 # Copy SOCA config files into RUNCDATE
 #----------------------------------------------------

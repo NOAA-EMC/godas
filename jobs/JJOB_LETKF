@@ -27,7 +27,26 @@ cat <<EOF
 #============================================
 EOF
 
-srun -n $NPE ${SOCA_EXEC}/letkfdriver ${LETKFDIR}/yaml/letkf.yaml
+if [ -f "${LETKFDIR}/soca_gridspec.nc" ]; then
+    echo
+    echo 'SOCA grid exist, by-passing grid generation.'
+    echo
+else
+    echo
+    echo 'No grid found. Generating SOCA grid.'
+    echo
+    srun -n $NPE ${SOCA_EXEC}/soca_gridgen.x ${LETKFDIR}/yaml/gridgen.yml
+fi
+
+if [ -f "${ROOT_GODAS_DIR}/build/letkf/bin/letkfdriver" ]; then
+ 
+    srun -n $NPE ${ROOT_GODAS_DIR}/build/letkf/bin/letkfdriver ${LETKFDIR}/yaml/letkf.yaml
+
+else
+    echo
+    echo 'letkfdriver does not exist.'
+    echo
+fi
 
 #cat <<EOF
 ##============================================
