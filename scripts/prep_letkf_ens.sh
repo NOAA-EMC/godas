@@ -59,3 +59,4 @@ ln -sf ${NEXTIC}/${icerst}                       \
 
 cp -rf ${HOFXDIR}/Data/ioda.*.nc ${LETKFDIR}/Data/mem${mbr}/
 find  ${LETKFDIR}/Data/mem${mbr}/ -type l -delete
+

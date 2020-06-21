@@ -43,6 +43,7 @@ cp $SOCA_STATIC/INPUT/layer_coord.nc            \
 # b. yaml file for UMD-LETKF
 mkdir -p ${LETKFDIR}/yaml
 cp -r $SOCA_CONFIG/letkf.yml ${LETKFDIR}/yaml/letkf.yaml
+cp -r $SOCA_CONFIG/gridgen.yml ${LETKFDIR}/yaml/gridgen.yml
 
 
 # Prep yaml for letkf
