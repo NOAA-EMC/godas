@@ -2,9 +2,10 @@
 ##      GODAS prerequisites
 ##
 
+export OPT=/home/rmahajan/opt
+
 module load git
 module use -a /home/rmahajan/opt/modulefiles/core
 module use -a /home/rmahajan/opt/modulefiles/apps
 module load jedi/intel-2019.5_openmpi-4.0.2
-module load nco
 module list
