@@ -46,6 +46,9 @@ sed -i "s/MEMBER_NO/${mbr}/g" ${yamlfile}
 sed -i "s/ocn.pert.ens..nc/MOM.res.nc/g" ${yamlfile}
 sed -i "s/cic.pert.ens..nc/cice_bkg.nc/g" ${yamlfile}
 sed -i "s/Data/INPUT_MOM6/g" ${yamlfile}
+sed -i "s/OCN_FILENAME/MOM.res.nc/g" ${yamlfile}
+sed -i "s/ICE_FILENAME/cice_bkg.nc/g" ${yamlfile}
+sed -i "s/BASE_NAME/.\/INPUT_MOM6\//g" ${yamlfile}
 
 #
 # Setup Jo cost function
