@@ -6,5 +6,6 @@ WORKFLOW_NAME: #set the name of your worklflow
 SKIP_BUILD: False
 GODAS_BRANCH_NAME: develop
 SOCA_BRANCH_NAME: stable.nightly #stable.nightly or develop
+SOCA_CONFIG_BRANCH_NAME: # develop or feature branch
 BUILD_COMPILER: intel18
 MACHINE_ID : hera #hera or orion
