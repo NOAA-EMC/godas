@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
         soca_config_path = CLONE_DIR + '/src/soca-bundle/soca-config'
         os.chdir(soca_config_path)
-        os.system('git checkout feature/letkf_merge')
+        os.system('git checkout '+SOCA_CONFIG_BRANCH_NAME.strip())
 
     # 2. Preparing the workflow and rocoto run case ------------------------                             
     os.chdir(CLONE_DIR + "/workflow")
