@@ -110,4 +110,4 @@ EOF
 # Copy SOCA analysis from a previous completed 24h forecast cycle to run the HOFX
 # WARNING: This overwrites the MOM.res.nc from ${SOCA_STATIC}
 
-cp -p ${SOCA_ANALYSIS}/$CDATE/Data/ocn.socagodas.an.${bkg_date}.nc $RUNCDATE/INPUT_MOM6/MOM.res.nc
+cp -p ${SOCA_ANALYSIS}/${CDATE}_IC/MOM.res.nc $RUNCDATE/INPUT_MOM6/MOM.res.nc

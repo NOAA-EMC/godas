@@ -32,9 +32,8 @@ shift $((OPTIND -1))
 cd ${RUNDIR}
 
 if [ -f "$yamlfile" ]; then
-
+   value=$(echo $value | sed -e "s#/#\\\/#g")
    sed -i "s/${keyword}/${value}/g"  ${yamlfile}
-
 else
    echo "ERROR: There is not "$yamlfile "exiting..."
    #exit
