@@ -1,11 +1,12 @@
-CLONE_DIR: #set the clone directory of the system build
+CLONE_DIR: # set the clone directory of the system that is availabel to use
 EXPROOT: # set the path for the experiment directory, storing workflow configuration files
 COMROOT: # set the path for the directory where input and output of jobs are stored
 DATAROOT: # set the path for the directory where each job runs
-WORKFLOW_NAME: #set the name of your worklflow
-SKIP_BUILD: False
-GODAS_BRANCH_NAME: develop
-SOCA_BRANCH_NAME: stable.nightly #stable.nightly or develop
+WORKFLOW_NAME: # [ic_ens,letkf_only_exp] 
+SKIP_BUILD: True
+GODAS_BRANCH_NAME: # develop 
+SOCA_BRANCH_NAME: # stable.nightly or develop
 SOCA_CONFIG_BRANCH_NAME: # develop or feature branch
 BUILD_COMPILER: intel18
-MACHINE_ID : hera #hera or orion
+MACHINE_ID : hera # hera or orion
+TEST_CASE : # [ic_ens.yaml,letkf_only_exp.yaml]

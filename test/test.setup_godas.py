@@ -60,7 +60,8 @@ def check_job_status(filename):
     count_success = 0
     count_submit = 0
     count_qued = 0
-    lapse_time = 60. * 3
+    lapse_min = 60
+    lapse_time= lapse_min * 3
 
     for index in range(len(jobtask)):
         if jobstate[index] == 'SUCCEEDED':
@@ -72,7 +73,7 @@ def check_job_status(filename):
                 jobtries[index])
         if jobstate[index] == 'SUBMITTING':
             count_submit = 1
-            lapse_time = 60. * 6
+            lapse_time = lapse_min * 6
             print(
                 jobcycle[index],
                 jobtask[index],
@@ -80,7 +81,7 @@ def check_job_status(filename):
                 jobtries[index])
         if jobstate[index] == 'QUEUED':
             count_qued = 1
-            lapse_time = 60. * 6
+            lapse_time = lapse_min * 6
             print(
                 jobcycle[index],
                 jobtask[index],
@@ -109,6 +110,7 @@ if __name__ == '__main__':
     SKIP_BUILD = input.get('SKIP_BUILD')
     GODAS_BRANCH_NAME = input.get('GODAS_BRANCH_NAME')
     SOCA_BRANCH_NAME = input.get('SOCA_BRANCH_NAME')
+    SOCA_CONFIG_BRANCH_NAME = input.get('SOCA_CONFIG_BRANCH_NAME')
     BUILD_COMPILER = input.get('BUILD_COMPILER')
     MACHINE_ID = input.get('MACHINE_ID')
     USER = os.getenv('USER')
@@ -191,7 +193,7 @@ if __name__ == '__main__':
             sys.exit('-----------No rule to build SOCA at '+ MACHINE_ID + '-----------') 
         soca_config_path = CLONE_DIR + '/src/soca-bundle/soca-config'
         os.chdir(soca_config_path)
-        os.system('git checkout develop')
+        os.system('git checkout '+SOCA_CONFIG_BRANCH_NAME.strip())
 
         # 3. Clone and build the UMD-LETKF ------------------------------------
         os.chdir(CLONE_DIR)

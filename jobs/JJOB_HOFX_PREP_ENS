@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_HOFX_PREP_ENS
+#  - Prepare yaml files for SOCA HOFX application
+#  - Prepare the path structure for running SOCA HOFX
+#================================================================================
+#================================================================================
+EOF
+
+module purge
+source $MOD_PATH/godas.main
+module list
+
+# Main 
+# ----------------------------------- 
+echo
+echo "The system runs at $RUNCDATE"
+echo
+echo "Root GODAS " ${ROOT_GODAS_DIR}
+echo
+echo "SOCA_STATIC="$SOCA_STATIC
+
+mkdir -p $RUNCDATE
+
+cd $RUNCDATE
+
+# Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
+
+export ENSEND=$((NMEM_PGRP * ENSGRP))
+export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
+
+for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+   echo 
+   echo Preparing the hofx for ensemble member $MEMBER_NO
+
+   ${ROOT_GODAS_DIR}/scripts/prep_hofx.sh -n $MEMBER_NO
+
+done
