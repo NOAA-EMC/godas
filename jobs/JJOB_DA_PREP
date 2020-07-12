@@ -89,6 +89,16 @@ sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
 
 ## Prep yaml for checkpointing 3DVAR analysis
 #--------------------------------------------
+sh ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/checkpointmodel.yml        \
+      -k OCN_FILENAME                              \
+      -v ocn.socagodas.an.BKG_DATE.nc
+
+sh ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      -i $RUNCDATE/yaml/checkpointmodel.yml        \
+      -k ICE_FILENAME                              \
+      -v cic.socagodas.an.BKG_DATE.nc
+
 sh ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
       -i $RUNCDATE/yaml/checkpointmodel.yml        \
       -d ${bkg_date}
@@ -148,28 +158,6 @@ sh ${ROOT_GODAS_DIR}/scripts/prep_3denvar_yaml.sh    \
       -m $RUNCDATE/yaml/ensvariance_member.yml          \
       -d $RUNCDATE                                \
       -n ${NO_ENS_MBR}
-
-
-#----------------------------------
-if [ $DA_METHOD = 'letkf' ]; then
-   for (( mbr=1; mbr<=${NO_ENS_MBR} ; mbr++ )); do
-
-      yaml_tmp=$RUNCDATE/yaml/hofx3d${mbr}.yml
-      cp -r $RUNCDATE/yaml/hofx3d.yml ${yaml_tmp}
-
-      sh ${ROOT_GODAS_DIR}/scripts/prep_hofx3d_yaml.sh   \
-         -i ${yaml_tmp}                               \
-         -d ${RUNCDATE}                               \
-         -n ${mbr}
-
-      jjob_tmp=${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF${mbr}
-      cp -f ${ROOT_GODAS_DIR}/jobs/JJOB_PREP_LETKF ${jjob_tmp}
-      sed -i "s/MEMBER_NO/${mbr}/g" ${jjob_tmp}
-   done
-fi
-
-# TODO: Prep yaml for letkf
-#----------------------------------
 
 cat <<EOF
 #================================================================================

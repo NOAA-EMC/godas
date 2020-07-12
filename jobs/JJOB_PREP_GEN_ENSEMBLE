@@ -1,0 +1,54 @@
+#!/bin/bash -l
+set -ex
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_PREP_GEN_ENSEMBLE
+#   Set up DIRs, make input files, copy over fix files for creating 
+#   initialcon conditions for ensembles
+#================================================================================
+#================================================================================
+EOF
+
+if [ "$FCSTMODEL" = "MOM6CICE5" ]; then
+   nextic=$RUNCDATE/../NEXT_IC
+
+   mkdir -p $nextic
+   cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
+   cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
+   cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+ 
+   ${ROOT_GODAS_DIR}/scripts/prep_genenspert.sh
+
+# TODO: Clean the following
+   cdate2bkg_date(){ echo ${1:0:4}-${1:4:2}-${1:6:2}T12:00:00Z; }          # make generic.
+   export bkg_date=$(cdate2bkg_date $CDATE)
+   MEMBER_NO=1
+
+   while [[ $MEMBER_NO -le $NO_ENS_MBR ]]; do
+
+      dum=$RUNCDATE/yaml/checkpointmodel$MEMBER_NO.yml
+
+      cp -f $RUNCDATE/yaml/checkpointmodel.yml $dum
+      
+      ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+            -i $dum                                      \
+            -k OCN_FILENAME                              \
+            -v ocn.pert.ens.$MEMBER_NO.nc
+
+      ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+            -i $dum                                      \
+            -k ICE_FILENAME                              \
+            -v cic.pert.ens.$MEMBER_NO.nc
+
+      ((MEMBER_NO = MEMBER_NO + 1))   
+   done
+else
+
+# TODO add the option here
+   echo "The forecast model is $FCSTMODEL, \
+   IC only for MOM6CICE5 are created, exiting... "
+   exit
+fi
+

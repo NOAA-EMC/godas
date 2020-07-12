@@ -9,10 +9,14 @@
 status=$?
 [[ $status -ne 0 ]] && exit $status\
 
+rename_func () { for files in $1; do cp $files ${files:0:(${#files}-28)}'nc'; done }
+
 echo $RUNCDATE
 
 if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
 cd $RUNCDATE
+
+mkdir -p $RUNCDATE/Data
 
 if   [ ! -d RESTART ]; then mkdir -p RESTART; fi
 

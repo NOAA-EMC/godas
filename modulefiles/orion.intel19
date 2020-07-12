@@ -2,7 +2,7 @@
 ##      GODAS prerequisites
 ##
 
-export OPT=/home/rmahajan/opt
+setenv OPT '/home/rmahajan/opt'
 
 module load git
 module use -a /home/rmahajan/opt/modulefiles/core

@@ -43,6 +43,14 @@ ${ROOT_GODAS_DIR}/scripts/SetupJoCostFunction.sh \
       -i ${yamlfile}                             \
       -d $RUNDIR
 
+#
+## Output Path
+## ----------------------
+${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh   \
+      -i ${yamlfile}                             \
+      -k OBSDATAOUT                              \
+      -v ./Data 
+
 echo '#                                                                 #'
 echo '#                      prep_3dvar_yaml.sh ends                    #'
 echo '#=================================================================#'
