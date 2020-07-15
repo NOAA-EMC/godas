@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/ksh
 
 echo 'MergingHofx starts...'
 echo ' '
