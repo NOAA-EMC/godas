@@ -5,7 +5,7 @@ case:
     godas_cyc: 1 # selection of godas cycle: 1(default)- 24h; 2 - 12h; 4 - 6h
     resolution: Ocean025deg
     FCSTMODEL: MOM6CICE5
-    forcing: CFSR # CFSR or GEFS
+    forcing: cfsr # CFSR or GEFS
     
   da_settings:
     NINNER: 5

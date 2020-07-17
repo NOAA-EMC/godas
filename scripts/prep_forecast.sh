@@ -13,6 +13,9 @@
 ######################################################################
 ######################################################################
 # Local Functions                                                    #
+
+set -x
+
 function ncdmnsz 
 { 
       ncks --trd -m -M ${2}         \
@@ -427,9 +430,9 @@ ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 cp -rf ${SCRIPTDIR}/make_scripgrid.ncl ./
 
 gridsrc=$DATA/DATM_INPUT/
-gridfile=${FORCING_SRC,,}.${CDATE}.nc
+gridfile=${FORCING_SRC}.${CDATE}.nc
 
-sed -i "s+FORCING_SRC+${FORCING_SRC,,}+g" make_scripgrid.ncl
+sed -i "s+FORCING_SRC+${FORCING_SRC}+g" make_scripgrid.ncl
 sed -i "s+GRIDSRC+${gridsrc}+g" make_scripgrid.ncl
 sed -i "s+GRIDFILE+${gridfile}+g" make_scripgrid.ncl
 sed -i "s+DIROUT+${gridsrc}+g" make_scripgrid.ncl
@@ -543,3 +546,4 @@ mv $nextic $keepic
 #   End of prep_forecast.sh                                          #
 ######################################################################
 echo "End of prep_forecast.sh"
+set +x

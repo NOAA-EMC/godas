@@ -81,7 +81,7 @@ if [ -f "${PREPROCobs}" ]; then
    cp -rf ${PREPROCobs} ${PROCobs}
 
    # Apply THINNING
-   thinning_func $subsample $skip
+#   thinning_func $subsample $skip
 
 else
    
@@ -114,7 +114,7 @@ else
       cp -rf ${PREPROCobs} ${PROCobs}
 
       # Apply THINNING
-      thinning_func $subsample $skip
+#      thinning_func $subsample $skip
 
    else
       echo There are no SST observations from ${SSTsource}-${sat} for ${PDY}  
