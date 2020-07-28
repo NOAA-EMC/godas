@@ -123,21 +123,21 @@ NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
 NEARESTCDATE=$(echo $CDATE | cut -c1-8)00
 
 ####
-DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-"${FORCING_SRC}."} #The prefix of the forcing files for the DATM
+DATM_FILENAME_BASE=`echo $FORCING_SRC | tr -s "[A-Z]" "[a-z]"`  #The prefix of the forcing files for the DATM
 DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC}/${SYEAR}${SMONTH}" #The path with the forcing
 
 #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs
 #IATM dimension of DATM input files, lon
 #JATM dimension of DATM input files, lat
 
-ForcingFile="$(ls "${DATMINPUTDIR}""/""${DATM_FILENAME_BASE}"*"nc" | tail -1)"
+ForcingFile="$(ls "${DATMINPUTDIR}""/""${DATM_FILENAME_BASE}."*"nc" | tail -1)"
 
 IATM=${IATM:-$(ncdmnsz "lon" "${ForcingFile}")}
 JATM=${JATM:-$(ncdmnsz "lat" "${ForcingFile}")}
 
-if [ "${FORCING_SRC}" = "cfsr" ]; then
+if [ "${FORCING_SRC}" = "CFSR" ]; then
    NFHOUT=${NFHOUT:-6}
-elif [ "${FORCING_SRC}" = "gefs" ]; then
+elif [ "${FORCING_SRC}" = "GEFS" ]; then
    NFHOUT=${NFHOUT:-3}
 else
    echo "Unknown forcing, exiting..."
