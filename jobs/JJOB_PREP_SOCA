@@ -1,5 +1,5 @@
 #!/bin/ksh
-set -e
+set -ex
 
 cat <<EOF
 #================================================================================
@@ -18,6 +18,8 @@ echo $RUNCDATE
 
 if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
 cd $RUNCDATE
+
+ulimit -s unlimited
 
 # Generate ocean-ice grid
 if [ -f "${RUNCDATE}/soca_gridspec.nc" ]; then

@@ -16,6 +16,8 @@ status=$?
 
 cd $RUNCDATE
 
+ulimit -s unlimited
+
 cat <<EOF
 #============================================
 # Run SOCA 3DVAR

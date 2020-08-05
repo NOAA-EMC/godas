@@ -16,15 +16,21 @@ if [[ -d /scratch1 ]] ; then
     # We are on NOAA Hera
 	module load hera.anaconda
         module load hera.intel18
-        module load hera.fcst
+        if [[ $1 = 'fcst' ]] ; then
+        	module load hera.fcst
+	fi
 elif [[ -d /work ]] ; then
     # We are on MSU Orion
-	module load orion.anaconda
-        module load orion.intel19
-        module load orion.fcst
+	source $ROOT_GODAS_DIR/modulefiles/orion.anaconda
+        source $ROOT_GODAS_DIR/modulefiles/orion.intel19
+        if [[ $1 = 'fcst' ]] ; then
+                source $ROOT_GODAS_DIR/modulefiles/orion.fcst
+        fi
 else
     echo WARNING: UNKNOWN PLATFORM 
 fi
+
+module list
 
 # Restore stack soft limit:
 ulimit -S -s "$ulimit_s"

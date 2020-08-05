@@ -123,7 +123,7 @@ NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
 NEARESTCDATE=$(echo $CDATE | cut -c1-8)00
 
 ####
-DATM_FILENAME_BASE=`echo $FORCING_SRC | tr -s "[A-Z]" "[a-z]"`  #The prefix of the forcing files for the DATM
+DATM_FILENAME_BASE=`echo $FORCING_SRC | tr -s "[A-Z]" "[a-z]"`.  #The prefix of the forcing files for the DATM
 DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC}/${SYEAR}${SMONTH}" #The path with the forcing
 
 #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs

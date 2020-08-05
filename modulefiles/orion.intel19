@@ -2,10 +2,17 @@
 ##      GODAS prerequisites
 ##
 
-setenv OPT '/home/rmahajan/opt'
+export OPT=/home/rmahajan/opt
 
 module load git
 module use -a /home/rmahajan/opt/modulefiles/core
 module use -a /home/rmahajan/opt/modulefiles/apps
 module load jedi/intel-2019.5_openmpi-4.0.2
+module load pnetcdf/1.12.1
+module load openmpi/4.0.2
+module load jedi-openmpi/4.0.2
+module load nccmp/1.8.2.1
+module load slurm/19.05.3-2
+module load munge/0.5.13
+module load netcdf/4.7.0
 module list
