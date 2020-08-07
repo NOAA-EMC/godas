@@ -33,7 +33,7 @@ case $FCSTMODEL in
       mv ./ANA/cice_bkg.nc ../NEXT_IC/ # Percistance for sea-ice
       ;;
    "MOM6CICE5")
-      . $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+      . $ROOT_GODAS_DIR/ush/load_godas_modules.sh fcst
       status=$?
       [[ $status -ne 0 ]] && exit $status
 
