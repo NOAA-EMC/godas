@@ -130,7 +130,7 @@ DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC}/${SYEAR}${SMONTH}" #The path
 #IATM dimension of DATM input files, lon
 #JATM dimension of DATM input files, lat
 
-ForcingFile="$(ls "${DATMINPUTDIR}""/""${DATM_FILENAME_BASE}."*"nc" | tail -1)"
+ForcingFile="$(ls "${DATMINPUTDIR}""/""${DATM_FILENAME_BASE}"*"nc" | tail -1)"
 
 IATM=${IATM:-$(ncdmnsz "lon" "${ForcingFile}")}
 JATM=${JATM:-$(ncdmnsz "lat" "${ForcingFile}")}
