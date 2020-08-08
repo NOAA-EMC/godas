@@ -11,6 +11,8 @@ cat <<EOF
 #================================================================================
 EOF
 
+ulimit -s unlimited
+
 case $FCSTMODEL in
    "MOM6solo")
       . $ROOT_GODAS_DIR/ush/load_godas_modules.sh fcst

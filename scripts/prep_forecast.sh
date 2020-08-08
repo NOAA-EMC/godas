@@ -126,6 +126,8 @@ NEARESTCDATE=$(echo $CDATE | cut -c1-8)00
 DATM_FILENAME_BASE=`echo $FORCING_SRC | tr -s "[A-Z]" "[a-z]"`.  #The prefix of the forcing files for the DATM
 DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC}/${SYEAR}${SMONTH}" #The path with the forcing
 
+FORCING_SRC_LOW=`echo $FORCING_SRC | tr -s "[A-Z]" "[a-z]"`
+
 #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs
 #IATM dimension of DATM input files, lon
 #JATM dimension of DATM input files, lat
@@ -430,9 +432,9 @@ ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 cp -rf ${SCRIPTDIR}/make_scripgrid.ncl ./
 
 gridsrc=$DATA/DATM_INPUT/
-gridfile=${FORCING_SRC}.${CDATE}.nc
+gridfile=${FORCING_SRC_LOW}.${CDATE}.nc
 
-sed -i "s+FORCING_SRC+${FORCING_SRC}+g" make_scripgrid.ncl
+sed -i "s+FORCING_SRC_LOW+${FORCING_SRC_LOW}+g" make_scripgrid.ncl
 sed -i "s+GRIDSRC+${gridsrc}+g" make_scripgrid.ncl
 sed -i "s+GRIDFILE+${gridfile}+g" make_scripgrid.ncl
 sed -i "s+DIROUT+${gridsrc}+g" make_scripgrid.ncl

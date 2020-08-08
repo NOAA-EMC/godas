@@ -10,7 +10,8 @@ cat <<EOF
 #================================================================================
 EOF
 # Plot results
-source $MOD_PATH/godas.python
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh fcst
+
 sh ${ROOT_GODAS_DIR}/scripts/post_plot.sh
 
 # Remove BUMP files
