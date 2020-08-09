@@ -1,5 +1,5 @@
 #!/bin/ksh
-set -e
+set -ex
 
 cat <<EOF
 #================================================================================
@@ -10,9 +10,9 @@ cat <<EOF
 #================================================================================
 EOF
 # Plot results
-. $ROOT_GODAS_DIR/ush/load_godas_modules.sh fcst
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh post
 
-sh ${ROOT_GODAS_DIR}/scripts/post_plot.sh
+#sh ${ROOT_GODAS_DIR}/scripts/post_plot.sh
 
 # Remove BUMP files
 # TODO: After update to soca, bump only needs to be initialized once

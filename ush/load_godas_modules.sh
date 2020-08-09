@@ -21,9 +21,10 @@ if [[ -d /scratch1 ]] ; then
 	fi
 elif [[ -d /work ]] ; then
     # We are on MSU Orion
-	source $ROOT_GODAS_DIR/modulefiles/orion.anaconda
-        source $ROOT_GODAS_DIR/modulefiles/orion.intel19
-        if [[ $1 = 'fcst' ]] ; then
+        source $ROOT_GODAS_DIR/modulefiles/orion.anaconda
+        if [[ $1 != 'post' ]] ; then
+                source $ROOT_GODAS_DIR/modulefiles/orion.intel19
+        elif [[ $1 = 'fcst' ]] ; then
                 source $ROOT_GODAS_DIR/modulefiles/orion.fcst
         fi
 else
