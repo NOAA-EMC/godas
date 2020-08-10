@@ -14,10 +14,12 @@ module use "$ROOT_GODAS_DIR/modulefiles"
 
 if [[ -d /scratch1 ]] ; then
     # We are on NOAA Hera
-	module load hera.anaconda
-        module load hera.intel18
+        module load hera.main
+        module load hera.anaconda
         if [[ $1 = 'fcst' ]] ; then
-        	module load hera.fcst
+                module purge
+                module load hera.main
+                module load hera.fcst
 	fi
 elif [[ -d /work ]] ; then
     # We are on MSU Orion
