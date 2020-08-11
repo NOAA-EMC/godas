@@ -445,9 +445,7 @@ sed -i "s+GRIDSRC+${gridsrc}+g" make_scripgrid.ncl
 sed -i "s+GRIDFILE+${gridfile}+g" make_scripgrid.ncl
 sed -i "s+DIROUT+${gridsrc}+g" make_scripgrid.ncl
 
-module load ncl
 ncl < make_scripgrid.ncl
-module unload ncl
 
 ######################################################################
 # 3.2 Link MOM6 fix files                                            #

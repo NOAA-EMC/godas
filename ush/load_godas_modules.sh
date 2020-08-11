@@ -14,11 +14,13 @@ module use "$ROOT_GODAS_DIR/modulefiles"
 
 if [[ -d /scratch1 ]] ; then
     # We are on NOAA Hera
-        module load hera.intel19 #hera.main
+        #module load hera.intel19
+	module load hera.main
         module load hera.anaconda
         if [[ $1 = 'fcst' ]] ; then
                 module purge
-                # module load hera.intel19 #hera.main
+                # module load hera.intel19 
+		module load hera.main
                 module load hera.fcst
 	fi
 elif [[ -d /work ]] ; then
