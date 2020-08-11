@@ -354,8 +354,14 @@ iceic='cice5_model.res.nc'
 
 
 #TODO: nhour is not getting propagated from workflow/patforms/hera.yaml for some reason..
-NWPROD="/scratch1/NCEPDEV/global/glopara"
-NHOUR="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+# Hera
+if [[ -d /scratch1 ]] ; then
+  NWPROD="/scratch1/NCEPDEV/global/glopara"
+  NHOUR="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+# orion
+elif [[ -d /work ]] ; then
+  NHOUR="/apps/contrib/NCEPLIBS/lib/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+fi
 
 echo "NHOUR is ${NHOUR}"
 echo "DT_CICE is $DT_CICE"
