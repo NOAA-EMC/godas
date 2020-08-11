@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/ksh
 
 OBSDCOM=$DCOM_ROOT/insitu.fnmoc/$PDY                           #FullPath of raw obs
 

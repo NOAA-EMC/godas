@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/ksh
 
 echo "post_plot_fcst.sh starts"
 echo "CDATE is " $CDATE

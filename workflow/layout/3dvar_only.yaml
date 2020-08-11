@@ -51,7 +51,7 @@ suite: !Cycle
         J_JOB: JJOB_POST
 
       final: !Task
-        <<: *service_task_template
+        <<: *shared_task_template
         Disable: !calc not metasched.type=="rocoto"
         resources: !calc partition.resources.run_nothing
         rocoto_command: "echo final"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ksh
 set -e
 
 cat <<EOF
@@ -30,5 +30,4 @@ mkdir -p ${LETKFDIR}
 
 cd ${LETKFDIR}
 
-${ROOT_GODAS_DIR}/scripts/prep_letkf.sh -n $NO_ENS_MBR
-
+sh ${ROOT_GODAS_DIR}/scripts/prep_letkf.sh -n $NO_ENS_MBR

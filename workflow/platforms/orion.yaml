@@ -54,7 +54,7 @@ platform: !Platform
       # Queues to use for each job type
       shared_queue: batch
       exclusive_queue: batch
-      service_queue: service
+      service_queue: batch 
 
       # Details about the scheduler on this cluster.
       scheduler_settings:
@@ -78,7 +78,7 @@ platform: !Platform
         partition: orion
 
       service_accounting_ref:
-        queue: service
+        queue: batch 
         project: !calc doc.accounting.cpu_project
         partition: orion
 

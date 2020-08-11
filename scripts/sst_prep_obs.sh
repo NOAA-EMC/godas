@@ -1,5 +1,8 @@
-#!/bin/bash -l 
-set -e
+#!/bin/ksh
+
+set -xe
+
+echo "sst_prep_obs.sh started"
 
 while getopts "i:" opt; do
    case $opt in
@@ -17,10 +20,10 @@ if $1; then
    echo
 
    mv ${PROCobs} ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc
+   # Subsample                                                                                                                        
+   ncks -O -F -d nlocs,1,,$2 ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
    # Create record dim
-   ncks --mk_rec_dmn nlocs ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc ${ObsRunDir}/sst-tmp.nc
-   # Subsample
-   ncks -O -F -d nlocs,1,,$2 ${ObsRunDir}/sst-tmp.nc ${PROCobs}
+   ncks --mk_rec_dmn nlocs ${ObsRunDir}/sst-tmp.nc ${PROCobs}
    # Cleanup
    rm ${ObsRunDir}/sst-tmp.nc
    rm ${ObsRunDir}/ioda.${SSTsource}_LARGE.nc

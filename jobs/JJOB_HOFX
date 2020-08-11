@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ksh
 set -e
 
 cat <<EOF
@@ -15,11 +15,9 @@ echo 'Date of Analysis: ' $CDATE
 echo 'Run Directory: ' $RUNCDATE
 echo ''
 
-module purge
-source $MOD_PATH/godas.main
-module list
-
-cd $RUNCDATE
+cd $RUNCDATOOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
 
 # Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
 
