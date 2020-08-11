@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/ksh
 set -ex
 
 cat <<EOF
@@ -32,12 +32,12 @@ if [ "$FCSTMODEL" = "MOM6CICE5" ]; then
 
       cp -f $RUNCDATE/yaml/checkpointmodel.yml $dum
       
-      ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      sh ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
             -i $dum                                      \
             -k OCN_FILENAME                              \
             -v ocn.pert.ens.$MEMBER_NO.nc
 
-      ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
+      sh ${ROOT_GODAS_DIR}/scripts/replace_KWRD_yaml.sh     \
             -i $dum                                      \
             -k ICE_FILENAME                              \
             -v cic.pert.ens.$MEMBER_NO.nc

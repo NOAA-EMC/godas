@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e
+#!/bin/ksh
+set -ex
 
 cat <<EOF
 #================================================================================
@@ -10,14 +10,16 @@ cat <<EOF
 #================================================================================
 EOF
 
-module purge
-source $MOD_PATH/godas.main
-module list
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
 
 echo $RUNCDATE
 
 if [ ! -d $RUNCDATE ]; then mkdir -p $RUNCDATE; fi
 cd $RUNCDATE
+
+ulimit -s unlimited
 
 # Generate ocean-ice grid
 if [ -f "${RUNCDATE}/soca_gridspec.nc" ]; then

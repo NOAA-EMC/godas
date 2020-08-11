@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/ksh
 set -e
 
 cat <<EOF
@@ -10,11 +10,13 @@ cat <<EOF
 #================================================================================
 EOF
 
-module purge
-source $MOD_PATH/godas.main
-module list
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
 
 cd $RUNCDATE
+
+ulimit -s unlimited
 
 cat <<EOF
 #============================================

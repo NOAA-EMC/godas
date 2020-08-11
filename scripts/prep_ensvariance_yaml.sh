@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/ksh
 #
 # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # * # 
 #                       Unix Script Documentation 

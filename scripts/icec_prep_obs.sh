@@ -1,4 +1,4 @@
-#!/bin/bash -l 
+#!/bin/ksh
 
 cd $DCOM_ROOT
 OBSDCOM=$DCOM_ROOT/icec_l2.emc                   #FullPath of raw obs

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/ksh
 
 ######################################################################
 ######################################################################
@@ -13,6 +13,9 @@
 ######################################################################
 ######################################################################
 # Local Functions                                                    #
+
+set -x
+
 function ncdmnsz 
 { 
       ncks --trd -m -M ${2}         \
@@ -120,8 +123,10 @@ NTASKS_TOT=${NTASKS_TOT:-"$(( $ATMPETS+$OCNPETS+$ICEPETS ))"} #240
 NEARESTCDATE=$(echo $CDATE | cut -c1-8)00
 
 ####
-DATM_FILENAME_BASE=${DATM_FILENAME_BASE:-"${FORCING_SRC,,}."} #The prefix of the forcing files for the DATM
-DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC^^}/${SYEAR}${SMONTH}" #The path with the forcing
+DATM_FILENAME_BASE=`echo $FORCING_SRC | tr -s "[A-Z]" "[a-z]"`.  #The prefix of the forcing files for the DATM
+DATMINPUTDIR="${GODAS_RC}/DATM_INPUT/${FORCING_SRC}/${SYEAR}${SMONTH}" #The path with the forcing
+
+FORCING_SRC_LOW=`echo $FORCING_SRC | tr -s "[A-Z]" "[a-z]"`
 
 #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs
 #IATM dimension of DATM input files, lon
@@ -132,9 +137,9 @@ ForcingFile="$(ls "${DATMINPUTDIR}""/""${DATM_FILENAME_BASE}"*"nc" | tail -1)"
 IATM=${IATM:-$(ncdmnsz "lon" "${ForcingFile}")}
 JATM=${JATM:-$(ncdmnsz "lat" "${ForcingFile}")}
 
-if [ "${FORCING_SRC,,}" = "cfsr" ]; then
+if [ "${FORCING_SRC}" = "CFSR" ]; then
    NFHOUT=${NFHOUT:-6}
-elif [ "${FORCING_SRC,,}" = "gefs" ]; then
+elif [ "${FORCING_SRC}" = "GEFS" ]; then
    NFHOUT=${NFHOUT:-3}
 else
    echo "Unknown forcing, exiting..."
@@ -349,8 +354,14 @@ iceic='cice5_model.res.nc'
 
 
 #TODO: nhour is not getting propagated from workflow/patforms/hera.yaml for some reason..
-NWPROD="/scratch1/NCEPDEV/global/glopara"
-NHOUR="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+# Hera
+if [[ -d /scratch1 ]] ; then
+  NWPROD="/scratch1/NCEPDEV/global/glopara"
+  NHOUR="$NWPROD/git/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+# orion
+elif [[ -d /work ]] ; then
+  NHOUR="/apps/contrib/NCEPLIBS/lib/NCEPLIBS-prod_util/v1.1.0/exec/nhour"
+fi
 
 echo "NHOUR is ${NHOUR}"
 echo "DT_CICE is $DT_CICE"
@@ -427,16 +438,14 @@ ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc $DATA/DATM_INPUT/
 cp -rf ${SCRIPTDIR}/make_scripgrid.ncl ./
 
 gridsrc=$DATA/DATM_INPUT/
-gridfile=${FORCING_SRC,,}.${CDATE}.nc
+gridfile=${FORCING_SRC_LOW}.${CDATE}.nc
 
-sed -i "s+FORCING_SRC+${FORCING_SRC,,}+g" make_scripgrid.ncl
+sed -i "s+FORCING_SRC_LOW+${FORCING_SRC_LOW}+g" make_scripgrid.ncl
 sed -i "s+GRIDSRC+${gridsrc}+g" make_scripgrid.ncl
 sed -i "s+GRIDFILE+${gridfile}+g" make_scripgrid.ncl
 sed -i "s+DIROUT+${gridsrc}+g" make_scripgrid.ncl
 
-module load ncl
 ncl < make_scripgrid.ncl
-module unload ncl
 
 ######################################################################
 # 3.2 Link MOM6 fix files                                            #
@@ -543,3 +552,4 @@ mv $nextic $keepic
 #   End of prep_forecast.sh                                          #
 ######################################################################
 echo "End of prep_forecast.sh"
+set +x

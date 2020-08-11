@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/ksh
 set -e
 
 #================================================================================
 #================================================================================
 # Prep SOCA Static B and grid
 
-module purge
-source $MOD_PATH/godas.main
-module list
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
 
 echo $RUNCDATE
 

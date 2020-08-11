@@ -21,7 +21,7 @@
 begin
  print("NOTE: ncl version >= 4.9.1 is required")
  ; Gaussian grids to use and the name of the land mask in the file
- name = "FORCING_SRC"
+ name = "FORCING_SRC_LOW"
  dname = str_upper(name)
  maskname = "slmsksfc"
  gridsrc = "GRIDSRC"

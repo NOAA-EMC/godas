@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ksh
 set -e
 
 cat <<EOF
@@ -37,6 +37,6 @@ for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
    echo 
    echo Preparing the hofx for ensemble member $MEMBER_NO
 
-   ${ROOT_GODAS_DIR}/scripts/prep_hofx.sh -n $MEMBER_NO
+   sh ${ROOT_GODAS_DIR}/scripts/prep_hofx.sh -n $MEMBER_NO
 
 done
