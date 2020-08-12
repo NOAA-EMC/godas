@@ -15,10 +15,16 @@ if [ "$FCSTMODEL" = "MOM6CICE5" ]; then
    nextic=$RUNCDATE/../NEXT_IC
 
    mkdir -p $nextic
-   cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
-   cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
-   cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
- 
+   if [[ -d /scratch1 ]] ; then
+      cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
+      cp /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
+      cp -r /scratch2/NCEPDEV/marine/marineda/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+   elif [[ -d /work ]] ; then
+      cp /work/noaa/marine/marineda/godas_input/soca-static/1440x1080x75/test-emc-m6c5/mediator_* $nextic
+      cp /work/noaa/marine/marineda/godas_input/soca-static/1440x1080x75/test-emc-m6c5/MOM*.nc $nextic
+      cp -r /work/noaa/marine/marineda/godas_input/soca-static/1440x1080x75/test-emc-m6c5/restart $nextic
+   fi
+
    ${ROOT_GODAS_DIR}/scripts/prep_genenspert.sh
 
 # TODO: Clean the following
