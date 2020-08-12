@@ -15,9 +15,11 @@ echo 'Date of Analysis: ' $CDATE
 echo 'Run Directory: ' $RUNCDATE
 echo ''
 
-cd $RUNCDATOOT_GODAS_DIR/ush/load_godas_modules.sh
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
 status=$?
 [[ $status -ne 0 ]] && exit $status
+
+cd $RUNCDATE
 
 # Get ENSBEG/ENSEND from ENSGRP and NMEM_EFCSGRP
 
