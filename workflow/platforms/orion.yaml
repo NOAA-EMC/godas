@@ -82,6 +82,11 @@ platform: !Platform
         project: !calc doc.accounting.cpu_project
         partition: orion
 
+      bigmem_accounting_ref: #exclusive_accounting_ref:
+        queue: batch
+        project: !calc doc.accounting.cpu_project
+        partition: orion
+
       # Generate the actual Python objects for the scheduler, parallelism,
       # and nodes:
       scheduler: !calc |
