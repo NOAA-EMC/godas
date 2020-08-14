@@ -14,9 +14,6 @@ EOF
 . $ROOT_GODAS_DIR/ush/load_godas_modules.sh
 status=$?
 [[ $status -ne 0 ]] && exit $status
-#module purge
-#source $MOD_PATH/godas.main
-#module list
 
 # Main 
 # ----------------------------------- 

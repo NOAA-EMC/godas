@@ -1,0 +1,48 @@
+#!/bin/bash -l
+set -e
+
+cat <<EOF
+#================================================================================
+#============================================
+# Run Recenter                                                                                                         
+#============================================
+#================================================================================
+EOF
+
+module purge
+source $MOD_PATH/godas.main
+module list
+
+echo
+echo "The system runs at $RUNCDATE"
+echo
+echo "The RECENTER LETKF directory is " ${LETKFDIR}
+
+cd ${LETKFDIR}
+
+if [ ! -d RESTART ]; then mkdir -p RESTART; fi
+
+export ENSEND=$((NMEM_PGRP * ENSGRP))
+export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
+
+for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+   echo
+   echo Running Checkpoint for the $MEMBER_NO
+
+   cp ${LETKFDIR}/ocn.ana.$MEMBER_NO.nc ${LETKFDIR}/Data/ocn.ana.$MEMBER_NO.nc
+   srun -n $NPE ${SOCA_EXEC}/soca_checkpoint_model.x ./yaml/checkpointmodel$MEMBER_NO.yml
+
+   # TODO: The ice is not pertubated but eventually, it will.
+   # ciceprep_func "${RUNCDATE}/Data/cic.pert.ens.*.nc"                   
+
+   mkdir -p ${LETKFDIR}/mem$MEMBER_NO
+
+   mv -f RESTART/* ${LETKFDIR}/mem$MEMBER_NO
+done
+
+for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+    mv ${LETKFDIR}/ocn.ana.$MEMBER_NO*.nc ${LETKFDIR}/Data
+    ln -s ${LETKFDIR}/mem$MEMBER_NO/MOM.res.nc ocn.ana.$MEMBER_NO.nc 
+done
+
+srun -n $NPE ${SOCA_EXEC}/soca_ensrecenter.x ./yaml/ensrecenter.yml

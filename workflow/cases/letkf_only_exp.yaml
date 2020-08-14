@@ -13,8 +13,8 @@ case:
     DA_TS: False
     DA_ADT: False
     DA_ICEC: False
-    NO_ENS_MBR: 10 
-    GROUPS: 5
+    NO_ENS_MBR: 5 
+    GROUPS: 1
 
   places:
     workflow_file: layout/letkf_only.yaml

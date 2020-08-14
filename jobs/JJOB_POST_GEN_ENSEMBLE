@@ -10,12 +10,14 @@ cat <<EOF
 #================================================================================
 EOF
 
-module purge
-source $MOD_PATH/godas.main
-module list
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
 
 # Functions 
 rename_func () { for files in $1; do cp -f $files ${files:0:(${#files}-28)}'nc'; done }
+rename_func_echo () { for files in $1; do echo $files ${files:0:(${#files}-28)}'nc'; done }
+
 ciceprep_func () {
    for files in $1; do
     #  ncks -O -C -v aicen,vicen,vsnon $files $files
@@ -40,6 +42,7 @@ cd ${RUNCDATE}/Data
 
 rename_func "cic.pert.ens.*.PT0S.nc"
 rename_func "ocn.pert.ens.*.PT0S.nc"
+rename_func_echo "ocn.pert.ens.*.PT0S.nc"
 
 cd ${RUNCDATE}
 
@@ -61,3 +64,6 @@ for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
    mv -f RESTART/* ${RUNCDATE}/mem$MEMBER_NO
 
 done
+
+mkdir -p ${RUNCDATE}/../../../../ENS_ICs
+cp -rf ${RUNCDATE}/mem* ${RUNCDATE}/../../../../ENS_ICs
