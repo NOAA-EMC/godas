@@ -15,9 +15,8 @@ status=$?
 [[ $status -ne 0 ]] && exit $status
 
 # Functions 
-rename_func () { for files in $1; do cp -f $files ${files:0:(${#files}-28)}'nc'; done }
-rename_func_echo () { for files in $1; do echo $files ${files:0:(${#files}-28)}'nc'; done }
-
+rename_func () { for files in $1; do strfiles=${#files}-28; cp -f $files ${files:0:$strfiles}'nc'; done }
+rename_func_echo () { for files in $1; do strfiles=${#files}-28; echo $files ${files:0:$strfiles}'nc'; done }
 ciceprep_func () {
    for files in $1; do
     #  ncks -O -C -v aicen,vicen,vsnon $files $files
@@ -64,6 +63,9 @@ for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
    mv -f RESTART/* ${RUNCDATE}/mem$MEMBER_NO
 
 done
+
+# TODO: Perturbed ICs are copied to a static location.
+# The location should be given as yaml variable
 
 mkdir -p ${RUNCDATE}/../../../../ENS_ICs
 cp -rf ${RUNCDATE}/mem* ${RUNCDATE}/../../../../ENS_ICs
