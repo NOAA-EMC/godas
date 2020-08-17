@@ -1,0 +1,42 @@
+#!/bin/ksh      
+set -e
+
+cat <<EOF
+#================================================================================
+#================================================================================
+# JJOB_COPY_ENSEMBLE
+#   Copy external ensemble of perturbed ICs for use in LETKF to $NEXT_IC
+#================================================================================
+#================================================================================
+EOF
+
+. $ROOT_GODAS_DIR/ush/load_godas_modules.sh
+status=$?
+[[ $status -ne 0 ]] && exit $status
+
+case $FCSTMODEL in
+   "MOM6solo")
+      ;;
+   "MOM6CICE5")
+       # If first cycle: Prepare hyb-coord and cice IC
+
+      export ENSEND=$((NMEM_PGRP * ENSGRP))
+      export ENSBEG=$((ENSEND - NMEM_PGRP + 1))
+
+      if [ "$NO_ENS_MBR" -gt "1" ]; then
+         for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
+            nextic="$RUNCDATE/../NEXT_IC/mem${MEMBER_NO}"
+            if [ ! -d $nextic ]; then
+cat <<EOF
+# Initial Conditions are copied from the static files
+EOF
+               echo Copying external ICs for ensemble member $MEMBER_NO
+               mkdir -p $nextic
+	       cp $EXPDIR/../../ENS_ICs/mem${MEMBER_NO}/MOM*.nc $nextic
+               cp -r $EXPDIR/../../ENS_ICs/mem${MEMBER_NO}/restart $nextic
+            fi
+         done
+      fi
+
+      ;;
+esac
