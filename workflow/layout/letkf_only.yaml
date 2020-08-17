@@ -29,17 +29,17 @@ suite: !Cycle
             export ENSGRP={ENSGRP}
             $ROOT_GODAS_DIR/jobs/{J_JOB}
 
-      fcst_run: !TaskArray
+      ens_ics_prep: !TaskArray
         Trigger: !Depend fcst_prep
         Dimensions:
           groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
-        fcst_run_grp: !TaskElement
+        fcst_prep_grp: !TaskElement
           <<: *shared_task_template
           Foreach: [ groupid ]
           Name: !expand "pgrp{dimval.groupid}"
-          resources: !calc partition.resources.run_fcst
+          resources: !calc partition.resources.run_fcst_prep
           config: [ base ]
-          J_JOB: JJOB_FORECAST
+          J_JOB: JJOB_COPY_ENSEMBLE
           ENSGRP: !expand "{dimval.groupid:02d}"
           rocoto_command: !expand >-
             {rocoto_load_modules} ;
@@ -50,7 +50,7 @@ suite: !Cycle
             $ROOT_GODAS_DIR/jobs/{J_JOB}
 
       hofx_prep: !TaskArray
-        Trigger: !Depend ( obs_prep & fcst_run )
+        Trigger: !Depend ( obs_prep & ens_ics_prep )
         Dimensions:
           groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
         fcst_run_grp: !TaskElement
@@ -123,6 +123,45 @@ suite: !Cycle
         config: [ base ]
         J_JOB: JJOB_LETKF
 
+      letkf_recenter: !TaskArray
+        Trigger: !Depend letkf
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_prep_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_fcst
+          config: [ base ]
+          J_JOB: JJOB_LETKF_RECEN
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
+
+      fcst_run: !TaskArray
+        Trigger: !Depend letkf_recenter
+        Dimensions:
+          groupid: !calc tools.seq(1,doc.da_settings.GROUPS,1)
+        fcst_run_grp: !TaskElement
+          <<: *shared_task_template
+          Foreach: [ groupid ]
+          Name: !expand "pgrp{dimval.groupid}"
+          resources: !calc partition.resources.run_fcst
+          config: [ base ]
+          J_JOB: JJOB_FORECAST
+          ENSGRP: !expand "{dimval.groupid:02d}"
+          rocoto_command: !expand >-
+            {rocoto_load_modules} ;
+            {rocoto_config_source} ;
+            /usr/bin/env ENSGRP={ENSGRP} &ROOT_GODAS_DIR;/jobs/{J_JOB}
+          ecflow_command: !expand |
+            export ENSGRP={ENSGRP}
+            $ROOT_GODAS_DIR/jobs/{J_JOB}
 
 #      post: !Task
 #        <<: *shared_task_template
