@@ -30,7 +30,9 @@ elif [[ -d /work ]] ; then
                 source $ROOT_GODAS_DIR/modulefiles/orion.intel19
         fi 
         if [[ $1 = 'fcst' ]] ; then
+                module purge
                 source $ROOT_GODAS_DIR/modulefiles/orion.fcst
+                source $ROOT_GODAS_DIR/modulefiles/orion.anaconda
         fi
 else
     echo WARNING: UNKNOWN PLATFORM 
