@@ -3,7 +3,7 @@
 ##
 
 module use -a /scratch2/NCEPDEV/marineda/Yi-cheng.Teng/opt/modulefiles/core
-module use -a scratch2/NCEPDEV/marineda/Yi-cheng.Teng/opt/modulefiles/apps
+module use -a /scratch2/NCEPDEV/marineda/Yi-cheng.Teng/opt/modulefiles/apps
 module load intel-impi-19.0.5-ecbuild-develop
 
 #module use /scratch1/NCEPDEV/jcsda/Ryan.Honeyager/jedi/modules
