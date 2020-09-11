@@ -1,0 +1,1 @@
+/work/noaa/da/ycteng/work7/godas/fix/CICE_FIX_mx025/kmtu_cice_NEMS_mx025.nc
