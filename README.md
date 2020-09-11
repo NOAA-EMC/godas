@@ -251,3 +251,6 @@ case:
 
 0. scripts/post_plot.sh has been updated and included in rocoto workflow. In post processing run, sea ice fraction, SSH, SST, and time_mean figures will be created in $RUNCDATE/Figures directory. Additional offline post processing and plotting tools are available in src/mom6-tools directory: see the instruction [here](./src/mom6-tools.plot/README.md).
 
+# SOCA-SCIENCE workflow
+
+Please see [soca ufs wiki page](https://github.com/JCSDA/soca-science/wiki/soca-ufs) to conduct ufs (DATM-mom6-cice) model fcst & 3dvar runs with soca-science workflow. Currently only 0.25deg model works.
