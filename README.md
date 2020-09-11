@@ -1,7 +1,7 @@
 # Introduction
 The following five steps will guide you through the process of cloning, building and running the GODAS workflow. 
 
-The instructions below are for csh and bash. 
+The instructions below are for csh and bash. The instruction for running ufs with soca-science workflow is at the [end](https://github.com/NOAA-EMC/godas/feature/ufs/README.md#L254).
 
 During this process, three directories will be created:
 - CLONE_DIR    : The directory where the system is cloned, user defined path.
