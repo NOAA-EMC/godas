@@ -1,4 +1,4 @@
-!!!Warning!!! The support of GODAS workflow will be discontinued soon. We will stiwch to [soca-science workflow](https://github.com/JCSDA/soca-science) for future development. 
+**!!!Warning!!!** The support of GODAS workflow will be discontinued soon. We will stiwch to [soca-science workflow](https://github.com/JCSDA/soca-science) for future development. 
 The instruction for running ufs with soca-science workflow can be found [here](https://github.com/JCSDA/soca-science/wiki/soca-ufs).
 
 # Introduction
