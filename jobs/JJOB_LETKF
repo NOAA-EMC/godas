@@ -39,7 +39,11 @@ else
 fi
 
 if [ -f "${ROOT_GODAS_DIR}/build/letkf/bin/letkfdriver" ]; then
- 
+
+    if [[ -d /work ]] ; then
+    	source ${ROOT_GODAS_DIR}/src/letkf/config/env.orion
+    fi
+
     srun -n $NPE ${ROOT_GODAS_DIR}/build/letkf/bin/letkfdriver ${LETKFDIR}/yaml/letkf.yaml
 
 else
