@@ -13,6 +13,10 @@ set -eu
 #load modules
 source $UFS_INSTALL/$MACHINE.fcst
 
+#reset input.nml
+rm -rf input.nml
+sh input.nml.sh > input.nml
+
 #setup diag_table
 sed -i "s+MDY+${MDY}+g" diag_table_tmp
 sed -i "s+SYEAR+${SYEAR}+g" diag_table_tmp
