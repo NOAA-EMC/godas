@@ -18,6 +18,7 @@ rm -rf input.nml
 mv input.nml.tmp input.nml
 
 #
+tar -xvzf cice_mx025.tgz
 mkdir -p RESTART_IN
 mkdir -p history
 mkdir -p DATM_INPUT
