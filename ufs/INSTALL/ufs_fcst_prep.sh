@@ -15,7 +15,12 @@ source $UFS_INSTALL/$MACHINE.fcst
 
 #reset input.nml
 rm -rf input.nml
-sh input.nml.sh > input.nml
+mv input.nml.tmp input.nml
+
+#
+mkdir -p RESTART_IN
+mkdir -p history
+mkdir -p DATM_INPUT
 
 #setup diag_table
 sed -i "s+MDY+${MDY}+g" diag_table_tmp
