@@ -1,0 +1,13 @@
+&fms_nml
+            clock_grain='ROUTINE'
+            clock_flags='NONE'
+            domains_stack_size = 5000000
+            stack_size =0
+/
+ &MOM_input_nml
+         output_directory = 'OUTPUT/',
+         input_filename = 'r'
+         restart_input_dir = 'RESTART_IN/',
+         restart_output_dir = 'RESTART/',
+         parameter_filename = 'MOM_input',
+                              'MOM_override' /
