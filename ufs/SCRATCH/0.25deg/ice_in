@@ -18,7 +18,7 @@
   , restart_file   = 'iced'
   , pointer_file   = './restart/ice.restart_file'
   , dumpfreq       = 's'
-  , dumpfreq_n     =  86400
+  , dumpfreq_n     =  DUMPFREQ_N
   , dump_last      = .false.  
   , diagfreq       = 6
   , diag_type      = 'file'
