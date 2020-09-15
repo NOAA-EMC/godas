@@ -15,7 +15,7 @@ source $UFS_INSTALL/$MACHINE.fcst
 
 #reset input.nml
 rm -rf input.nml
-mv input.nml.tmp input.nml
+sh input.nml.tmp.sh > input.nml
 
 #
 tar -xvzf cice_mx025.tgz
