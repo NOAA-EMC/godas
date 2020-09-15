@@ -54,10 +54,24 @@ fi
 
 #set nems.configure
 #Calculate bounds based on resource PETS
-med_petlist_bounds=${med_petlist_bounds:-"0 $(( $UFS_MEDPETS-1 ))"}
-atm_petlist_bounds=${atm_petlist_bounds:-"0 $(( $UFS_ATMPETS-1 ))"}
-ocn_petlist_bounds=${ocn_petlist_bounds:-"$UFS_ATMPETS $(( $UFS_ATMPETS+$UFS_OCNPETS-1 ))"}
-ice_petlist_bounds=${ice_petlist_bounds:-"$(( $UFS_ATMPETS+$UFS_OCNPETS )) $(( $UFS_ATMPETS+$UFS_OCNPETS+$UFS_ICEPETS-1 ))"}
+echo ${MODEL_RES}
+if [[ "$MODEL_RES" == "1deg" ]]; then
+    source ./module-setup.sh
+    module use $( pwd -P )
+    module load modules.datm
+    module load ncl
+    module load nco
+    module list
+    med_petlist_bounds=${med_petlist_bounds:-"$UFS_ATMPETS $(( $UFS_ATMPETS+$UFS_MEDPETS-1 ))"}
+    atm_petlist_bounds=${atm_petlist_bounds:-"0 $(( $UFS_ATMPETS-1 ))"}
+    ocn_petlist_bounds=${ocn_petlist_bounds:-"$(( $UFS_ATMPETS+$UFS_MEDPETS )) $(( $UFS_MEDPETS+$UFS_ATMPETS+$UFS_OCNPETS-1 ))"}
+    ice_petlist_bounds=${ice_petlist_bounds:-"$(( $UFS_ATMPETS+$UFS_MEDPETS+$UFS_OCNPETS )) $(( $UFS_ATMPETS+$UFS_MEDPETS+$UFS_OCNPETS+$UFS_ICEPETS-1 ))"}
+elif [[ "$MODEL_RES" == "0.25deg" ]]; then
+    med_petlist_bounds=${med_petlist_bounds:-"0 $(( $UFS_MEDPETS-1 ))"}
+    atm_petlist_bounds=${atm_petlist_bounds:-"0 $(( $UFS_ATMPETS-1 ))"}
+    ocn_petlist_bounds=${ocn_petlist_bounds:-"$UFS_ATMPETS $(( $UFS_ATMPETS+$UFS_OCNPETS-1 ))"}
+    ice_petlist_bounds=${ice_petlist_bounds:-"$(( $UFS_ATMPETS+$UFS_OCNPETS )) $(( $UFS_ATMPETS+$UFS_OCNPETS+$UFS_ICEPETS-1 ))"}
+fi
 sed -i -e "s;@\[med_petlist_bounds\];$med_petlist_bounds;g" nems.configure
 sed -i -e "s;@\[atm_petlist_bounds\];$atm_petlist_bounds;g" nems.configure
 sed -i -e "s;@\[ocn_petlist_bounds\];$ocn_petlist_bounds;g" nems.configure
@@ -124,4 +138,3 @@ sed -i "s+GRIDFILE+${gridfile}+g" make_scripgrid.ncl
 sed -i "s+DIROUT+${gridsrc}+g" make_scripgrid.ncl
 
 ncl < make_scripgrid.ncl
-
