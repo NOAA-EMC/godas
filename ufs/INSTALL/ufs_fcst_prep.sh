@@ -103,7 +103,7 @@ if [[ "$FCST_RESTART" == 1 ]]; then
     ln -sf $MODEL_RST_DIR_IN/MOM.res* RESTART_IN
     cp $MODEL_RST_DIR_IN/mediator* .
     cp $MODEL_RST_DIR_IN/ice.restart_file ./restart
-    cp $MODEL_RST_DIR_IN/iced.$SYEAR-$SMONTH-$SDAY-43200.nc ./restart
+    cp $MODEL_RST_DIR_IN/iced.$SYEAR-$SMONTH-$SDAY-*.nc ./restart
 else
     exit 1
 fi
