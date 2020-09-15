@@ -18,7 +18,7 @@ rm -rf input.nml
 sh input.nml.tmp.sh > input.nml
 
 #
-tar -xvzf cice_mx025.tgz
+tar -xvzf cice_mx.tgz
 mkdir -p RESTART_IN
 mkdir -p history
 mkdir -p DATM_INPUT
@@ -89,11 +89,13 @@ stepsperhr=$((3600/${DT_CICE}))
 nhours=$(${NHOUR} ${CDATE} ${SYEAR}010100)
 istep0=$((nhours*stepsperhr))
 npt=$((FCST_LEN*$stepsperhr))      # Need this in order for dump_last to work
+nsec=$((FCST_LEN*3600))
 sed -i -e "s;YEAR_INIT;${SYEAR};g" ice_in
 sed -i -e "s;NPT;${npt};g" ice_in
 sed -i -e "s;ISTEP0;${istep0};g" ice_in
 sed -i -e "s;DT_CICE;${DT_CICE};g" ice_in
 sed -i -e "s;NPROC_ICE;${UFS_ICEPETS};g" ice_in
+sed -i -e "s;DUMPFREQ_N;${nsec};g" ice_in
 
 # get ICs
 mkdir -p INPUT
