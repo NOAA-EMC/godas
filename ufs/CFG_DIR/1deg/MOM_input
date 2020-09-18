@@ -778,5 +778,5 @@ BUOY_CONFIG = "zero"            !
 WIND_CONFIG = "zero"            !
 
 ! === module MOM_restart ===
-
+RESTART_CHECKSUMS_REQUIRED = False
 ! === module MOM_file_parser ===

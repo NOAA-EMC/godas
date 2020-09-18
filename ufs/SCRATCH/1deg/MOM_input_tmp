@@ -776,5 +776,5 @@ FIX_USTAR_GUSTLESS_BUG = False  !   [Boolean] default = True
                                 ! velocity
 
 ! === module MOM_restart ===
-
+RESTART_CHECKSUMS_REQUIRED = False
 ! === module MOM_file_parser ===
