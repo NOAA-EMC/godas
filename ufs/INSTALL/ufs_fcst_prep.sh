@@ -36,6 +36,17 @@ DATM_FILENAME_BASE=`echo $FORC_GEN_SOURCE | tr -s "[A-Z]" "[a-z]"`.  #The prefix
 DATMINPUTDIR="$FORC_SRC_DIR/$FORC_GEN_SOURCE/${SYEAR}${SMONTH}" #The path with the forcing
 FORCING_SRC_LOW=`echo $FORC_GEN_SOURCE | tr -s "[A-Z]" "[a-z]"`
 
+#setup path for next month
+N=$((10#$SMONTH))
+if [ $N == 12 ]; then
+    NYEAR=$(($SYEAR+1))
+    NMONTH=01
+else
+    NYEAR=$SYEAR
+    NMONTH=$( printf '%02d' "$(($N+1))" )
+fi
+DATMINPUTDIR_NEXT="$FORC_SRC_DIR/$FORC_GEN_SOURCE/${NYEAR}${NMONTH}"
+
 #nfhout number of hours between DATM inputs 6 for cfsr 3 for gefs
 #IATM dimension of DATM input files, lon
 #JATM dimension of DATM input files, lat
@@ -127,6 +138,7 @@ fi
 # DATM forcing file name convention is ${DATM_FILENAME_BASE}.$YYYYMMDDHH.nc
 echo "Link DATM forcing files"
 ln -sf ${DATMINPUTDIR}/${DATM_FILENAME_BASE}*.nc ./DATM_INPUT/
+ln -sf ${DATMINPUTDIR_NEXT}/${DATM_FILENAME_BASE}*.nc ./DATM_INPUT/
 
 # Create scrip.nc
 gridsrc=$(pwd)/DATM_INPUT/
