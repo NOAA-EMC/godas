@@ -84,7 +84,7 @@ export bkg_date=$(cdate2bkg_date $CDATE)
 echo "bkg_date="$bkg_date
 
 ${ROOT_GODAS_DIR}/scripts/prep_BKG_DATE_yaml.sh    \
-      -i $LETKFDIR/yaml/ensrecenter.yml    \
+      -i $LETKFDIR/yaml/ensrecenter.yml    \      
       -d ${bkg_date}
 
 ${ROOT_GODAS_DIR}/scripts/prep_recenter_yaml.sh     \
