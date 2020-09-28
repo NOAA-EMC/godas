@@ -57,4 +57,5 @@ for MEMBER_NO in $(seq $ENSBEG $ENSEND); do
 done
 if [ -f "${LETKFDIR}/Data/tmp.nc" ]; then rm ${LETKFDIR}/Data/tmp.nc; fi
 
+
 srun -n $NPE ${SOCA_EXEC}/soca_ensrecenter.x ./yaml/ensrecenter.yml
