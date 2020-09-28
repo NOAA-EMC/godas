@@ -1,4 +1,8 @@
+**!!!Warning!!!** The support of GODAS workflow will be discontinued soon. We will switch to [soca-science workflow](https://github.com/JCSDA/soca-science) for future development. 
+The instruction for running ufs with soca-science workflow can be found [here](https://github.com/JCSDA/soca-science/wiki/soca-ufs).
+
 # Introduction
+
 The following five steps will guide you through the process of cloning, building and running the GODAS workflow. 
 
 The instructions below are for csh and bash. 
@@ -251,3 +255,6 @@ case:
 
 0. scripts/post_plot.sh has been updated and included in rocoto workflow. In post processing run, sea ice fraction, SSH, SST, and time_mean figures will be created in $RUNCDATE/Figures directory. Additional offline post processing and plotting tools are available in src/mom6-tools directory: see the instruction [here](./src/mom6-tools.plot/README.md).
 
+# SOCA-SCIENCE workflow
+
+Please see [soca ufs wiki page](https://github.com/JCSDA/soca-science/wiki/soca-ufs) to conduct ufs (DATM-mom6-cice) model fcst & 3dvar runs with soca-science workflow. Currently only 0.25deg model works.

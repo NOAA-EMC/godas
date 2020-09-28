@@ -18,7 +18,7 @@ if [ -f "${PREPROCobs}" ]; then
    # Subsample
    ncks -O -F -d nlocs,1,,5 ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc ${ObsRunDir}/icec-tmp.nc 
    # Create record dim
-   ncks --mk_rec_dmn nlocs ${ObsRunDir}/icec-tmp.nc ${PROCobs} 
+   ncks --mk_rec_dmn nlocs ${ObsRunDir}/icec-tmp.nc ${PROCobs}   
    rm ${ObsRunDir}/icec-tmp.nc
    rm ${ObsRunDir}/ioda.icec.cat_l2.emc_LARGE.nc
 
