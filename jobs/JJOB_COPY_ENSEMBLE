@@ -32,8 +32,8 @@ cat <<EOF
 EOF
                echo Copying external ICs for ensemble member $MEMBER_NO
                mkdir -p $nextic
-	       cp $EXPDIR/../../ENS_ICs/mem${MEMBER_NO}/MOM*.nc $nextic
-               cp -r $EXPDIR/../../ENS_ICs/mem${MEMBER_NO}/restart $nextic
+	       cp $EXPDIR/../../../ENS_ICs/mem${MEMBER_NO}/MOM*.nc $nextic
+               cp -r $EXPDIR/../../../ENS_ICs/mem${MEMBER_NO}/restart $nextic
             fi
          done
       fi
