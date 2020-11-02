@@ -25,7 +25,7 @@ cat <<EOF
             date_init = $(date -u "+%Y,%m,%d,%H" -d "${FCST_START_TIME}"),0,0,
             minutes = 0
             seconds = 0
-            calendar = 'NOLEAP' /
+            calendar = 'julian' /
 
 
  &MOM_input_nml
