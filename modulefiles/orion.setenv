@@ -1,5 +1,0 @@
-#!/bin/ksh
-
-export FC=mpiifort
-export CC=mpiicc
-export CXX=mpiicpc

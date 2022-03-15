@@ -1,6 +1,0 @@
-#%Module######################################################################
-##
-##      Python prerequisites
-##
-module use -a /work/noaa/marine/marineda/modulefiles
-module load anaconda/1.7.2

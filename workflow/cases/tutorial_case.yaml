@@ -1,8 +1,0 @@
-case:
-  settings:
-    SDATE: 2011-10-01t00:00:00
-    EDATE: 2011-10-01t00:00:00
-    da_cyc: 24 # run gfs every cycle
-
-  places:
-    workflow_file: layout/3dvar_only.yaml

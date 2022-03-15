@@ -1,4 +1,0 @@
-[submodule "workflow/CROW"]
-	path = workflow/CROW
-	url = https://github.com/NOAA-EMC/CROW.git
-
