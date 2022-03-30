@@ -34,6 +34,6 @@ d=$out_dir
 pwd=$(pwd)
 mkdir -p $d/${year}/${date}
 cd $d/${year}/${date}
-wget $source/$fn1/$yr/${date}00.$fn2.Z --no-check-certificate
+wget $source/$fn1/$year/${date}00.$fn2.Z --no-check-certificate
 gunzip *.Z
 cd $pwd
