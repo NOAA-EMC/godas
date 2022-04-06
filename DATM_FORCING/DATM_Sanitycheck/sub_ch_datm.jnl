@@ -1,0 +1,18 @@
+!
+
+let va=$1
+let vb=$2
+let nm="$3"
+let cl=$4
+let rw=$5
+
+set view v`cl``rw`
+plot/line/nolab/line=1/dash=(0.1,0.1,0.1,0.1) va[x=@max]
+plot/nolab/o/line=2/dash=(0.1,0.1,0.1,0.1) vb[x=@max]
+plot/nolab/o/line=7 va[x=@ave]
+plot/nolab/o/line=8 vb[x=@ave]
+plot/nolab/o/line=1 va[x=@min]
+plot/nolab/o/line=2 vb[x=@min]
+label/nouser 0.5 1.0,0,0,0.15 "`nm`"
+!go remove_logo
+
