@@ -1,4 +1,4 @@
-# emc_obsdb
+# `r2d2`
 Wrapper to JCSDA tools to manage the EMC marine observation database. 
 You will need to load the jedi modules and use the version of R2D2 that is 
 currently used in soca-science. The simplest way to get have access to all the dependencies 
