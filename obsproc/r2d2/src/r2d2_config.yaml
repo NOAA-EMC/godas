@@ -1,0 +1,23 @@
+databases:
+  local:
+    class: LocalDB
+    root: ./r2d2-local/obs/
+    cache_fetch: no
+
+  shared:
+    class: LocalDB
+    root: ./r2d2-shared/obs/
+    cache_fetch: no
+
+  archive: # name known by the end-user
+    class: S3DB # which class to instantiate
+    bucket: archive.jcsda
+    cache_fetch: true
+
+fetch_order:
+  - local
+
+store_order:
+  - shared
+  - local
+  - archive
