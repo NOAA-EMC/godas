@@ -14,7 +14,7 @@ def obssource(source_dir, year, month, day, obs_type, hour=[], minute=[], ext='.
     if fmttype=='ymdhm':
         obspath=os.path.join(obspath, year+month+day,obs_type+'_'+year+month+day+hour+minute+'.'+ext)
     if fmttype=='ymd':
-        obspath=os.path.join(obspath, year+month+day,obs_type+'_'+year+month+day+'.'+ext)
+        obspath=os.path.join(obspath, year, year+month+day,obs_type+'_'+year+month+day+'.'+ext)
 
     return obspath
 
