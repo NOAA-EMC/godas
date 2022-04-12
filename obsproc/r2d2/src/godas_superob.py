@@ -115,7 +115,7 @@ if __name__ == '__main__':
         bf = os.path.basename(f)
         ymdhm = re.findall("\d+", bf[-16:])[0]
         year, month, day, hour, minute = str2ymdhm(ymdhm)
-        outputpath=os.path.join(args.superobout,'year',year+month+day)
+        outputpath=os.path.join(args.superobout,year,year+month+day)
         if (not os.path.exists(outputpath)):
             os.makedirs(outputpath)
         yamlconf=bf+'.yaml'
