@@ -61,8 +61,8 @@ if __name__ == '__main__':
     '                                      --source_dir ./ioda_data/ \n' + \
     '                                      --source_file ymdhm' + \
     '                                      --source_file_ext nc' + \
-    '                                      --provider jcsda_soca \n' + \
-    '                                      --experiment benchmark_v2 \n' + \
+    '                                      --provider gdas_marine \n' + \
+    '                                      --experiment s2s_v1 \n' + \
     '                                      --obstype sst \n' + \
     '                                      --platforms noaa18_l3u \n' + \
     '                                      --storage local \n' + \
