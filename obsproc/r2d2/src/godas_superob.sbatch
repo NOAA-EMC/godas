@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name=superob
 #SBATCH --nodes=1
-#SBATCH --qos=debug
-##SBATCH --qos=batch
+##SBATCH --qos=debug
+#SBATCH --qos=batch
 #SBATCH --time=00:30:00
 #SBATCH --account=marine-cpu
 #SBATCH --output=superob%j.log
 #SBATCH --error=superob%j.err
-##SBATCH --exclusive
-##SBATCH --partition=orion
+#SBATCH --exclusive
+#SBATCH --partition=orion
 
 function ymd2iso () {
     echo $( date -d "$1" +%Y-%m-%dT:%H:%M:%SZ )
@@ -59,7 +59,7 @@ while [ "$cycle_end" != "$enddate" ]; do
     lof=`ls ${obstype}_$( date -d "$cycle_start" +%Y%m%d )*.nc.yaml`
     for f in $lof; do
         echo "Superobing $f"
-        $superob_bin $f > ${f}.out &
+        $superob_bin $f > ${f}.out
     done
     wait # for all processes to be done
     profiling_end=`date +%s.%N`
