@@ -42,6 +42,12 @@ function infiles_wildcard () {
         avhrrmtc_l3u)
             echo "*AVHRRF_MC*.nc"
             ;;
+        viirs_n20_l3u)
+            echo "*VIIRS_N20*.nc"
+            ;;
+        viirs_npp_l3u)
+            echo "*VIIRS_NPP*.nc"
+            ;;
         *)
             echo ".nc*"
             ;;
@@ -51,10 +57,10 @@ function infiles_wildcard () {
 function provider () {
     inst=$1
     case $inst in
-        avhrr_l3u | viirs_l3u)
+        avhrr_l3u)
             echo "nesdis"
             ;;
-        avhrrmta_l3u | avhrrmtb_l3u | avhrrmtc_l3u)
+        avhrrmta_l3u | avhrrmtb_l3u | avhrrmtc_l3u | viirs_n20_l3u | viirs_npp_l3u)
             echo "JPL"
             ;;
         *)
@@ -76,6 +82,10 @@ function inst2filename () {
             name="metopb_l3u" ;;
         "*AVHRRF_MC*.nc")
             name="metopc_l3u" ;;
+        "*VIIRS_N20*.nc")
+            name="viirs_n20_l3u" ;;
+        "*VIIRS_NPP*.nc")
+            name="viirs_npp_l3u" ;;
         *)
             name="unknown"
     esac
