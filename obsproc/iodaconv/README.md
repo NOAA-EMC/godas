@@ -20,4 +20,5 @@ ln -s <path to source of obs>/sst.avhrr_l3u.nesdis data/sst.avhrr_l3u.nesdis
 ```
 
 - **godas_obscat.sh**
-In progress, will concatenate files just don't use it just yet.
+TODO (Guillaume): Probably should be here, move somewhere else
+In progress, will concatenate files just don't use it just yet

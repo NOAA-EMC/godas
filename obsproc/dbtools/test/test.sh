@@ -1,6 +1,6 @@
 #!/bin/bash
 set -eu
-../bin/soca_store_obs.py --start 2015-01-01T00:00:00Z \
+../bin/godas_store_obs.py --start 2015-01-01T00:00:00Z \
                          --end 2015-01-03T00:00:00Z \
                          --source_dir ./obs-2-move \
                          --source_file ymd \
