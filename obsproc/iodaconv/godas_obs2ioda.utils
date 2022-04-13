@@ -36,6 +36,9 @@ function infiles_wildcard () {
         avhrrmta_l3u)
             echo "*AVHRRF_MA*.nc"
             ;;
+        avhrrmtb_l3u)
+            echo "*AVHRRF_MB*.nc"
+            ;;
         *)
             echo ".nc*"
             ;;
@@ -48,7 +51,7 @@ function provider () {
         avhrr_l3u | viirs_l3u)
             echo "nesdis"
             ;;
-        avhrrmta_l3u)
+        avhrrmta_l3u | avhrrmtb_l3u)
             echo "JPL"
             ;;
         *)
@@ -66,6 +69,8 @@ function inst2filename () {
             name="noaa18_l3u" ;;
         "*AVHRRF_MA*.nc")
             name="metopa_l3u" ;;
+        "*AVHRRF_MB*.nc")
+            name="metopb_l3u" ;;
         *)
             name="unknown"
     esac
