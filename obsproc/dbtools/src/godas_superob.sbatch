@@ -25,10 +25,10 @@ obstype='sst_noaa18_l3u'
 export R2D2_DB=/work/noaa/ng-godas/r2d2/                                                               # path to the DB
 source /work/noaa/marine/Guillaume.Vernieres/runs/s2s/soca-science/configs/machine/machine.orion.intel # Load modules
 superob_bin=/work/noaa/marine/Guillaume.Vernieres/runs/s2s/broken-b/build/bin/obs_superob.x            # superob exec
-export GRIDSPEC=/work/noaa/marine/Guillaume.Vernieres/runs/s2s/final-0.25/static/soca_gridspec.nc      # 1/4 deg grid
+export GRIDSPEC=/work/noaa/marine/Guillaume.Vernieres/runs/s2s/notfinal-0.25/static/soca_gridspec.nc      # 1/4 deg grid
 superob_out=$PWD/test                                                                                  # Output path for the superobed files
 godas_sandbox=/work/noaa/marine/Guillaume.Vernieres/OBS/sprint1of4/convert2ioda/godas                  # path to godas
-superob=${godas_sandbox}/obsproc/r2d2/src/godas_superob.py                                             # Python wrapper to superob
+superob=${godas_sandbox}/obsproc/dbtools/src/godas_superob.py                                             # Python wrapper to superob
 
 # Superob each files
 export OMP_NUM_THREADS=1
@@ -43,7 +43,7 @@ while [ "$cycle_end" != "$enddate" ]; do
 
     # Fetch obs from R2D2
     echo "=================================================================="
-    echo "Fetching $obstype from $(ymd2iso $cycle_start) to $(ymd2iso $cycle_end) ..."    
+    echo "Fetching $obstype from $(ymd2iso $cycle_start) to $(ymd2iso $cycle_end) ..."
     ${superob} --start $(ymd2iso $cycle_start) \
                --end $(ymd2iso $cycle_end) \
                --step $step \
@@ -52,7 +52,7 @@ while [ "$cycle_end" != "$enddate" ]; do
                --obstype $obstype \
                --superobout ${superob_out} > r2d2_fetch_$(ymd2iso $cycle_start).log
 
-    # Superob the batch of fetched obs 
+    # Superob the batch of fetched obs
     echo "Superobing from $(ymd2iso $cycle_start) to $(ymd2iso $cycle_end) ..."
 
     profiling_start=`date +%s.%N`
@@ -64,7 +64,7 @@ while [ "$cycle_end" != "$enddate" ]; do
     wait # for all processes to be done
     profiling_end=`date +%s.%N`
     echo "RUNTIME: $( echo "$profiling_end - $profiling_start" | bc -l )"
-    
+
     # Increment time by one day for next batch of obs
     cycle_start=${cycle_end}
 
