@@ -33,6 +33,9 @@ function infiles_wildcard () {
         avhrr_l3u)
             echo "*AVHRRG_N19*.nc *AVHRRG_N18*.nc"
             ;;
+        avhrrmta_l3u)
+            echo "*AVHRRF_MA*.nc"
+            ;;
         *)
             echo ".nc*"
             ;;
@@ -45,23 +48,11 @@ function provider () {
         avhrr_l3u | viirs_l3u)
             echo "nesdis"
             ;;
+        avhrrmta_l3u)
+            echo "JPL"
+            ;;
         *)
             echo "nesdis" #"ghrsst"
-            ;;
-    esac
-}
-
-function option_thinofinst () {
-    inst=$1
-    case $inst in
-        noaa19_l3u | metopa_l3u)
-            echo "-t 0.98"
-            ;;
-        viirs_l3u)
-            echo "-t 0.99"
-            ;;
-        *)
-            echo ""
             ;;
     esac
 }
@@ -73,26 +64,10 @@ function inst2filename () {
             name="noaa19_l3u" ;;
         "*AVHRRG_N18*.nc")
             name="noaa18_l3u" ;;
-        "AVHRRMTA*.nc*")
+        "*AVHRRF_MA*.nc")
             name="metopa_l3u" ;;
         *)
             name="unknown"
     esac
     echo "${name}"
 }
-
-function option_thinofinst () {
-    inst=$1
-    case $inst in
-        noaa19_l3u | metopa_l3u)
-            echo "-t 0.98"
-            ;;
-        viirs_l3u)
-            echo "-t 0.99"
-            ;;
-        *)
-            echo ""
-            ;;
-    esac
-}
-

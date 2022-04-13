@@ -26,7 +26,7 @@ while getopts ":hs:e:i:o:t:d:n:" option; do
          insts=$OPTARG;;
       n) # Enter number of  pe's
          N=$OPTARG;;
-     
+
      \?) # Invalid option
          echo "Error: Invalid option"
          exit;;
@@ -63,7 +63,7 @@ while [[ $date -le $date_end ]]; do
 
         for w in $loi; do
             infiles=$(ls -1 ${input_path}/${obs}.${inst}.${prov}/${date}/*${w} | awk '{ ORS=" "; print; }')
-	    obs_descriptor=$(inst2filename $w) 
+	    obs_descriptor=$(inst2filename $w)
 	    for f in $infiles; do
 		ymdhm=`basename $f`
 		ymdhm=`echo $ymdhm | grep -Eo [0-9]{12}`
