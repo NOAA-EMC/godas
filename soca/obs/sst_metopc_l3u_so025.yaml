@@ -1,9 +1,9 @@
 - obs space:
-    name: sst_noaa19
+    name: sst_metopc_l3u_so025
     obsdatain:
-      obsfile: $(experiment_dir)/{{current_cycle}}/sst_noaa19.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/sst_metopc_l3u_so025.{{window_begin}}.nc4
     obsdataout:
-      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sst_noaa19.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sst_metopc_l3u_so025.{{window_begin}}.nc4
     simulated variables: [sea_surface_temperature]
   obs operator:
     name: Identity
@@ -26,7 +26,3 @@
     where:
     - variable: {name: sea_surface_temperature@ObsError}
       minvalue: 0.001
-
-  ## Gaussian_Thinning is having problems with the LETKF, try again alter
-  # - filter: Gaussian_Thinning
-  #   horizontal_mesh:   25.0 #km
