@@ -102,7 +102,6 @@ def gen_figure(input1,input2,sdate,d1nm,d2nm,d1ad,d2ad,plotpath):
     ne = 0
     for v in varlists:
         print (v)
-     #  data1, lons1, lats1, data2, lons2, lats2 = read_2datm_var(input1,input2, v)
         data1, lons1, lats1 = read_datm_var(input1, v)
         data2, lons2, lats2 = read_datm_var(input2, v)
 
