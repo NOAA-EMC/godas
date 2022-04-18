@@ -1,0 +1,30 @@
+- obs space:
+    name: insitu_t_profile_fnmoc
+    distribution:
+      name: *obs_distribution
+    obsdatain:
+      obsfile: $(experiment_dir)/{{current_cycle}}/temp_profile_fnmoc.{{window_begin}}.nc4
+    obsdataout:
+      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).temp_profile_fnmoc.{{window_begin}}.nc4
+    simulated variables: [sea_water_temperature]
+  obs operator:
+    name: InsituTemperature
+  obs error:
+    covariance model: diagonal
+  _letkf: &letkf
+    # note, this is only used for LETKF. If running with LETKF, the workflow
+    # will append "<< : *letkf" to the end of this file
+    obs localizations:
+    - localization method: Horizontal Gaspari-Cohn
+      lengthscale: 500e3
+  obs filters:
+  - *obs_land_mask
+  - filter: Domain Check
+    where:
+    - variable: {name: sea_water_temperature@ObsError}
+      minvalue: 0.001
+  - filter: Bounds Check
+    minvalue: -2.0
+    maxvalue: 36.0
+  - filter: Background Check
+    threshold: 5.0
