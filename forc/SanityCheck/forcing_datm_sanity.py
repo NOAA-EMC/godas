@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
                            #hyun-chul.lee@noaa.gov
 import matplotlib
-#matplotlib.use('agg')
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 import netCDF4 as nc
 from netCDF4 import Dataset
 import numpy as np
 import argparse
-import glob
-import os
 import yaml
-import sys
 
 def plot_zonal_ave(data1zave,data1zmax,data1zmin,lats1,data2zave,data2zmax,data2zmin,lats2,plotpath,v,sdate,d1nm,d2nm,ne):
     #-- 
@@ -87,6 +82,19 @@ def read_2datm_var(input1, input2, v):
 
     return data1, lons1, lats1, data2, lons2, lats2
 
+def read_datm_var(inputs, v):
+    datas = np.array([])
+    latss = np.array([])
+    lonss = np.array([])
+
+    datanc = nc.Dataset(inputs)
+    latss = datanc.variables['lat'][:]
+    lonss = datanc.variables['lon'][:]
+    datas = datanc.variables[v][:,:]
+    datanc.close()
+
+    return datas, lonss, latss
+
 
 def gen_figure(input1,input2,sdate,d1nm,d2nm,d1ad,d2ad,plotpath):
     dset1 = nc.Dataset(input1)
@@ -94,7 +102,9 @@ def gen_figure(input1,input2,sdate,d1nm,d2nm,d1ad,d2ad,plotpath):
     ne = 0
     for v in varlists:
         print (v)
-        data1, lons1, lats1, data2, lons2, lats2 = read_2datm_var(input1,input2, v)
+     #  data1, lons1, lats1, data2, lons2, lats2 = read_2datm_var(input1,input2, v)
+        data1, lons1, lats1 = read_datm_var(input1, v)
+        data2, lons2, lats2 = read_datm_var(input2, v)
 
         data1zave=np.average(data1,axis=2)
         data1zmax=np.amax(data1,axis=2)
