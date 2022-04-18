@@ -59,29 +59,6 @@ def plot_zonal_ave(data1zave,data1zmax,data1zmin,lats1,data2zave,data2zmax,data2
         plt.savefig(outname)
         plt.close()
 
-def read_2datm_var(input1, input2, v):
-    data1 = np.array([])
-    lats1 = np.array([])
-    lons1 = np.array([])
-
-    data2 = np.array([])
-    lats2 = np.array([])
-    lons2 = np.array([])
-
-    datanc = nc.Dataset(input1)
-    lats1 = datanc.variables['lat'][:]
-    lons1 = datanc.variables['lon'][:]
-    data1 = datanc.variables[v][:,:]
-    datanc.close()
-
-    datanc = nc.Dataset(input2)
-    lats2 = datanc.variables['lat'][:]
-    lon2 = datanc.variables['lon'][:]
-    data2 = datanc.variables[v][:,:]
-    datanc.close()
-
-    return data1, lons1, lats1, data2, lons2, lats2
-
 def read_datm_var(inputs, v):
     datas = np.array([])
     latss = np.array([])
