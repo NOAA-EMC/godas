@@ -71,6 +71,12 @@ cost function:
     state variables: [__DA_VARIABLES__, mld, layer_depth]
 
   background error:
+    #covariance model: SABER
+    #saber blocks:
+    #- saber block name: ID
+    #  input variables: *soca_vars
+    #  output variables: *soca_vars
+
     covariance model: SocaError
     analysis variables: [__DA_VARIABLES__]
     date: *bkg_date
