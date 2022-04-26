@@ -1,3 +1,19 @@
+'''
+Description:
+    This python script can be used to produce a broader picture of the database inventory.
+    It can show the gap when data are missing.  
+Author:
+    Jakir Hossen
+Modified date:
+    Apr 21, 2022
+input:
+    start date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
+    end date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
+    yaml file (contains step, r2d2 dir and list of observation)
+output:
+    will produce a figure that shows when observation is available and a gap when data are missing
+'''
+
 from netCDF4 import Dataset, num2date, date2num
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from datetime import datetime, timedelta
@@ -22,6 +38,11 @@ class ObsInventory:
         self.args=args
 
     def inventory_p1d(self, folder=None):
+        '''
+        For missing file: ind=0
+        and for existing: ind=1
+        This index is used for plotting
+        '''
         if folder== None:
             folder=self.folder
         start_date=datetime.strptime(self.start_date, '%Y%m%d').date()
@@ -44,6 +65,12 @@ class ObsInventory:
         self.plot_p1d(plf_avail_date)
     
     def plot_p1d(self, plf_data):
+        '''
+        is_key is used to find the total length of data when available, like start date and end date
+        initially, is_key=1, when start date (first instance of ind[i]=1)  is picked, put is_key=0, 
+        Do not update is_key until ind[i]=0, which is the end_date. 
+        After picking end date, put is_key=1
+        '''
         listd=[]
         for plf in plf_data.keys():
             data=plf_data[plf]
@@ -87,6 +114,11 @@ class ObsInventory:
         pio.write_image(fig, 'Fig_inventory_P1D_%s-%s.png'%(self.start_date[:4], self.end_date[:4]), format='png')
 
     def inventory_pt10m(self, folder=None):
+        '''
+        For missing file: ind=0
+        and for existing: ind=1
+        This index is used for plotting
+        '''
         if folder== None:
             folder=self.folder
         start_date=datetime.strptime(self.start_date, '%Y%m%d%H%M')
@@ -109,6 +141,12 @@ class ObsInventory:
         self.plot_pt10m(plf_avail_date)
         
     def plot_pt10m(self, plf_data):
+        '''
+        is_key is used to find the total length of data when available, like start date and end date
+        initially, is_key=1, when start date (first instance of ind[i]=1)  is picked, put is_key=0, 
+        Do not update is_key until ind[i]=0, which is the end_date. 
+        After picking end date, put is_key=1
+        '''
         listd=[]
         for plf in plf_data.keys():
             data=plf_data[plf]
@@ -154,21 +192,19 @@ class ObsInventory:
 
   
 if __name__ == '__main__':
-    description = """ Ex: godas_obssanitycheck.py -f adt_c2 -s start -e end -q frequency
-                      Suggestions: limit the range between 3-6 months for daily data
-                                for hourly or minutes data limit a day to few days       
+    description = """ Ex: python godas_inventory_plot.py -s start -e end -y yaml_file
+                      Suggestions: for PT10M, limit the range between 1-2 years
                   """
     # Command line argument
     parser = ArgumentParser(
         description=description,
         formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('-s','--start',
-        help="start date (yearmmdd, yearmmddhhmn, ...)",
-        type=str, required=True)
+        help="start date (yyyymmdd, yyyymmddhhmn)", type=str, required=True)
     parser.add_argument( '-e','--end',
-        help="end date in the format yearmmdd",type=str, required=True)
+        help="end date (yyyymmdd, yyyymmddhhmn)",type=str, required=True)
     parser.add_argument('-y','--yaml',
-        help="Provide yaml file", type=str, required=False)
+        help="Provide yaml file that contains step, r2d2 dir, obs_type", type=str, required=True)
 
     args = parser.parse_args()
     if args.yaml is not None:
@@ -177,7 +213,7 @@ if __name__ == '__main__':
         args.file_descriptor=config['obs_types']
         args.path=config['obs_dir']
         args.step=config['step']
-    print(args)
+    #print(args)
     obj_inventory=ObsInventory(args=args)
 
     #obj_inventory.inventory_barplot(folder=args.path)
@@ -186,6 +222,7 @@ if __name__ == '__main__':
 
     elif len(args.start)>8 and args.step == 'PT10M':
         obj_inventory.inventory_pt10m(folder=args.path)
+
     else:
         sys.exit('inconsistent information. Please check your date and yaml file')
 

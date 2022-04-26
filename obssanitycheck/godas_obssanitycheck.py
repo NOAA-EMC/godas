@@ -1,3 +1,21 @@
+'''
+Description:
+    This module can find missing files in the database and also extract information such as obs count, min/max of a variable.
+Author:
+    Jakir Hossen
+Modified date:
+    Apr 26, 2022
+input:
+    start date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
+    end date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
+    obs_type (such as, adt, sst, sss ...)
+    platforms (such as satellite or instrument name)
+    step (such as P1D, PT10M)
+output:
+    produce figure with plotting obs count, min/max of ObsValue and ObsError
+    Also, put all the dates or time at which files are missing
+'''
+
 from netCDF4 import Dataset, num2date, date2num
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from datetime import datetime, timedelta
@@ -12,6 +30,8 @@ import plotly.express as px
 import pandas as pd
 import plotly.io as pio
 
+# -------------- ------------------
+
 class ObsSanityCheck:
     def __init__(self,args=None):
         self.folder = args.path 
@@ -20,47 +40,44 @@ class ObsSanityCheck:
         self.year=self.start_date[0:4]
         self.args=args
 
+
     def extract_info_pt10m(self, folder=None):
-        if folder is None:
+
+        if folder== None:
             folder=self.folder
-        file_descriptor=self.args.file_descriptor
         start_date=datetime.strptime(self.start_date, '%Y%m%d%H%M')
         end_date=datetime.strptime(self.end_date, '%Y%m%d%H%M')
-        current_date=start_date
-        missing_hours=[]
-        nlocs=[]
-        avail_dates=[]
-        minval=[]
-        maxval=[]
-        while current_date < end_date:
-            tmdhm=datetime.strftime(current_date, '%Y%m%d%H%M')
-            ddir=folder+'/'+tmdhm[0:8]
-            list_of_files=glob(ddir+'/*%s*%s*.nc*'%(file_descriptor, tmdhm))
-            if not list_of_files:
-                missing_hours.append(tmdhm[8:])
-            else:
-                nloc, minn, maxx=self.find_param(list_of_files[0])
-                nlocs.append(nloc)
-                minval.append(minn)
-                maxval.append(maxx)
-                if nloc==0: 
-                    missing_hours.append(tmdhm[8:])
-                avail_dates.append(current_date)
-            current_date=current_date+timedelta(minutes=10)
-        self.plot_info(nlocs, minval, maxval, avail_dates, missing_hours, freq='hours')
+        plf_data={}
+        plf_miss_hrs={}
+        var_name=None
+        for plf in self.args.platform:
+            obstype=self.args.obstype
+            current_date=start_date
+            while current_date < end_date:
+                ddir=folder+'/%s'%current_date.date()
+                tmhm=current_date.time()
+                list_of_files=glob(ddir+'/*%s*%s*%s*.nc*'%(obstype, plf, tmhm))
+                if not list_of_files:
+                    plf_miss_hrs.setdefault(plf, []).append(tmhm)
+                else:
+                    nloc, minval, maxval=self.find_param(list_of_files[0], group='ObsValue')
+                    nloc, minerr, maxerr=self.find_param(list_of_files[0], group='ObsError')
+                    plf_data.setdefault(plf, []).append([nloc, minval, maxval, minerr, maxerr, current_date])                    
+                current_date=current_date+timedelta(minutes=10)
+        self.plf_data=plf_data
+        self.plf_miss_hrs=plf_miss_hrs
+        if len(plf_data) !=0 : 
+            self.plot_info(plf_data, plf_miss_hrs)
+        else:
+            sys.exit('Nothing is found for the range of the date; check your database')
 
 
     def extract_info_p1d(self, folder=None):
-        #file_descriptor=self.args.file_descriptor
+        
         if folder== None:
             folder=self.folder
         start_date=datetime.strptime(self.start_date, '%Y%m%d').date()
         end_date=datetime.strptime(self.end_date, '%Y%m%d').date()
-        missing_dates=[]
-        nlocs=[]
-        avail_dates=[]
-        obsval=[]
-        obserr=[]
         plf_data={}
         plf_missdates={}
         var_name=None
@@ -75,7 +92,6 @@ class ObsSanityCheck:
                 else:
                     nloc, minval, maxval=self.find_param(list_of_files[0], group='ObsValue')
                     nloc, minerr, maxerr=self.find_param(list_of_files[0], group='ObsError')
-                    avail_dates.append(current_date)
                     plf_data.setdefault(plf, []).append([nloc, minval, maxval, minerr, maxerr, current_date])                    
                 current_date=current_date+timedelta(days=1)
         self.plf_data=plf_data
@@ -84,16 +100,16 @@ class ObsSanityCheck:
             self.plot_info(plf_data, plf_missdates, freq='dates')
         else:
             sys.exit('Nothing is found for the range of the date; check your database')
-    #def plot_info(self, nlocs, obsval, obserr, var_name, avail_dates, missing_dates, freq=None):        
+
+
     def plot_info(self, plf_data, plf_missdates, freq=None):        
         
-        #file_descriptor=self.args.file_descriptor
         formatter = mdates.DateFormatter('%Y/%m/%d')
         fig = plt.figure(figsize=(7,8), tight_layout=True)
         self.color_plf=['g','r','b','k','m','y']
         self.units={'sea_ice_area_fraction':'\%', 'absolute_dynamic_topography': 'm', \
             'ice_concentration':'\%', 'sea_surface_salinity':'psu', 'sea_water_salinity':'psu',
-            'sea_surface_temperature':'C' }
+            'sea_surface_temperature':'C','sea_surface_skin_temperature':'C' }
 
         gs = gridspec.GridSpec(3, 3)
         ax = fig.add_subplot(gs[0, 0:2])
@@ -109,7 +125,7 @@ class ObsSanityCheck:
         self.write_missing_on_plot(ax)
 
         plt.suptitle("%s: %s-%s"%(self.args.obstype.upper(), self.start_date, self.end_date), y=.98, fontsize=14);
-        plt.savefig('Fig_%s_%s_mm-%s-%s.png'%(self.year, self.args.obstype, self.start_date[4:6], self.end_date[4:6]), bbox_inches='tight', pad_inches=0.1)
+        plt.savefig('Fig_%s_%s_%sm%s-%s.png'%(self.args.step, self.args.obstype, self.year, self.start_date[4:6], self.end_date[4:6]), bbox_inches='tight', pad_inches=0.1)
    
     def plot_obscount(self, ax):
         nlocmax=[]
@@ -122,7 +138,7 @@ class ObsSanityCheck:
             data=np.array(data)
             nlocs=data[:,0]
             avail_dates=data[:,5]
-            nlocs=[xx/1000 for xx in nlocs]
+            nlocs=[xx/1000 for xx in nlocs] # number of data in thousands
             nlocmax.append(max(nlocs))
             nlocmin.append(min(nlocs))
             ax.plot_date(avail_dates, nlocs,'-o', color=self.color_plf[i], label='%s'%plf)
@@ -157,14 +173,14 @@ class ObsSanityCheck:
             plt.plot_date(avail_dates, minerr,'-o', markersize=6,  color=self.color_plf[i],label='%s (min)'%plf)
             i=i+1
         ax.set_ylabel('Obs Error')
-        ax.set_xlabel('dates')
+        ax.set_xlabel('Dates')
         plt.grid(True)
-        ax.legend(ncol=min(3,len(self.args.platform)), labelspacing = 0.2, loc=0)
+        ax.legend(ncol=min(3,len(self.plf_data.keys())), labelspacing = 0.2, loc=0)
         ax.xaxis.set_major_locator(mdates.DayLocator(interval=15))
         ax.set_xticklabels([])
 
     def plot_obsvalue(self, ax):
-        #var_name=self.fxn(var_name)
+        # remove "_" from the var name
         if "_" in self.var_name:
             varr_name=self.var_name.replace('_', " ")
         plt.title('%s (%s)'%(varr_name, self.units[self.var_name]))
@@ -182,42 +198,49 @@ class ObsSanityCheck:
             i=i+1
         ax.set_ylabel('Obs Value')
         plt.grid(True)
-        #ax.legend(ncol=len(self.args.platform), loc=0)
-        ax.legend(ncol=min(3,len(self.args.platform)), loc=0, fontsize=10, labelspacing=0.2)
+        ax.legend(ncol=min(3,len(self.plf_data.keys())), loc=0, fontsize=10, labelspacing=0.2)
         ax.xaxis.set_major_locator(mdates.DayLocator(interval=15))
         ax.set_xticklabels([])
-    # --- extract no of observations and min/max value of a varibale -----
+
     def write_missing_on_plot(self, ax):
+        plf_data=self.plf_data
+        if self.args.step=='PT10M':
+            plf_missdates=self.plf_miss_hrs
+        else:
+            plf_missdates=self.plf_missdates
             
-        #plt.title('Missing files (mm-dd)')
         xstep=0.01
         ystep=0.98
-        # First write "not files exist"
+        # First write "no files exist"
         # then, write the "no missing files:
         # then write the date when files are missing
         for plf in self.args.platform:
-            if plf not in self.plf_data.keys():
+            if plf not in plf_data.keys():
                 plt.text(xstep, ystep, 'No files exist for %s!'%plf)
                 ystep=ystep-0.03
                 continue
-            if plf not in self.plf_missdates.keys():
+            if plf not in plf_missdates.keys():
                 plt.text(xstep, ystep, 'No missing files for %s!'%plf)
                 ystep=ystep-0.03
                 continue
         
         ystep=ystep-0.01
-        # write dates when files are missing for some platforms.
-        plt.text(xstep, ystep, 'Missing files (mm-dd)')
+        # write dates when files are missing
+        if self.args.step=='PT10M':
+            plt.text(xstep, ystep, 'Missing files (dd-hhmn):')
+        else:
+            plt.text(xstep, ystep, 'Missing files (mm-dd):')
+
         ystep=ystep-0.035
 
         yheight=ystep
         for plf in self.args.platform:
-            if plf not in self.plf_data.keys():
+            if plf not in plf_data.keys():
                 continue
-            if plf not in self.plf_missdates.keys():
+            if plf not in plf_missdates.keys():
                 #ystep=ystep-0.05
                 continue
-            missing_dates=self.plf_missdates[plf]
+            missing_dates=plf_missdates[plf]
             
             #ystep=ystep-0.05
             plt.text(xstep, ystep, 'PF: %s'%plf, bbox=dict(facecolor='none', edgecolor='red'), fontsize=10)
@@ -227,18 +250,23 @@ class ObsSanityCheck:
                 if ystep < .01: 
                     xstep=xstep+0.355
                     ystep=yheight
-                plt.text(xstep, ystep, '%02d-%02d |'%(tx.month, tx.day), fontsize=9)
+
+                if self.args.step=='PT10M':
+                    txtime=tx.time()
+                    plt.text(xstep, ystep, '%02d-%02d%02d |'%(tx.day, txtime.hour, txtime.minute), fontsize=9)
+                else:
+                    plt.text(xstep, ystep, '%02d-%02d |'%(tx.month, tx.day), fontsize=9)
             ystep=ystep-0.05
         ax.axis('off')
+
+    # --- extract no of observations and min/max value of a varibale -----
 
     def find_param(self, fname, group='ObsValue'):
         args=self.args
         ncfile = Dataset(fname,'r')
-        metadata_grp=ncfile.groups['MetaData']
         var_grp=ncfile.groups[group]
         var_names=list(var_grp.variables)
-        #print(var_names)
-        var_name=var_names[0]
+        var_name=var_names[-1]
         var_tmp=np.squeeze(var_grp.variables[var_name][:])
         self.var_name=var_name
         nlocs=len(var_tmp)
@@ -251,9 +279,9 @@ class ObsSanityCheck:
         return nlocs,  minval, maxval
   
 if __name__ == '__main__':
-    description = """ Ex: godas_obssanitycheck.py -t adt -p c2 j2 j3 sa 3a -s start -e end -q P1D
-                      Suggestions: limit the range between 3-6 months for daily data
-                                for hourly or minutes data limit a day to few days       
+    description = """ Ex: godas_obssanitycheck.py -t adt -p c2 j2 j3 sa 3a -s start -e end --step P1D
+                      Suggestions: limit the range between 3-6 months for P1D data
+                                for PT10M data limit a day to few days       
                   """
     # Command line argument
     parser = ArgumentParser(
