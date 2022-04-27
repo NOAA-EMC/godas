@@ -1,10 +1,7 @@
 '''
 Description:
     This module can find missing files in the database and also extract information such as obs count, min/max of a variable.
-Author:
-    Jakir Hossen
-Modified date:
-    Apr 26, 2022
+
 input:
     start date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
     end date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
@@ -13,7 +10,7 @@ input:
     step (such as P1D, PT10M)
 output:
     produce figure with plotting obs count, min/max of ObsValue and ObsError
-    Also, put all the dates or time at which files are missing
+    Also, show all the dates or time at which files are missing
 '''
 
 from netCDF4 import Dataset, num2date, date2num

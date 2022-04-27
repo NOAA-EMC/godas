@@ -1,11 +1,8 @@
 '''
 Description:
-    This python script can be used to produce a broader picture of the database inventory.
-    It can show the gap when data are missing.  
-Author:
-    Jakir Hossen
-Modified date:
-    Apr 21, 2022
+    This python script can be used to produce an overview of the database inventory, 
+    such as the time period when data is available and when data is missing.  
+
 input:
     start date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
     end date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
@@ -66,10 +63,11 @@ class ObsInventory:
     
     def plot_p1d(self, plf_data):
         '''
-        is_key is used to find the total length of data when available, like start date and end date
-        initially, is_key=1, when start date (first instance of ind[i]=1)  is picked, put is_key=0, 
-        Do not update is_key until ind[i]=0, which is the end_date. 
-        After picking end date, put is_key=1
+        is_key is used to find the total length of time when data is available, 
+	like start date and end date. Initially, is_key=1 is setup when start date 
+	(first instance of ind[i]=1) is picked and put is_key=0. 
+        Do not update is_key until ind[i]=0 is found, at which the end_date is 
+        picked and put is_key=1
         '''
         listd=[]
         for plf in plf_data.keys():
@@ -142,10 +140,11 @@ class ObsInventory:
         
     def plot_pt10m(self, plf_data):
         '''
-        is_key is used to find the total length of data when available, like start date and end date
-        initially, is_key=1, when start date (first instance of ind[i]=1)  is picked, put is_key=0, 
-        Do not update is_key until ind[i]=0, which is the end_date. 
-        After picking end date, put is_key=1
+        is_key is used to find the total length of time when data is available, 
+	like start date and end date. Initially, is_key=1 is setup when start date 
+	(first instance of ind[i]=1) is picked and put is_key=0. 
+        Do not update is_key until ind[i]=0 is found, at which the end_date is 
+        picked and put is_key=1
         '''
         listd=[]
         for plf in plf_data.keys():
