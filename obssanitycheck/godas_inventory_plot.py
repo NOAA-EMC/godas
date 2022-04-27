@@ -33,7 +33,7 @@ class ObsInventory:
         self.end_date = args.end
         self.year=self.start_date[0:4]
         self.args=args
-
+    # ---------- P1D database ----------------- 
     def inventory_p1d(self, folder=None):
         '''
         For missing file: ind=0
@@ -111,6 +111,8 @@ class ObsInventory:
         fig.update_layout(title_x=0.55, yaxis_title=None, margin=dict(l=20, r=20, t=25, b=20))
         pio.write_image(fig, 'Fig_inventory_P1D_%s-%s.png'%(self.start_date[:4], self.end_date[:4]), format='png')
 
+    # ------------ SST 10 min database ---------------
+    # ------------------------------------------------
     def inventory_pt10m(self, folder=None):
         '''
         For missing file: ind=0
