@@ -1,10 +1,6 @@
 '''
 Description:
     This module can find missing files in the database and also extract information such as obs count, min/max of a variable.
-Author:
-    Jakir Hossen
-Modified date:
-    Apr 26, 2022
 input:
     start date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
     end date (for P1D: yyyymmdd, for PT10M: yyyymmddhhmn)
@@ -13,7 +9,7 @@ input:
     step (such as P1D, PT10M)
 output:
     produce figure with plotting obs count, min/max of ObsValue and ObsError
-    Also, put all the dates or time at which files are missing
+    Also, show all the dates or time at which files are missing
 '''
 
 from netCDF4 import Dataset, num2date, date2num
@@ -64,12 +60,13 @@ class ObsSanityCheck:
                     nloc, minerr, maxerr=self.find_param(list_of_files[0], group='ObsError')
                     plf_data.setdefault(plf, []).append([nloc, minval, maxval, minerr, maxerr, current_date])                    
                 current_date=current_date+timedelta(minutes=10)
+                
         self.plf_data=plf_data
         self.plf_miss_hrs=plf_miss_hrs
         if len(plf_data) !=0 : 
             self.plot_info(plf_data, plf_miss_hrs)
         else:
-            sys.exit('Nothing is found for the range of the date; check your database')
+            sys.exit('Nothing is found; check your database whether obs_type or platforms exist')
 
 
     def extract_info_p1d(self, folder=None):
@@ -94,6 +91,7 @@ class ObsSanityCheck:
                     nloc, minerr, maxerr=self.find_param(list_of_files[0], group='ObsError')
                     plf_data.setdefault(plf, []).append([nloc, minval, maxval, minerr, maxerr, current_date])                    
                 current_date=current_date+timedelta(days=1)
+                
         self.plf_data=plf_data
         self.plf_missdates=plf_missdates
         if len(plf_data) !=0 : 
@@ -211,9 +209,8 @@ class ObsSanityCheck:
             
         xstep=0.01
         ystep=0.98
-        # First write "no files exist"
-        # then, write the "no missing files:
-        # then write the date when files are missing
+        # First write "no files exist"; then, write the "no missing files"
+        # And finally, write the date when files are missing
         for plf in self.args.platform:
             if plf not in plf_data.keys():
                 plt.text(xstep, ystep, 'No files exist for %s!'%plf)
@@ -242,10 +239,8 @@ class ObsSanityCheck:
                 continue
             missing_dates=plf_missdates[plf]
             
-            #ystep=ystep-0.05
             plt.text(xstep, ystep, 'PF: %s'%plf, bbox=dict(facecolor='none', edgecolor='red'), fontsize=10)
             for tx in missing_dates:
-                #print(tx, tx.day)
                 ystep=ystep-0.027
                 if ystep < .01: 
                     xstep=xstep+0.355
