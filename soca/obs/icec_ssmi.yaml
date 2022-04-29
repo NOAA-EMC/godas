@@ -1,10 +1,12 @@
 - obs space:
-    name: sst_noaa19_l3u_so025
+    name: icec_ssmi
+    distribution:
+      name: *obs_distribution
     obsdatain:
-      obsfile: $(experiment_dir)/{{current_cycle}}/sst_noaa19_l3u_so025.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/icec_ssmi.{{window_begin}}.nc4
     obsdataout:
-      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sst_noaa19_l3u_so025.{{window_begin}}.nc4
-    simulated variables: [sea_surface_temperature]
+      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_ssmi.{{window_begin}}.nc4
+    simulated variables: [sea_ice_area_fraction]
   obs operator:
     name: Identity
   obs error:
@@ -14,15 +16,15 @@
     # will append "<< : *letkf" to the end of this file
     obs localizations:
     - localization method: Horizontal Gaspari-Cohn
-      lengthscale: 500e3
+      lengthscale: 200e3
   obs filters:
   - *obs_land_mask
   - filter: Bounds Check
-    minvalue: -2.0
-    maxvalue: 36.0
+    minvalue: 0.0
+    maxvalue: 1.0
   - filter: Background Check
     threshold: 5.0
   - filter: Domain Check
     where:
-    - variable: {name: sea_surface_temperature@ObsError}
-      minvalue: 0.001
+    - variable: { name: sea_surface_temperature@GeoVaLs}
+      maxvalue: 0.9

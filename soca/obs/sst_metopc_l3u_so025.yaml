@@ -1,9 +1,11 @@
 - obs space:
-    name: sst_noaa19_l3u_so025
+    name: sst_metopc_l3u_so025
+    distribution:
+      name: *obs_distribution
     obsdatain:
-      obsfile: $(experiment_dir)/{{current_cycle}}/sst_noaa19_l3u_so025.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/sst_metopc_l3u_so025.{{window_begin}}.nc4
     obsdataout:
-      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sst_noaa19_l3u_so025.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sst_metopc_l3u_so025.{{window_begin}}.nc4
     simulated variables: [sea_surface_temperature]
   obs operator:
     name: Identity
@@ -14,7 +16,7 @@
     # will append "<< : *letkf" to the end of this file
     obs localizations:
     - localization method: Horizontal Gaspari-Cohn
-      lengthscale: 500e3
+      lengthscale: 200e3
   obs filters:
   - *obs_land_mask
   - filter: Bounds Check
@@ -26,3 +28,10 @@
     where:
     - variable: {name: sea_surface_temperature@ObsError}
       minvalue: 0.001
+    #  maxvalue: 0.5
+    #action:
+    #  name: inflate error
+    #  inflation: 2.0
+  ## Gaussian_Thinning is having problems with the LETKF, try again alter
+  #- filter: Gaussian_Thinning
+  #  horizontal_mesh:  1111.949266 #km
