@@ -92,6 +92,7 @@ DATM_START_TYPE="startup"
 ICE_START_TYPE="initial"
 DATM_NAME="cdeps"
 
+
 #-------------------------------------------------------------------------------
 # Observations
 #-------------------------------------------------------------------------------
@@ -104,12 +105,13 @@ OBS_ENABLED=T
 OBS_TOLERATE_FAIL=T
 OBS_GEN_ENABLED=F
 
-OBS_LIST_OCN="temp salt adt sst sss"
+OBS_LIST_OCN="temp salt adt sst sss icec"
 
 OBS_ADT_LIST="3a_egm2008 c2_egm2008 j2_egm2008 j3_egm2008 sa_egm2008 coperl4"
-OBS_SST_LIST="metopa_l3u_so025 metopb_l3u_so025 noaa18_l3u_so025 noaa19_l3u_so025 viirs_npp_l3u_so025 drifter ship_fnmoc trak_fnmoc"
+OBS_SST_LIST="drifter ship_fnmoc trak_fnmoc metopa_l3u_so025 metopb_l3u_so025 metopc_l3u_so025 noaa18_l3u_so025 noaa19_l3u_so025 noaa20_l3u_so025 viirs_npp_l3u_so025 viirs_n20_l3u_so025"
 OBS_SSS_LIST="trak_fnmoc"
 OBS_SALT_LIST="profile_fnmoc"
 OBS_TEMP_LIST="profile_fnmoc"
+OBS_ICEC_LIST="ssmis_f17_north ssmis_f17_south ssmis_f18_north ssmis_f18_south"
 
-OBS_DB_PT10M="sst_metopa_l3u_so025 sst_metopb_l3u_so025 sst_noaa18_l3u_so025 sst_noaa19_l3u_so025 sst_viirs_npp_l3u_so025"
+OBS_DB_PT10M="sst_metopa_l3u_so025 sst_metopb_l3u_so025 sst_metopc_l3u_so025 sst_noaa18_l3u_so025 sst_noaa19_l3u_so025 sst_noaa20_l3u_so025 sst_viirs_npp_l3u_so025 sst_viirs_n20_l3u_so025"
