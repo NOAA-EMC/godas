@@ -26,5 +26,5 @@
   - filter: Bounds Check
     minvalue: -2.0
     maxvalue: 36.0
-  - filter: Background Check
-    threshold: 5.0
+#  - filter: Background Check
+#    threshold: 5.0
