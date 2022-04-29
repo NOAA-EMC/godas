@@ -1,6 +1,5 @@
 SCRATCH_DIR=${EXP_DIR}/SCRATCH   # Temporary files, deleted after each cycl
 SOCA_BIN_DIR=/work/noaa/marine/Guillaume.Vernieres/runs/s2s/build.intel/bin
-#SOCA_BIN_DIR=/work/noaa/marine/Guillaume.Vernieres/runs/s2s/broken-b/build/bin
 SOCA_DEFAULT_CFGS_DIR=${EXP_DIR}/godas/soca
 
 #-------------------------------------------------------------------------------
