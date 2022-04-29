@@ -1,11 +1,11 @@
 - obs space:
-    name: icec_ssmis_f17_north
+    name: icec_ssmis_f18_north
     distribution:
       name: *obs_distribution
     obsdatain:
-      obsfile: $(experiment_dir)/{{current_cycle}}/icec_ssmis_f17_north.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/icec_ssmis_f18_south.{{window_begin}}.nc4
     obsdataout:
-      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_ssmis_f17_north.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_ssmis_f18_south.{{window_begin}}.nc4
     simulated variables: [sea_ice_area_fraction]
   obs operator:
     name: Identity
