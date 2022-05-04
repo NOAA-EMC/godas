@@ -26,12 +26,5 @@
   - filter: Bounds Check
     minvalue: -2.0
     maxvalue: 36.0
-  - filter: Background Check
-    threshold: 3.0
-  # Measurement errors are too small, inflate almost everywhere
-  #- filter: Background Check
-  #  threshold: 0.01
-  #  action:
-  #    name: inflate error
-  #    inflation factor: 30.0
-
+#  - filter: Background Check
+#    threshold: 5.0
