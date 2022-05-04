@@ -11,8 +11,8 @@ _corr:
   - &corr_ocn
     name: ocn
     rossby mult: 1.0
-    min grid mult: 2.0
-    min value: 50.0e3
+    min grid mult: 3.0
+    min value: 100.0e3
     variables: [__DA_VARIABLES_OCN__]
   - &corr_ice
     name: ice

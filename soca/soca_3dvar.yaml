@@ -113,8 +113,8 @@ cost function:
         ssh_min: 0.0   # value at EQ
         ssh_max: 0.0   # value in Extratropics
         ssh_phi_ex: 20 # lat of transition from extratropics
-        cicen_min: 0.1
-        cicen_max: 0.1
+        cicen_min: 0.05
+        cicen_max: 0.05
         hicen_min: 0.1
         hicen_max: 0.1
 
