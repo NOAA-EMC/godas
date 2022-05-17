@@ -14,7 +14,7 @@ clim:
 time: $4
 level: $5
 latitude: 0.0
-color: jet # Spectral  #seismic #jet 
+color: seismic # Spectral  #seismic #jet 
 aggregate: False
 projection: $6 #'global'
 experiment: $7 
@@ -44,8 +44,8 @@ mkdir $cdir
 #varlist=(Temp)
 varlist=(Temp Salt ave_ssh aicen hicen)
 projlist=(global north south)
-#varlist=(ave_ssh)
-#projlist=(global)
+varlist=(Temp ave_ssh)
+projlist=(global)
 #tlist=($(seq 0 50 100))
 tlist=(50) # list of time indices to plot
 LEVEL=1
@@ -80,7 +80,7 @@ while [ "$YMDH" -le "$end_date" ]; do
                         prepsurfyaml $varname -.5 .5 $tindex surface $proj $stv $plotdir > ${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname -1.2 1.2 $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                        prepsurfyaml $varname -2 1. $tindex surface $proj $stv $plotdir > ${stv}.yaml
                     fi 
                     ;;
                     Salt)
@@ -121,7 +121,7 @@ while [ "$YMDH" -le "$end_date" ]; do
                             prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir > ${stv}.yaml
                         else
                             FNAME=ice.${stv}.${YMDH}.nc
-                            prepsurfyaml $varname 0 2 $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                            prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir > ${stv}.yaml
                         fi
                     else
                         continue

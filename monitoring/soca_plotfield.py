@@ -14,6 +14,18 @@ import yaml
 defaultcm = cmo.thermal
 from matplotlib import cm
 import re
+from matplotlib.colors import Normalize
+
+class MidpointNormalize(Normalize):
+    def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
+        self.midpoint = midpoint
+        Normalize.__init__(self, vmin, vmax, clip)
+
+    def __call__(self, value, clip=None):
+        # I'm ignoring masked values and all kinds of edge cases to make a
+        # simple example...
+        x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
+        return np.ma.masked_array(np.interp(value, x, y))
 
 def plothor(x, y, z, map, varname='',
             clim=[-1,1],
@@ -31,8 +43,8 @@ def plothor(x, y, z, map, varname='',
     if proj_type == 'south':
         proj = ccrs.SouthPolarStereo()
 
-    #fig = plt.figure(figsize=(13,6.2))
-    fig = plt.figure(figsize=(10,6))
+    fig = plt.figure(figsize=(13,8))
+    #fig = plt.figure(figsize=(10,6))
     ax = fig.add_subplot(1, 1, 1, projection=proj)
     if  proj_type == 'global':
         ax.set_global()
@@ -46,12 +58,13 @@ def plothor(x, y, z, map, varname='',
         ax.set_extent([-80, 30, 50, 87], crs=ccrs.PlateCarree())
     if plot_type == 'contour':
         if abs(a-b)<2: 
-            clevs = np.linspace(a, b, 6)
+            clevs = np.linspace(a, b, 11)
         else:
-            clevs = np.linspace(a, b, 21)
+            clevs = np.linspace(a, b, 41)
+        norm1 = MidpointNormalize(vmin=a, vmax=b, midpoint=0)
         p = ax.contourf(x, y, z, clevs,
                         transform=ccrs.PlateCarree(),
-                        cmap=colormap,
+                        cmap=colormap, norm=norm1,
                         extend='both')
 
         #line_c = ax.contour(x, y, z, levels=p.levels,
