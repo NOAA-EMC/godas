@@ -14,11 +14,11 @@ clim:
 time: $4
 level: $5
 latitude: 0.0
-color: seismic # Spectral  #seismic #jet 
 aggregate: False
 projection: $6 #'global'
 experiment: $7 
 plot_dir: $8
+color: $9  # Spectral  #seismic #jet 
 EOF
 }
 
@@ -44,14 +44,14 @@ mkdir $cdir
 #varlist=(Temp)
 varlist=(Temp Salt ave_ssh aicen hicen)
 projlist=(global north south)
-varlist=(Temp ave_ssh)
-projlist=(global)
+#varlist=(Temp ave_ssh)
+#projlist=(global)
 #tlist=($(seq 0 50 100))
 tlist=(50) # list of time indices to plot
 LEVEL=1
 date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
-
+clmp=jet
 #END_YMDH=$(date -ud "$date_YMDH + ${num_days} days " +%Y%m%d%H )
 #echo $YMDH $end_date
 year=${YMDH:0:4}
@@ -66,6 +66,7 @@ while [ "$YMDH" -le "$end_date" ]; do
 
     datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
     if [ $stv == incr ]; then
+        clmp=seismic
         hrp=${YMDH:9:10}
         YMDH_i=$(date -ud "${YMD}Z$hrp" +%Y-%m-%dT%H:%M:%S)
         echo $YMDH $YMDH_i
@@ -77,38 +78,38 @@ while [ "$YMDH" -le "$end_date" ]; do
                     ave_ssh)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-                        prepsurfyaml $varname -.5 .5 $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                        prepsurfyaml $varname -.1 .1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname -2 1. $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                        prepsurfyaml $varname -2 1 $tindex surface $proj $stv $plotdir  $clmp > ${stv}.yaml
                     fi 
                     ;;
                     Salt)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-                        prepsurfyaml $varname -.1 0.1 $tindex $LEVEL $proj $stv $plotdir > ${stv}.yaml
+                        prepsurfyaml $varname -.1 0.1 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname 30 38 $tindex $LEVEL $proj $stv $plotdir > ${stv}.yaml
+                        prepsurfyaml $varname 30 38 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
                     fi
                     ;;
                     Temp)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-                        prepsurfyaml ${varname} -3.0 3.0 $tindex $LEVEL $proj $stv $plotdir > ${stv}.yaml
+                        prepsurfyaml ${varname} -2.0 2.0 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname -1.8 32 $tindex $LEVEL $proj $stv $plotdir > ${stv}.yaml
+                        prepsurfyaml $varname -2 32 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
                     fi 
                     ;;
                     aicen)  # bound [0 1]
                     if [ $proj != 'global' ] ; then
                         if [ $stv == incr ]; then
                             FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
-                            prepsurfyaml $varname -0.2 0.2 $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
                         else
                             FNAME=ice.${stv}.${YMDH}.nc
-                            prepsurfyaml $varname 0 1 $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                            prepsurfyaml $varname 0 1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
                         fi
                     else
                         continue
@@ -118,10 +119,10 @@ while [ "$YMDH" -le "$end_date" ]; do
                     if [ $proj != 'global' ]; then
                         if [ $stv == incr ]; then
                             FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
-                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
                         else
                             FNAME=ice.${stv}.${YMDH}.nc
-                            prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir > ${stv}.yaml
+                            prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
                         fi
                     else
                         continue

@@ -58,13 +58,13 @@ def plothor(x, y, z, map, varname='',
         ax.set_extent([-80, 30, 50, 87], crs=ccrs.PlateCarree())
     if plot_type == 'contour':
         if abs(a-b)<2: 
-            clevs = np.linspace(a, b, 11)
+            clevs = np.linspace(a, b, 21)
         else:
             clevs = np.linspace(a, b, 41)
-        norm1 = MidpointNormalize(vmin=a, vmax=b, midpoint=0)
+        #norm1 = MidpointNormalize(vmin=a, vmax=b, midpoint=0)
         p = ax.contourf(x, y, z, clevs,
                         transform=ccrs.PlateCarree(),
-                        cmap=colormap, norm=norm1,
+                        cmap=colormap, #norm=norm1,
                         extend='both')
 
         #line_c = ax.contour(x, y, z, levels=p.levels,

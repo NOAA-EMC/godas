@@ -4,11 +4,11 @@
 #   bash godas_obsplot.sh exp_name variable start_date end_date
 
 
-while getopts x:v:s:e: flag
+while getopts x:t:s:e: flag
 do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
-        v) varname=${OPTARG};;  #variable name
+        t) obs_type=${OPTARG};;  #variable name
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
     esac
@@ -38,7 +38,7 @@ while [ "$YMDH" -le "$end_date" ]; do
 
     datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
     echo data dir: $datadir
-    case $varname in
+    case $obs_type in
         sst)
         python ./godas_plotobs.py -f $datadir/sst*_l3u_so025.*.nc -g ombg -v sea_surface_temperature -b -2 2 -c jet -q 0 -s $plotdir/sst_superobs.png
         ;;
