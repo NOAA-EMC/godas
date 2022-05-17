@@ -1,10 +1,8 @@
 #!/bin/bash
 
 #Command:
-#   bash soca_plotfield.sh exp_name state_vector start_date num_of_days
+#   bash soca_plotfield.sh -x exp_name -v state_vector -s start_date -e end_date
 
-
-#exit 0
 function prepsurfyaml {
 cat <<EOF
 variable: $1
@@ -37,28 +35,18 @@ cycle_dir=/work/noaa/marine/jhossen/$exp
 echo $cycle_dir
 cdir=$PWD/$exp
 mkdir $cdir
-#stv=$2              # state vector, bkg or ombg
-#start_date=$3Z00    # start date
-#num_days=$4 # number of days you want to plot
-#end_date=${4}00  # End date
-#varlist=(Temp)
 varlist=(Temp Salt ave_ssh aicen hicen)
 projlist=(global north south)
-#varlist=(Temp ave_ssh)
-#projlist=(global)
 #tlist=($(seq 0 50 100))
 tlist=(50) # list of time indices to plot
 LEVEL=1
 date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
 clmp=jet
-#END_YMDH=$(date -ud "$date_YMDH + ${num_days} days " +%Y%m%d%H )
-#echo $YMDH $end_date
 year=${YMDH:0:4}
 mkdir $cdir/$year
 while [ "$YMDH" -le "$end_date" ]; do
     YMD=${YMDH:0:8}
-    #echo $YMDH
     mkdir $cdir/$year/$YMD
     plotdir=$cdir/$year/$YMD/$stv
     mkdir $plotdir
@@ -139,8 +127,4 @@ while [ "$YMDH" -le "$end_date" ]; do
     YMDH=$(date -ud "$date_YMDH + $DH hours" +%Y%m%d%H )
 done  # day loop
 
-
-
-#mv *png $ddir/.
-#rm *nc
 

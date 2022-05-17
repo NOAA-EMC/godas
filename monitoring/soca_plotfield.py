@@ -248,4 +248,3 @@ if __name__ == '__main__':
         pngname=tail+'.'+args.variable+'.'+str(args.lat)+'.'+ str(args.maxdepth)+'.zonal.png'
         plt.savefig(pngname)
 
-############################3333#!/usr/bin/env python3

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Command:
-#   bash godas_obsplot.sh exp_name variable start_date end_date
+#   bash godas_obsplot.sh -x exp_name -t obs_type -s start_date -e end_date
 
 
 while getopts x:t:s:e: flag
@@ -13,6 +13,7 @@ do
         e) end_date=${OPTARG}00;;
     esac
 done
+
 echo experiments: $exp
 fctl=24
 cycle_dir=/work/noaa/marine/jhossen/$exp
@@ -24,13 +25,10 @@ stv=obs_out
 date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
 
-#END_YMDH=$(date -ud "$date_YMDH + ${num_days} days " +%Y%m%d%H )
-#echo $YMDH $end_date
 year=${YMDH:0:4}
 mkdir $cdir/$year
 while [ "$YMDH" -le "$end_date" ]; do
     YMD=${YMDH:0:8}
-    #echo $YMDH
     mkdir $cdir/$year/$YMD
     plotdir=$cdir/$year/$YMD/ombg
     mkdir $plotdir
@@ -56,8 +54,4 @@ while [ "$YMDH" -le "$end_date" ]; do
     YMDH=$(date -ud "$date_YMDH + $DH hours" +%Y%m%d%H )
 done  # day loop
 
-
-
-#mv *png $ddir/.
-#rm *nc
 
