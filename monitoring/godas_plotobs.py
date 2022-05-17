@@ -1,5 +1,3 @@
-#!/home/gvernier/anaconda3/bin/python
-
 from netCDF4 import Dataset, num2date, date2num
 import numpy as np
 import matplotlib.pyplot as plt
