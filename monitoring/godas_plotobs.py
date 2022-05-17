@@ -1,5 +1,3 @@
-#!/home/gvernier/anaconda3/bin/python
-
 from netCDF4 import Dataset, num2date, date2num
 import numpy as np
 import matplotlib.pyplot as plt
@@ -133,6 +131,7 @@ def plotobs(args):
     plt.colorbar(obsax, shrink=0.5).set_label(args.group)
     plt.title(args.title, fontsize=24, fontweight='bold')
     if ( args.save == 'none' ): plt.show()
+
     if ( args.save != 'none' ): plt.savefig(args.save,  bbox_inches='tight', pad_inches = 0.02)
 
 
