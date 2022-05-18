@@ -34,23 +34,18 @@ echo experiments: $exp
 fctl=24
 #cycle_dir=/work/noaa/marine/jhossen/$exp
 echo 'EXP dir:' ${cycle_dir}
-cdir=$PWD/$exp
-mkdir $cdir
 varlist=(ave_ssh Temp Salt aicen hicen)
 projlist=(global north south)
-#tlist=($(seq 0 50 100))
 tlist=(50) # list of time indices to plot
 LEVEL=1
 date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
 clmp=jet
 year=${YMDH:0:4}
-mkdir $cdir/$year
 while [ "$YMDH" -le "$end_date" ]; do
     YMD=${YMDH:0:8}
-    mkdir $cdir/$year/$YMD
-    plotdir=$cdir/$year/$YMD/$stv
-    mkdir $plotdir
+    plotdir=$PWD/$exp/$year/$YMD/$stv
+    mkdir -p $plotdir
     echo plotting dir: $plotdir
 
     datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
@@ -119,7 +114,7 @@ while [ "$YMDH" -le "$end_date" ]; do
                     ;;
                 esac
                 echo plotting $varname in the $proj # using $FNAME
-                ./soca_plotfield.py -g $cycle_dir/static/soca_gridspec.nc -f $datadir/$FNAME \
+                python soca_plotfield.py -g $cycle_dir/static/soca_gridspec.nc -f $datadir/$FNAME \
                              -s horizontal -y ${exp}_${stv}.yaml
           done  #tindex
       done  #varname
