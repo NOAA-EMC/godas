@@ -35,7 +35,7 @@ cycle_dir=/work/noaa/marine/jhossen/$exp
 echo $cycle_dir
 cdir=$PWD/$exp
 mkdir $cdir
-varlist=(Temp Salt ave_ssh aicen hicen)
+varlist=(ave_ssh Temp Salt aicen hicen)
 projlist=(global north south)
 #tlist=($(seq 0 50 100))
 tlist=(50) # list of time indices to plot
@@ -69,7 +69,7 @@ while [ "$YMDH" -le "$end_date" ]; do
                         prepsurfyaml $varname -.1 .1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname -2 1 $tindex surface $proj $stv $plotdir  $clmp > ${exp}_${stv}.yaml
+                        prepsurfyaml $varname -1.5 1.5 $tindex surface $proj $stv $plotdir  $clmp > ${exp}_${stv}.yaml
                     fi 
                     ;;
                     Salt)
@@ -127,4 +127,4 @@ while [ "$YMDH" -le "$end_date" ]; do
     YMDH=$(date -ud "$date_YMDH + $DH hours" +%Y%m%d%H )
 done  # day loop
 
-
+rm ${exp}_${stv}.yaml
