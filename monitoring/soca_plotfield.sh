@@ -25,7 +25,7 @@ do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
         v) stv=${OPTARG};;  #state vector
-        p) cycle_dir=${OPTARG};;  #state vector
+        p) cycle_dir=${OPTARG};;  #path/to/exp
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
     esac

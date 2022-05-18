@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Command:
-#   bash godas_obsplot.sh -x exp_name -t obs_type -s start_date -e end_date
+#   bash godas_obsplot.sh -p path/to/exp -x exp_name -t obs_type -s start_date -e end_date
 
 
 while getopts x:v:s:e:p: flag
@@ -9,7 +9,7 @@ do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
         v) stv=${OPTARG};;  #variable name
-        p) cycle_dir=${OPTARG};;  #variable name
+        p) cycle_dir=${OPTARG};;  #path/to/exp
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
     esac
@@ -17,11 +17,7 @@ done
 
 echo experiments: $exp
 fctl=24
-#cycle_dir=/work/noaa/marine/jhossen/$exp
-
 echo 'EXP dir:' $cycle_dir
-cdir=$PWD/$exp
-mkdir $cdir
 
 obslist=(sst adt salt temp sss)
 
@@ -29,14 +25,11 @@ date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
 clmp=seismic
 year=${YMDH:0:4}
-mkdir $cdir/$year
 while [ "$YMDH" -le "$end_date" ]; do
     YMD=${YMDH:0:8}
-    mkdir $cdir/$year/$YMD
-    plotdir=$cdir/$year/$YMD/ombg
-    mkdir $plotdir
+    plotdir=$PWD/$exp/$year/$YMD/ombg
+    mkdir -p $plotdir
     echo plotting dir: $plotdir
-
     datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
     echo data dir: $datadir
     for obs_type in ${obslist[@]}; do
