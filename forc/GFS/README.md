@@ -41,7 +41,7 @@
 * get_gfs_beta4_gdas.csh : script to import input files from HPSS and merge variables into a file
 * conv_gfs2datm_long_beta4.f : convert code from input file to DATM output
 * conv_gfs2datm.fort_beta4.csh : script for conversion
-* run_gfs2datm_inter.csh : wrap script for getting and converting
+* run_gfs2datm_inter.csh : wrap script for getting input files and variables and converting to DATM output
 
 ## Instruction of conversion
  - Compile the code by comp_f77_code.csh
