@@ -9,8 +9,8 @@ for example:
 bash soca_plotfield.sh -x EMC2 -v bkg -s 20210601 -e 20210601
 bash soca_plotfield.sh -x EMC2 -v incr -s 20210601 -e 20210601
 
-For obs_out, obs_types are sst, adt, salt, temp:
-bash godas_plotobs.sh -x EMC3 -t sst -s 20210201 -e 20210202
+For obs_out:
+bash godas_plotobs.sh -x EMC3 -v obs_out -s 20210201 -e 20210202
 
 This will use a python script named godas_plotobs.py
 
