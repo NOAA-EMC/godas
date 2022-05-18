@@ -4,7 +4,7 @@
 
 ## Inputs of conversion in conv_gfs2datm_long_beta4.f
 
-* INPUT variables : the output of GFSv16,
+* INPUT variables : from the output of GFSv16,
     ==> longitude, latitude, time, DLWRF_surface, ULWRF_surface, DSWRF_surface, UFLX_surface, VFLX_surface, SHTFL_surface,
       LHTFL_surface, PRATE_surface, UGRD_10maboveground, VGRD_10maboveground, PRES_surface, TMP_1hybridlevel, 
       SPFH_1hybridlevel, UGRD_1hybridlevel, VGRD_1hybridlevel, SPFH_2maboveground, TMP_2maboveground, LAND_surface, 
