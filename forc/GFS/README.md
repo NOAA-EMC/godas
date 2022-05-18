@@ -4,30 +4,57 @@
 
 ## Inputs of conversion in conv_gfs2datm_long_beta4.f
 
-* INPUT variables : from the output of GFSv16,
-    ==> longitude, latitude, time, DLWRF_surface, ULWRF_surface, DSWRF_surface, UFLX_surface, VFLX_surface, SHTFL_surface,
-      LHTFL_surface, PRATE_surface, UGRD_10maboveground, VGRD_10maboveground, PRES_surface, TMP_1hybridlevel, 
-      SPFH_1hybridlevel, UGRD_1hybridlevel, VGRD_1hybridlevel, SPFH_2maboveground, TMP_2maboveground, LAND_surface, 
-      delz, PRATE_surface, pres_hyblev1, precp, fprecp, ICEC_surface
+* INPUT Sources : from the output of GFSv16,
 
-* ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.sfluxgrbf000.grib2 :: Input data are from the GFSv16 outs of initial analysis fields, 
+I. ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.sfluxgrbf000.grib2 :: Input data are from the GFSv16 outs of initial analysis fields, 
   except following missing variables in the initial file.
 
-./gdas.${datb}/${hhb}/atmos/gdas.t${hhb}z.sfluxgrb${hprep}.grib2 :: 6 hour forecast fields at the analysis time
+II. ./gdas.${datb}/${hhb}/atmos/gdas.t${hhb}z.sfluxgrb${hprep}.grib2 :: 6 hour forecast fields at the analysis time
       ==> PRATE_surface, UFLX_surface, VFLX_surface
 
-./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc  ==> delz
+III. ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc  ==> delz
 
-## Output of conversion in conv_gfs2datm_long_beta4.f
-* OUTPUT variables for DATM
-  ==> lat, lon, time, DLWRF, ULWRF, DSWRF, vbdsf_ave, vddsf_ave, nbdsf_ave, nddsf_ave, dusfc, dvsfc, shtfl_ave, lhtfl_ave, 
-      totprcp_ave, u10m, v10m, hgt_hyblev1, psurf, tmp_hyblev1, spfh_hyblev1, ugrd_hyblev1, vgrd_hyblev1, q2m, t2m, 
-      slmsksfc, pres_hyblev1, precp, fprecp, icecsfc
+| Input variable |	Source	| Output variable|
+| --- | --- | ---|
+| longitude	| I| lon |
+| latitude |I |lat |
+| time | I| time |
+|DLWRF_surface  |I |DLWRF |
+|ULWRF_surface  | I|ULWRF |
+| DSWRF_surface |I |DSWRF |
+|DSWRF_surface |I |vbdsf_ave |
+|DSWRF_surface |I | vddsf_ave|
+|DSWRF_surface |I |nbdsf_ave |
+|DSWRF_surface |I | nddsf_ave|
+| UFLX_surface|II | dusfc|
+|VFLX_surface |II |dvsfc |
+|SHTFL_surface |I | shtfl_ave|
+|LHTFL_surface |I |lhtfl_ave |
+| PRATE_surface|I |totprcp_ave |
+| UGRD_10maboveground|I |u10m |
+|VGRD_10maboveground |I |v10m |
+|delz |III |hgt_hyblev1 |
+|PRES_surface |I | psurf|
+|PRATE_surface |II |precp |
+|PRATE_surface |II | fprecp|
+|ICEC_surface  | I|icecsfc |
+|TMP_1hybridlevel |I |tmp_hyblev1 |
+| SPFH_1hybridlevel|I |spfh_hyblev1 |
+|UGRD_1hybridlevel |I |ugrd_hyblev1 |
+|VGRD_1hybridlevel |I | vgrd_hyblev1|
+|SPFH_2maboveground |I |q2m |
+|TMP_2maboveground |I |t2m |
+| LAND_surface|I | slmsksfc|
+|ICEC_surface |I | icecsfc|
 
-## Additional conversions
+
+
+
+
+## Estimation and calculation
 * vbdsf_ave, vddsf_ave, nbdsf_ave, nddsf_ave are estimated from DSWRF_surface, multiplied by 0.285 (vbdsf_ave, addsf_ave) and 0.215 (nbdsf_ave, nddsf_ave). 
 
-* hgt_hyblev1 are obtained by delz with inverse direction of hight : -1* delz
+* hgt_hyblev1 are obtained by delz which  : -1* delz
 
 * precp and fprecp are estimated by the thresh hold of TMP_2maboveground by -15oC.
 
