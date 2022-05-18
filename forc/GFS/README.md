@@ -21,7 +21,7 @@
 ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc  : 
      ==> delz
 
-## OUTPUT of conversion in conv_gfs2datm_long_beta4.f
+## Output of conversion in conv_gfs2datm_long_beta4.f
 * OUTPUT variables for DATM
   ==> lat, lon, time, DLWRF, ULWRF, DSWRF, vbdsf_ave, vddsf_ave, nbdsf_ave, nddsf_ave, dusfc, dvsfc, shtfl_ave, lhtfl_ave, 
           totprcp_ave, u10m, v10m, hgt_hyblev1, psurf, tmp_hyblev1, spfh_hyblev1, ugrd_hyblev1, vgrd_hyblev1, q2m, t2m, 
