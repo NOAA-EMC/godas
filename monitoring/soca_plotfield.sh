@@ -20,19 +20,20 @@ color: $9  # Spectral  #seismic #jet
 EOF
 }
 
-while getopts x:v:s:e: flag
+while getopts x:v:s:e:p: flag
 do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
         v) stv=${OPTARG};;  #state vector
+        p) cycle_dir=${OPTARG};;  #state vector
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
     esac
 done
 echo experiments: $exp
 fctl=24
-cycle_dir=/work/noaa/marine/jhossen/$exp
-echo $cycle_dir
+#cycle_dir=/work/noaa/marine/jhossen/$exp
+echo 'EXP dir:' ${cycle_dir}
 cdir=$PWD/$exp
 mkdir $cdir
 varlist=(ave_ssh Temp Salt aicen hicen)

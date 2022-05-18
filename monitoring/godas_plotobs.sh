@@ -4,11 +4,12 @@
 #   bash godas_obsplot.sh -x exp_name -t obs_type -s start_date -e end_date
 
 
-while getopts x:v:s:e: flag
+while getopts x:v:s:e:p: flag
 do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
         v) stv=${OPTARG};;  #variable name
+        p) cycle_dir=${OPTARG};;  #variable name
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
     esac
@@ -16,8 +17,9 @@ done
 
 echo experiments: $exp
 fctl=24
-cycle_dir=/work/noaa/marine/jhossen/$exp
-echo $cycle_dir
+#cycle_dir=/work/noaa/marine/jhossen/$exp
+
+echo 'EXP dir:' $cycle_dir
 cdir=$PWD/$exp
 mkdir $cdir
 
