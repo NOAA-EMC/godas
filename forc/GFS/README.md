@@ -50,7 +50,7 @@
  - Check the output with /work/noaa/ng-godas/marineda/DATM_INPUT/GFS/ in Orion
 
 
-### Issue(s) addressed
+## Issue(s) addressed
 
 Document the code that generates the forcing :
 https://github.com/NOAA-EMC/godas/issues/276
