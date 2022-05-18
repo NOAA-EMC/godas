@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Command:
-#   bash soca_plotfield.sh -x exp_name -v state_vector -s start_date -e end_date
+#   bash soca_plotfield.sh -x exp_name -v state_vector -s start_date -e end_date -p path/to/exp
 
 function prepsurfyaml {
 cat <<EOF
