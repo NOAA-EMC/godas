@@ -2,7 +2,7 @@
 
 * This package generates DATM input data for the forcing fluxes at the sea surface from the NCEP operational GFSv16 outputs.
 
-## Inputs and outputs of conversion in conv_gfs2datm_long_beta4.f
+## Inputs of conversion in conv_gfs2datm_long_beta4.f
 
 * INPUT variables : the output of GFSv16,
 
@@ -21,11 +21,13 @@
 ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc  : 
      ==> delz
 
-* OUTPUT variables
+## OUTPUT of conversion in conv_gfs2datm_long_beta4.f
+* OUTPUT variables for DATM
   ==> lat, lon, time, DLWRF, ULWRF, DSWRF, vbdsf_ave, vddsf_ave, nbdsf_ave, nddsf_ave, dusfc, dvsfc, shtfl_ave, lhtfl_ave, 
           totprcp_ave, u10m, v10m, hgt_hyblev1, psurf, tmp_hyblev1, spfh_hyblev1, ugrd_hyblev1, vgrd_hyblev1, q2m, t2m, 
           slmsksfc, pres_hyblev1, precp, fprecp, icecsfc
 
+## Additional conversions
 * vbdsf_ave, vddsf_ave, nbdsf_ave, nddsf_ave are estimated from DSWRF_surface, multiplied by 0.285 (vbdsf_ave, addsf_ave) and 0.215 (nbdsf_ave, nddsf_ave). 
 
 * hgt_hyblev1 are obtained by delz with inverse direction of hight : -1* delz
@@ -37,14 +39,14 @@
 * In the GFS_DATM, there is no bulk formula caluration
 
 
-
+## Code and scripts
 * comp_f77_code.csh : compilation code
 * get_gfs_beta4_gdas.csh : Import input files from HPSS and merge variables into a file
 * conv_gfs2datm_long_beta4.f : convert input file to DATM output
 * conv_gfs2datm.fort_beta4.csh : script for conversion
 * run_gfs2datm_inter.csh : wrap script for getting and converting
 
-* Instruction
+## Instruction of conversion
  - Compile the code by comp_f77_code.csh
  - Set configurations in run_gfs2datm_inter.csh
  - Run the script : csh run_gfs2datm_inter.csh
