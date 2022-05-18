@@ -66,38 +66,38 @@ while [ "$YMDH" -le "$end_date" ]; do
                     ave_ssh)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-                        prepsurfyaml $varname -.1 .1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
+                        prepsurfyaml $varname -.1 .1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname -2 1 $tindex surface $proj $stv $plotdir  $clmp > ${stv}.yaml
+                        prepsurfyaml $varname -2 1 $tindex surface $proj $stv $plotdir  $clmp > ${exp}_${stv}.yaml
                     fi 
                     ;;
                     Salt)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-                        prepsurfyaml $varname -.1 0.1 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
+                        prepsurfyaml $varname -.1 0.1 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname 30 38 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
+                        prepsurfyaml $varname 30 38 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     fi
                     ;;
                     Temp)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-                        prepsurfyaml ${varname} -2.0 2.0 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
+                        prepsurfyaml ${varname} -2.0 2.0 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
-                        prepsurfyaml $varname -2 32 $tindex $LEVEL $proj $stv $plotdir $clmp > ${stv}.yaml
+                        prepsurfyaml $varname -2 32 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     fi 
                     ;;
                     aicen)  # bound [0 1]
                     if [ $proj != 'global' ] ; then
                         if [ $stv == incr ]; then
                             FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
-                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
+                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                         else
                             FNAME=ice.${stv}.${YMDH}.nc
-                            prepsurfyaml $varname 0 1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
+                            prepsurfyaml $varname 0 1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                         fi
                     else
                         continue
@@ -107,10 +107,10 @@ while [ "$YMDH" -le "$end_date" ]; do
                     if [ $proj != 'global' ]; then
                         if [ $stv == incr ]; then
                             FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
-                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
+                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                         else
                             FNAME=ice.${stv}.${YMDH}.nc
-                            prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir $clmp > ${stv}.yaml
+                            prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                         fi
                     else
                         continue
@@ -119,7 +119,7 @@ while [ "$YMDH" -le "$end_date" ]; do
                 esac
                 echo plotting $varname in the $proj # using $FNAME
                 ./soca_plotfield.py -g $cycle_dir/static/soca_gridspec.nc -f $datadir/$FNAME \
-                             -s horizontal -y ${stv}.yaml
+                             -s horizontal -y ${exp}_${stv}.yaml
           done  #tindex
       done  #varname
     done    #projlist
