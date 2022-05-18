@@ -10,7 +10,7 @@ bash soca_plotfield.sh -x EMC2 -v bkg -s 20210601 -e 20210601 -p /work/noaa/mari
 bash soca_plotfield.sh -x EMC2 -v incr -s 20210601 -e 20210601 -p /work/noaa/marine/...
 
 For obs_out:
-bash godas_plotobs.sh -x EMC3 -v obs_out -s 20210201 -e 20210202
+bash godas_plotobs.sh -x EMC3 -v obs_out -s 20210201 -e 20210202 -p /work/noaa/marine/...
 
 This will use a python script named godas_plotobs.py
 
