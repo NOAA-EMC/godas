@@ -27,7 +27,7 @@ clmp=seismic
 year=${YMDH:0:4}
 while [ "$YMDH" -le "$end_date" ]; do
     YMD=${YMDH:0:8}
-    plotdir=$PWD/$exp/$year/$YMD/ombg
+    plotdir=${cycle_dir}/monitoring/$year/$YMD/ombg
     mkdir -p $plotdir
     echo plotting dir: $plotdir
     datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
