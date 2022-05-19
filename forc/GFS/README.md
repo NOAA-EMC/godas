@@ -54,7 +54,7 @@ III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`
 
 * hgt_hyblev1 are obtained by delz which  : -1* delz
 
-* precp and fprecp are estimated by the thresh hold of TMP_2maboveground by -15oC.
+* precp and fprecp are estimated from PRATE_surface with the thresh hold of TMP_2maboveground by -15oC.
 
 * pres_hyblev1 are calculated from `delz`, `TMP_1HYBRIDLEVEL`, `PRES_SURFACE`.
 
