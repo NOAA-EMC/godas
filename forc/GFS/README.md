@@ -4,15 +4,13 @@
 
 ## Inputs of conversion in conv_gfs2datm_long_beta4.f
 
-* INPUT Sources : from the output of GFSv16,
+* INPUT Sources 
 
-I. ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.sfluxgrbf000.grib2 :: Input data are from the GFSv16 outs of initial analysis fields, 
-  except following missing variables in the initial file.
+I. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.sfluxgrbf000.grib2` 
 
-II. ./gdas.${datb}/${hhb}/atmos/gdas.t${hhb}z.sfluxgrb${hprep}.grib2 :: 6 hour forecast fields at the analysis time
-      ==> PRATE_surface, UFLX_surface, VFLX_surface
+II. `./gdas.${datb}/${hhb}/atmos/gdas.t${hhb}z.sfluxgrb${hprep}.grib2` :: 6 hour forecast fields at the analysis time
 
-III. ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc  ==> delz
+III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`  
 
 | Input variable |	Source	| Output variable|
 | --- | --- | ---|
@@ -52,21 +50,20 @@ III. ./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc  ==> delz
 
 
 ## Estimation and calculation
-* vbdsf_ave, vddsf_ave, nbdsf_ave, nddsf_ave are estimated from DSWRF_surface, multiplied by 0.285 (vbdsf_ave, addsf_ave) and 0.215 (nbdsf_ave, nddsf_ave). 
+* vbdsf_ave[W/m**2], vddsf_ave[W/m**2], nbdsf_ave[W/m**2], nddsf_ave[W/m**2] are estimated from DSWRF_surface[W/m**2], multiplied by 0.285 (vbdsf_ave, addsf_ave) and 0.215 (nbdsf_ave, nddsf_ave).
 
 * hgt_hyblev1 are obtained by delz which  : -1* delz
 
 * precp and fprecp are estimated by the thresh hold of TMP_2maboveground by -15oC.
 
-* pres_hyblev1 are calculated from delz, TMP_1HYBRIDLEVEL, PRES_SURFACE.
+* pres_hyblev1 are calculated from `delz`, `TMP_1HYBRIDLEVEL`, `PRES_SURFACE`.
 
 * In the GFS_DATM, there is no bulk formula caluration
 
 
 ## Code and scripts
 * comp_f77_code.csh : compilation script for the code
-* get_gfs_beta4_gdas.csh : script to import input files from HPSS and merge variables into a file
-* conv_gfs2datm_long_beta4.f : convert code from input file to DATM output
+* get_gfs_beta4_gdas.csh : script to import input files from HPSS and merge variables into a  conv_gfs2datm_long_beta4.f : convert code from input file to DATM output
 * conv_gfs2datm.fort_beta4.csh : script for conversion
 * run_gfs2datm_inter.csh : wrap script for getting input files and variables and converting to DATM output
 
