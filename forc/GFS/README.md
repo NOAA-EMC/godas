@@ -52,7 +52,7 @@ III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`
 ## Estimation and calculation
 * vbdsf_ave[W/m**2], vddsf_ave[W/m**2], nbdsf_ave[W/m**2], nddsf_ave[W/m**2] are estimated from DSWRF_surface[W/m**2], multiplied by 0.285 (vbdsf_ave, addsf_ave) and 0.215 (nbdsf_ave, nddsf_ave).
 
-* hgt_hyblev1 are obtained by delz which  : -1* delz
+* hgt_hyblev1 are obtained by delz  : -1* delz
 
 * precp and fprecp are estimated from PRATE_surface with the thresh hold of TMP_2maboveground by -15oC.
 
