@@ -58,7 +58,7 @@ III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`
 
 * pres_hyblev1 are calculated from `delz`, `TMP_1HYBRIDLEVEL`, `PRES_SURFACE`.
 
-* In the GFS_DATM, there is no bulk formula caluration
+* In the GFS_DATM, there is no bulk formula calcuration
 
 
 ## Code and scripts
