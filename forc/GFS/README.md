@@ -63,7 +63,8 @@ III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`
 
 ## Code and scripts
 * comp_f77_code.csh : compilation script for the code
-* get_gfs_beta4_gdas.csh : script to import input files from HPSS and merge variables into a  conv_gfs2datm_long_beta4.f : convert code from input file to DATM output
+* get_gfs_beta4_gdas.csh : script to import input files from HPSS and merge variables into an input file 
+* conv_gfs2datm_long_beta4.f : convert code from input file to DATM output
 * conv_gfs2datm.fort_beta4.csh : script for conversion
 * run_gfs2datm_inter.csh : wrap script for getting input files and variables and converting to DATM output
 
