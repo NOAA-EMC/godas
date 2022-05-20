@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #Command:
-#   bash godas_obsplot.sh -p path/to/exp -x exp_name -t obs_type -s start_date -e end_date
+#   bash godas_obsplot.sh -p path/to/exp -x exp_name -t obs_type -s start_date -e end_datei -l fct_length
 
 
-while getopts x:v:s:e:p: flag
+while getopts x:v:s:e:p:l: flag
 do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
@@ -12,11 +12,12 @@ do
         p) cycle_dir=${OPTARG};;  #path/to/exp
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
+        l) fctl=${OPTARG};;     # forecast length
     esac
 done
 
 echo experiments: $exp
-fctl=24
+#fctl=6
 echo 'EXP dir:' $cycle_dir
 
 obslist=(sst adt salt temp sss)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Command:
-#   bash soca_plotfield.sh -x exp_name -v state_vector -s start_date -e end_date -p path/to/exp
+#   bash soca_plotfield.sh -x exp_name -v state_vector -s start_date -e end_date -p path/to/exp -l fct_length
 
 function prepsurfyaml {
 cat <<EOF
@@ -20,7 +20,7 @@ color: $9  # Spectral  #seismic #jet
 EOF
 }
 
-while getopts x:v:s:e:p: flag
+while getopts x:v:s:e:p:l: flag
 do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
@@ -28,10 +28,11 @@ do
         p) cycle_dir=${OPTARG};;  #path/to/exp
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
+        l) fctl=${OPTARG};;     # forecast length, should be consistent with model output
     esac
 done
 echo experiments: $exp
-fctl=6
+#fctl=6
 echo 'EXP dir:' ${cycle_dir}
 varlist=(ave_ssh Temp Salt aicen hicen)
 projlist=(global north south)
