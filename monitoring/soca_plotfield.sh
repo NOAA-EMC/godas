@@ -36,8 +36,8 @@ echo experiments: $exp
 echo 'EXP dir:' ${cycle_dir}
 varlist=(ave_ssh Temp Salt aicen hicen)
 projlist=(global north south)
-#varlist=(Temp)
-#projlist=(global)
+varlist=(Temp)
+projlist=(north)
 tlist=(50) # list of time indices to plot
 LEVEL=1
 date_YMDH=$(date -ud "$start_date")
@@ -54,9 +54,9 @@ while [ "$YMDH" -le "$end_date" ]; do
 
     if [ $stv == incr ]; then
         clmp=seismic
-        hrp=${YMDH:9:10}
+        hrp=${YMDH:8:10}
         YMDH_i=$(date -ud "${YMD}Z$hrp" +%Y-%m-%dT%H:%M:%S)
-        echo $YMDH $YMDH_i
+        #echo $hrp $YMDH $YMDH_i
     fi
     for proj in ${projlist[@]}; do
         for tindex in ${tlist[@]} ;do
