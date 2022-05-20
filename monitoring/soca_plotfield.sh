@@ -36,8 +36,8 @@ echo experiments: $exp
 echo 'EXP dir:' ${cycle_dir}
 varlist=(ave_ssh Temp Salt aicen hicen)
 projlist=(global north south)
-varlist=(Temp)
-projlist=(north)
+#varlist=(Temp)
+#projlist=(north)
 tlist=(50) # list of time indices to plot
 LEVEL=1
 date_YMDH=$(date -ud "$start_date")
