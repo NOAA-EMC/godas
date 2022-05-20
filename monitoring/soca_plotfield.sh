@@ -31,10 +31,12 @@ do
     esac
 done
 echo experiments: $exp
-fctl=24
+fctl=6
 echo 'EXP dir:' ${cycle_dir}
 varlist=(ave_ssh Temp Salt aicen hicen)
 projlist=(global north south)
+#varlist=(Temp)
+#projlist=(global)
 tlist=(50) # list of time indices to plot
 LEVEL=1
 date_YMDH=$(date -ud "$start_date")
@@ -48,6 +50,7 @@ while [ "$YMDH" -le "$end_date" ]; do
     echo plotting dir: $plotdir
 
     datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
+
     if [ $stv == incr ]; then
         clmp=seismic
         hrp=${YMDH:9:10}
