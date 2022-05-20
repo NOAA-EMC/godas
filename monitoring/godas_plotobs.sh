@@ -37,19 +37,19 @@ while [ "$YMDH" -le "$end_date" ]; do
         echo plotting $obs_type ...
         case $obs_type in
         sst)
-        python godas_plotobs.py -f $datadir/sst*_l3u_so025.*.nc -g ombg -v sea_surface_temperature -b -2 2 -c $clmp -q 0 -s $plotdir/sst_superobs.png -t 'sst superobs'
+        python godas_plotobs.py -f $datadir/sst*_l3u_so025.*.nc -g ombg -v sea_surface_temperature -b -2 2 -c $clmp -q 0 -s $plotdir/sst_superobs_${YMDH}.png -t "sst superobs ${YMDH}"
         ;;
         adt)
-        python godas_plotobs.py -f $datadir/adt*.nc -g ombg -v absolute_dynamic_topography -b -.2 .2 -c $clmp -q 0 -s $plotdir/adt.png -t 'adt'
+        python godas_plotobs.py -f $datadir/adt*.nc -g ombg -v absolute_dynamic_topography -b -.2 .2 -c $clmp -q 0 -s $plotdir/adt_${YMDH}.png -t "adt ${YMDH}"
         ;;
         salt)
-        python godas_plotobs.py -f $datadir/salt*.nc -g ombg -v sea_water_salinity -b -1 3 -c $clmp -q 0 -s $plotdir/salt_profile.png -t 'salt profile'
+        python godas_plotobs.py -f $datadir/salt*.nc -g ombg -v sea_water_salinity -b -1 3 -c $clmp -q 0 -s $plotdir/salt_profile_${YMDH}.png -t "salt profile ${YMDH}"
         ;;
         temp)
-        python godas_plotobs.py -f $datadir/temp*.nc -g ombg -v sea_water_temperature -b -1.5 1.5 -c $clmp -q 0 -s $plotdir/temp_profile.png -t 'temp profile'
+        python godas_plotobs.py -f $datadir/temp*.nc -g ombg -v sea_water_temperature -b -1.5 1.5 -c $clmp -q 0 -s $plotdir/temp_profile_${YMDH}.png -t "temp profile ${YMDH}"
         ;;
         sss)
-        python godas_plotobs.py -f $datadir/sss*.nc -g ombg -v sea_surface_salinity -b -.5 .5 -c $clmp -q 0 -s $plotdir/sss_trak.png -t 'sss trak'
+        python godas_plotobs.py -f $datadir/sss*.nc -g ombg -v sea_surface_salinity -b -.5 .5 -c $clmp -q 0 -s $plotdir/sss_trak_${YMDH}.png -t "sss trak ${YMDH}"
         ;;
         esac
     done #obs_type
