@@ -2,7 +2,10 @@
 
 #Command:
 #   bash godas_obsplot.sh -p path/to/exp -x exp_name -t obs_type -s start_date -e end_datei -l fct_length
-
+if [[ $# != 12 ]]; then
+    echo "usage: <command> options:<p|x|v|s|e|l>"
+    exit 1
+fi
 
 while getopts x:v:s:e:p:l: flag
 do
@@ -13,6 +16,9 @@ do
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
         l) fctl=${OPTARG};;     # forecast length
+        *) 
+            echo please provide correct arguments
+            exit 1 ;;
     esac
 done
 
@@ -25,8 +31,8 @@ obslist=(sst adt salt temp sss)
 date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
 clmp=seismic
-year=${YMDH:0:4}
 while [ "$YMDH" -le "$end_date" ]; do
+    year=${YMDH:0:4}
     YMD=${YMDH:0:8}
     plotdir=${cycle_dir}/monitoring/$year/$YMD/ombg
     mkdir -p $plotdir

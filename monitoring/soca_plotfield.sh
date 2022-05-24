@@ -20,6 +20,11 @@ color: $9  # Spectral  #seismic #jet
 EOF
 }
 
+if [[ $# != 12 ]]; then
+    echo "usage: <command> options:<p|x|v|s|e|l>"
+    exit 1
+fi
+
 while getopts x:v:s:e:p:l: flag
 do
     case "${flag}" in
@@ -29,6 +34,9 @@ do
         s) start_date=${OPTARG}Z00;;
         e) end_date=${OPTARG}00;;
         l) fctl=${OPTARG};;     # forecast length, should be consistent with model output
+        *) 
+            echo please provide correct arguments
+            exit 1 ;;
     esac
 done
 echo experiments: $exp
@@ -43,8 +51,8 @@ LEVEL=1
 date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
 clmp=jet
-year=${YMDH:0:4}
 while [ "$YMDH" -le "$end_date" ]; do
+    year=${YMDH:0:4}
     YMD=${YMDH:0:8}
     plotdir=${cycle_dir}/monitoring/$year/$YMD/$stv
     mkdir -p $plotdir
