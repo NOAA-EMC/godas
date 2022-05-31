@@ -70,7 +70,7 @@ def get_obs_stats_from_ioda(path2ioda, obsfname, varname, d0):
 
 def main():
 
-  desc = 'Time series of mean absolute error of ioda output. Example: ./plot-mae.py -e geos3dvar -n geos3dvar -y 2015 -m 07'
+  desc = 'Time series of mean absolute error of ioda output. Example: godas_mae.py -e ./geos3dvar -n geos3dvar -y 201*'
   parser = ArgumentParser(
            description=desc,
            formatter_class=ArgumentDefaultsHelpFormatter)
