@@ -2,7 +2,7 @@
 
 * This package generates DATM input data for the forcing fluxes at the sea surface from the NCEP operational GFSv16 outputs.
 
-## Inputs of conversion in conv_gfs2datm_long_beta4.f
+## Inputs of conversion in conv_gfs2datm_long_beta5.f
 
 * INPUT Sources 
 
@@ -17,46 +17,46 @@ III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`
 | longitude	| I| lon |
 | latitude |I |lat |
 | time | I| time |
-|DLWRF_surface  |I |DLWRF |
-|ULWRF_surface  | I|ULWRF |
+| DLWRF_surface  |I |DLWRF |
+| ULWRF_surface  | I|ULWRF |
 | DSWRF_surface |I |DSWRF |
-|DSWRF_surface |I |vbdsf_ave |
-|DSWRF_surface |I | vddsf_ave|
-|DSWRF_surface |I |nbdsf_ave |
-|DSWRF_surface |I | nddsf_ave|
+| VBDSF_surface |II |vbdsf_ave |
+| VDDSF_surface |II | vddsf_ave|
+| NBDSF_surface |II |nbdsf_ave |
+| NDDSF_surface |II | nddsf_ave|
 | UFLX_surface|II | dusfc|
-|VFLX_surface |II |dvsfc |
-|SHTFL_surface |I | shtfl_ave|
-|LHTFL_surface |I |lhtfl_ave |
+| VFLX_surface |II |dvsfc |
+| SHTFL_surface |I | shtfl_ave|
+| LHTFL_surface |I |lhtfl_ave |
 | PRATE_surface|I |totprcp_ave |
 | UGRD_10maboveground|I |u10m |
-|VGRD_10maboveground |I |v10m |
-|delz |III |hgt_hyblev1 |
-|PRES_surface |I | psurf|
-|PRATE_surface |II |precp |
-|PRATE_surface |II | fprecp|
-|ICEC_surface  | I|icecsfc |
-|TMP_1hybridlevel |I |tmp_hyblev1 |
+| VGRD_10maboveground |I |v10m |
+| delz |III |hgt_hyblev1 |
+| PRES_surface |I | psurf|
+| PRATE_surface |II |precp |
+| PRATE_surface |II | fprecp|
+| ICEC_surface  | I|icecsfc |
+| TMP_1hybridlevel |I |tmp_hyblev1 |
 | SPFH_1hybridlevel|I |spfh_hyblev1 |
-|UGRD_1hybridlevel |I |ugrd_hyblev1 |
-|VGRD_1hybridlevel |I | vgrd_hyblev1|
-|SPFH_2maboveground |I |q2m |
-|TMP_2maboveground |I |t2m |
+| UGRD_1hybridlevel |I |ugrd_hyblev1 |
+| VGRD_1hybridlevel |I | vgrd_hyblev1|
+| SPFH_2maboveground |I |q2m |
+| TMP_2maboveground |I |t2m |
 | LAND_surface|I | slmsksfc|
-|ICEC_surface |I | icecsfc|
+| ICEC_surface |I | icecsfc|
 
 
 
 
 
 ## Estimation and calculation
-* vbdsf_ave[W/m**2], vddsf_ave[W/m**2], nbdsf_ave[W/m**2], nddsf_ave[W/m**2] are estimated from DSWRF_surface[W/m**2], multiplied by 0.285 (vbdsf_ave, addsf_ave) and 0.215 (nbdsf_ave, nddsf_ave).
+* vbdsf_ave[W/m**2], vddsf_ave[W/m**2], nbdsf_ave[W/m**2], nddsf_ave[W/m**2] are from VBDSF, VDDSF, NBDSF and NDDSF of 6 hour fcst at the diagnostic time.
 
-* hgt_hyblev1 are obtained by delz  : -1* delz
+* hgt_hyblev1 are obtained by "delz" the thinkness of the 1sy hyblev  : -0.5* delz
 
-* precp and fprecp are estimated from PRATE_surface with the thresh hold of TMP_2maboveground by -15oC.
+* precp and fprecp are estimated from PRATE_surface with CPOFP, the percentage of frozen precp
 
-* pres_hyblev1 are calculated from `delz`, `TMP_1HYBRIDLEVEL`, `PRES_SURFACE`.
+* pres_hyblev1 are calculated from `hgt_hyblev1`, `TMP_1HYBRIDLEVEL`, `PRES_SURFACE`.
 
 * In the GFS_DATM, there is no bulk formula calculation
 
