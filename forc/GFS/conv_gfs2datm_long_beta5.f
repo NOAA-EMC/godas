@@ -1,4 +1,4 @@
-C----  convert surface fluxes data from GFSv16 to DATM
+C----  convert surface fluxes data from CFSR to DATM
 C----                         hyun-chul.lee@noaa.gov
       program conv_gfs2datm
       implicit none
@@ -76,6 +76,10 @@ c     parameter (NX = 1152, NY = 576, NT = 1, NDIM = 3)
      &  PRATE_surface,
      &  UFLX_surface,
      &  VFLX_surface,
+     &  VBDSF_surface,
+     &  VDDSF_surface,
+     &  NBDSF_surface,
+     &  NDDSF_surface,
      &  delz,
      &  VAR1,VAR2,vtmp
 
@@ -141,6 +145,10 @@ C C This will be the netCDF ID for the file and data variable.
      &  vi_PRATE_surface, 
      &  vi_UFLX_surface,
      &  vi_VFLX_surface,
+     &  vi_VBDSF_surface,
+     &  vi_VDDSF_surface,
+     &  vi_NBDSF_surface,
+     &  vi_NDDSF_surface,
      &  vi_delz
 
 
@@ -341,6 +349,14 @@ C  ! Get the varid of the data variable, based on its name.
       if (nerr .ne. nf_noerr) call handle_err(nerr)
       nerr = nf_inq_varid(ncid , "VFLX_surface" ,vi_VFLX_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_inq_varid(ncid , "VBDSF_surface" ,vi_VBDSF_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_inq_varid(ncid , "VDDSF_surface" ,vi_VDDSF_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_inq_varid(ncid , "NBDSF_surface" ,vi_NBDSF_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_inq_varid(ncid , "NDDSF_surface" ,vi_NDDSF_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
       nerr = nf_inq_varid(ncid , "delz" ,vi_delz )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
   
@@ -470,6 +486,14 @@ c     nerr = nf_get_var_int(ncid , vi_time_in, time_in )
       nerr = nf_get_var_real(ncid , vi_UFLX_surface, UFLX_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
       nerr = nf_get_var_real(ncid , vi_VFLX_surface, VFLX_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_get_var_real(ncid , vi_VBDSF_surface, VBDSF_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_get_var_real(ncid , vi_VDDSF_surface, VDDSF_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_get_var_real(ncid , vi_NBDSF_surface, NBDSF_surface )
+      if (nerr .ne. nf_noerr) call handle_err(nerr)
+      nerr = nf_get_var_real(ncid , vi_NDDSF_surface, NDDSF_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
       nerr = nf_get_var_real(ncid , vi_delz, delz )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
@@ -964,17 +988,17 @@ C: put vaiables
       nerr = nf_put_var_real(mcid , vi_DSWRF, DSWRF_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
 
-      VAR2=DSWRF_surface*0.285
-      nerr = nf_put_var_real(mcid , vi_vbdsf_ave, VAR2 )
+C     VAR2=DSWRF_surface*0.285
+      nerr = nf_put_var_real(mcid , vi_vbdsf_ave, VBDSF_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
-      VAR2=DSWRF_surface*0.285
-      nerr = nf_put_var_real(mcid , vi_vddsf_ave, VAR2 )
+C     VAR2=DSWRF_surface*0.285
+      nerr = nf_put_var_real(mcid , vi_vddsf_ave, VDDSF_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
-      VAR2=DSWRF_surface*0.215
-      nerr = nf_put_var_real(mcid , vi_nbdsf_ave, VAR2 )
+C     VAR2=DSWRF_surface*0.215
+      nerr = nf_put_var_real(mcid , vi_nbdsf_ave, NBDSF_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
-      VAR2=DSWRF_surface*0.215
-      nerr = nf_put_var_real(mcid , vi_nddsf_ave, VAR2 )
+C     VAR2=DSWRF_surface*0.215
+      nerr = nf_put_var_real(mcid , vi_nddsf_ave, NDDSF_surface )
       if (nerr .ne. nf_noerr) call handle_err(nerr)
 
       nerr = nf_put_var_real(mcid , vi_dusfc, UFLX_surface )
@@ -1041,7 +1065,7 @@ C--------------------------------------------------
         do j=1,NY
           jinv = NY- (j - 1)
           do i=1,NX
-            vtmp(i,j,k) = -1.0*delz(i,jinv,k)             
+            vtmp(i,j,k) = -0.5*delz(i,jinv,k)             
           enddo
         enddo
       enddo
@@ -1056,19 +1080,18 @@ C--------- Specific Gas Constant for dry air : J/Kg/K
       do k=1,NT
         do j=1,NY
           do i=1,NX
-c           TCel = TMP_surface(i,j,k)-273.15
-            TCel = TMP_2maboveground(i,j,k)-273.15
-            if (TCel >= 0.0) then
-              coef = 1.0
-            else if (TCel < -15.0) then
-              coef = 0.0
-            else
-              coef = (TCel + 15.0)/15.0
-            endif
-c           PRAT_tot=PWAT_entireatmosphere_consideredasasinglelayer_(i,j,k)
+C           TCel = TMP_2maboveground(i,j,k)-273.15
+C           if (TCel >= 0.0) then
+C             coef = 1.0
+C           else if (TCel < -15.0) then
+C             coef = 0.0
+C           else
+C             coef = (TCel + 15.0)/15.0
+C           endif
+            coef = 0.01*CPOFP_surface(i,j,k)
             PRATE_surf=PRATE_surface(i,j,k)
-            precp(i,j,k) = coef * PRATE_surf
-            fprecp(i,j,k) = (1.0 - coef) * PRATE_surf
+            precp(i,j,k) = (1.0 - coef) * PRATE_surf
+            fprecp(i,j,k) = coef * PRATE_surf
 C------------ GFS has correct HGT_1HYBRIDLEVEL
 cc           if (abs(HGT_1HYBRIDLEVEL(i,j,k)) < 1.0e10 .and. LAND_surface(i,j,k) == 1) then
 c            if (abs(HGT_1HYBRIDLEVEL(i,j,k)) < 1.0e11 .and. LAND_surface(i,j,k) == 1) then
