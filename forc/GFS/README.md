@@ -63,10 +63,10 @@ III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`
 
 ## Code and scripts
 * comp_f77_code.csh : compilation script for the code
-* get_gfs_beta4_gdas.csh : script to import input files from HPSS and merge variables into an input file 
-* conv_gfs2datm_long_beta4.f : convert code from input file to DATM output
-* conv_gfs2datm.fort_beta4.csh : script for conversion
-* run_gfs2datm_inter.csh : wrap script for getting input files and variables and converting to DATM output
+* get_gfs_beta5_gdas.csh : script to import input files from HPSS and merge variables into an input file 
+* conv_gfs2datm_long_beta5.f : convert code from input file to DATM output
+* conv_gfs2datm.fort_beta5.csh : script for conversion
+* run_gfs2datm_inter_5.csh : wrap script for getting input files and variables and converting to DATM output
 
 ## Instruction of conversion
  - Compile the code by comp_f77_code.csh
@@ -78,12 +78,12 @@ III. `./gdas.${dat}/${hh}/atmos/gdas.t${hh}z.atmf000.nc`
 ## Issue(s) addressed
 
 Document the code that generates the forcing :
-https://github.com/NOAA-EMC/godas/issues/276
+https://github.com/NOAA-EMC/godas/issues/280
 
 
 
 ## Testing
-The validation of the GFS_DATM from this package has been done by the comparisons of CFSR_DATM/GEFS_DATM in the same periods.
+The validation of the GFS_DATM from this package has been done by the comparisons between the previous and the new GFS_DATM in the same periods.
 
 
 ## Dependencies
