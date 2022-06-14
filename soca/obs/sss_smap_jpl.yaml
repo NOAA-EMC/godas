@@ -22,13 +22,6 @@
     maxvalue: 40.0
   - filter: Background Check
     threshold: 5.0
-#  - filter: Domain Check
-#    action:
-#      name: passivate
-#    where:
-#    - variable: {name: sea_surface_temperature@GeoVaLs}
-#      minvalue: 10.0
-
   ## Gaussian_Thinning is having problems with LETKF, try again later
   # - filter: Gaussian_Thinning
   #   horizontal_mesh:   25.0 #km

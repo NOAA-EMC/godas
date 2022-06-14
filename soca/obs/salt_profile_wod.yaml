@@ -42,7 +42,3 @@
     where:
     - variable: { name: sea_ice_area_fraction@GeoVaLs}
       maxvalue: 0.00001
-#  - filter: Domain Check
-#    where:
-#    - variable: {name: distance_from_coast@GeoVaLs}
-#      minvalue: 100e3
