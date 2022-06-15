@@ -14,3 +14,4 @@ bash godas_plotobs.sh -x EMC3 -v obs_out -s 20210201 -e 20210202 -p /work/noaa/m
 
 This will use a python script named godas_plotobs.py
 
+To check if plots are missing for some dates, one can use: check_plots.sh
