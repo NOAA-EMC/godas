@@ -34,3 +34,7 @@
   ## Gaussian_Thinning is having problems with LETKF, try again later
   # - filter: Gaussian_Thinning
   #   horizontal_mesh:   25.0 #km
+  - filter: Domain Check
+    where:
+    - variable: {name: distance_from_coast@GeoVaLs}
+      minvalue: 100e3

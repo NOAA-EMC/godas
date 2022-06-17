@@ -11,16 +11,10 @@
     name: Identity
   obs error:
     covariance model: diagonal
-  _letkf: &letkf
-    # note, this is only used for LETKF. If running with LETKF, the workflow
-    # will append "<< : *letkf" to the end of this file
-    obs localizations:
-    - localization method: Horizontal Gaspari-Cohn
-      lengthscale: 200e3
   obs filters:
   - *obs_land_mask
   - filter: Bounds Check
-    minvalue: -2.0
+    minvalue: 1.0
     maxvalue: 36.0
   - filter: Background Check
     threshold: 5.0
@@ -28,10 +22,15 @@
     where:
     - variable: {name: sea_surface_temperature@ObsError}
       minvalue: 0.001
-   #   maxvalue: 0.5
-    #action:
-    #  name: inflate error
-    #  inflation: 2.0
-  ## Gaussian_Thinning is having problems with the LETKF, try again alter
-  #- filter: Gaussian_Thinning
-  #  horizontal_mesh:  1111.949266 #km
+  - filter: Domain Check
+    where:
+    - variable: { name: sea_ice_area_fraction@GeoVaLs}
+      maxvalue: 0.00001
+  - filter: Domain Check
+    where:
+    - variable: {name: sea_surface_temperature@GeoVaLs}
+      minvalue: 3.0
+  - filter: Domain Check
+    where:
+    - variable: {name: distance_from_coast@GeoVaLs}
+      minvalue: 100e3
