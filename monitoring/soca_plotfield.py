@@ -226,7 +226,6 @@ if __name__ == '__main__':
         x=np.tile(grid.lon[index,:],(nlev,1))
         fig = plt.figure(figsize=(18,6))
         ax = fig.add_subplot(1, 1, 1)
-
         p = ax.pcolormesh(x, y, var,
                           cmap=plt.get_cmap(args.color),
                           vmin=args.clim[0], vmax=args.clim[1],

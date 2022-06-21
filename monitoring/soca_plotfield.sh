@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #Command:
-
 #   bash soca_plotfield.sh -x exp_name -v state_vector -s start_date -e end_date -p path/to/exp -l fct_length
 
 function prepsurfyaml {
@@ -27,7 +26,6 @@ if [[ $# != 12 ]]; then
 fi
 
 while getopts x:v:s:e:p:l: flag
-
 do
     case "${flag}" in
         x) exp=${OPTARG};;  # experiment
@@ -41,8 +39,6 @@ do
             exit 1 ;;
     esac
 done
-echo experiments: $exp
-#fctl=6
 echo 'EXP dir:' ${cycle_dir}
 varlist=(ave_ssh Temp Salt aicen hicen)
 projlist=(global north south)
@@ -53,7 +49,6 @@ LEVEL=1
 date_YMDH=$(date -ud "$start_date")
 YMDH=$(date -ud "$date_YMDH " +%Y%m%d%H )
 clmp=jet
-
 while [ "$YMDH" -le "$end_date" ]; do
     year=${YMDH:0:4}
     YMD=${YMDH:0:8}
@@ -61,14 +56,13 @@ while [ "$YMDH" -le "$end_date" ]; do
     mkdir -p $plotdir
     echo plotting dir: $plotdir
 
-    datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
+    datadir=${cycle_dir}/${stv}/${year}/${YMDH}/ctrl
 
     if [ $stv == incr ]; then
         clmp=seismic
         hrp=${YMDH:8:10}
         YMDH_i=$(date -ud "${YMD}Z$hrp" +%Y-%m-%dT%H:%M:%S)
         #echo $hrp $YMDH $YMDH_i
-
     fi
     for proj in ${projlist[@]}; do
         for tindex in ${tlist[@]} ;do
@@ -77,46 +71,38 @@ while [ "$YMDH" -le "$end_date" ]; do
                     ave_ssh)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-
                         prepsurfyaml $varname -.1 .1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
                         prepsurfyaml $varname -1.5 1.5 $tindex surface $proj $stv $plotdir  $clmp > ${exp}_${stv}.yaml
-
                     fi 
                     ;;
                     Salt)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-
                         prepsurfyaml $varname -.1 0.1 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
                         prepsurfyaml $varname 30 38 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-
                     fi
                     ;;
                     Temp)
                     if [ $stv == incr ]; then
                         FNAME=ocn.var.iter1.${stv}.${YMDH_i}Z.nc
-
                         prepsurfyaml ${varname} -2.0 2.0 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
                         FNAME=ocn.${stv}.${YMDH}.nc
                         prepsurfyaml $varname -2 32 $tindex $LEVEL $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-
                     fi 
                     ;;
                     aicen)  # bound [0 1]
                     if [ $proj != 'global' ] ; then
                         if [ $stv == incr ]; then
                             FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
-
                             prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                         else
                             FNAME=ice.${stv}.${YMDH}.nc
                             prepsurfyaml $varname 0 1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-
                         fi
                     else
                         continue
@@ -130,7 +116,6 @@ while [ "$YMDH" -le "$end_date" ]; do
                         else
                             FNAME=ice.${stv}.${YMDH}.nc
                             prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-
                         fi
                     else
                         continue
@@ -138,10 +123,8 @@ while [ "$YMDH" -le "$end_date" ]; do
                     ;;
                 esac
                 echo plotting $varname in the $proj # using $FNAME
-
                 python soca_plotfield.py -g $cycle_dir/static/soca_gridspec.nc -f $datadir/$FNAME \
                              -s horizontal -y ${exp}_${stv}.yaml
-
           done  #tindex
       done  #varname
     done    #projlist
@@ -149,6 +132,4 @@ while [ "$YMDH" -le "$end_date" ]; do
     YMDH=$(date -ud "$date_YMDH + $DH hours" +%Y%m%d%H )
 done  # day loop
 
-
 rm ${exp}_${stv}.yaml
-

@@ -22,9 +22,6 @@ do
     esac
 done
 
-echo experiments: $exp
-
-#fctl=6
 echo 'EXP dir:' $cycle_dir
 
 obslist=(sst adt salt temp sss)
@@ -38,7 +35,7 @@ while [ "$YMDH" -le "$end_date" ]; do
     plotdir=${cycle_dir}/monitoring/$year/$YMD/ombg
     mkdir -p $plotdir
     echo plotting dir: $plotdir
-    datadir=${cycle_dir}/${stv}/${YMDH:0:4}/${YMDH}/ctrl
+    datadir=${cycle_dir}/${stv}/${year}/${YMDH}/ctrl
     echo data dir: $datadir
     for obs_type in ${obslist[@]}; do
         echo plotting $obs_type ...
