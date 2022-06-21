@@ -33,3 +33,7 @@
     where:
     - variable: {name: sea_area_fraction@GeoVaLs}
       maxvalue: 0.9
+  - filter: Domain Check
+    where:
+    - variable: {name: distance_from_coast@GeoVaLs}
+      minvalue: 100e3

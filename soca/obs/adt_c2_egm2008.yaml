@@ -9,18 +9,12 @@
     name: ADT
   obs error:
     covariance model: diagonal
-  _letkf: &letkf
-    # note, this is only used for LETKF. If running with LETKF, the workflow
-    # will append "<< : *letkf" to the end of this file
-    obs localizations:
-    - localization method: Horizontal Gaspari-Cohn
-      lengthscale: 500e3
   obs filters:
   - *obs_land_mask
   - filter: Domain Check
     where:
     - variable: { name: sea_surface_temperature@GeoVaLs}
-      minvalue: 5.0
+      minvalue: 15.0
   - filter: Background Check
     absolute threshold: 0.2
   - filter: Domain Check
@@ -36,7 +30,7 @@
           variables: [mesoscale_representation_error@GeoVaLs,
                       absolute_dynamic_topography@ObsError]
           coefs: [0.1,
-                  2.0]
+                  0.5]
   - filter: BlackList
     where:
     - variable:
@@ -57,3 +51,7 @@
         name: longitude@MetaData
       minvalue: 60
       maxvalue: 110
+  - filter: Domain Check
+    where:
+    - variable: { name: sea_ice_area_fraction@GeoVaLs}
+      maxvalue: 0.00001

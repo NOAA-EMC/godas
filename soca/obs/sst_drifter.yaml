@@ -36,3 +36,7 @@
       name: reject
     minvalue: -2.0
     maxvalue: 36.0
+  - filter: Domain Check
+    where:
+    - variable: {name: distance_from_coast@GeoVaLs}
+      minvalue: 100e3
