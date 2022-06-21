@@ -128,4 +128,5 @@ cost function:
         dtdzmin: 1.0e-6
         nlayers: 10
 
-  observations: *observations
+  observations:
+    observers: *observations

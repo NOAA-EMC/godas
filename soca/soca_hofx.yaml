@@ -37,4 +37,5 @@ window length: __DA_WINDOW_LENGTH__
 window begin: __DA_WINDOW_START__
 
 observations:
-  __OBSERVATIONS__
+  observers:
+    __OBSERVATIONS__
