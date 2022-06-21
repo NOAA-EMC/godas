@@ -28,10 +28,11 @@
     where:
     - variable: {name: sea_surface_temperature@ObsError}
       minvalue: 0.001
-   #   maxvalue: 0.5
-    #action:
-    #  name: inflate error
-    #  inflation: 2.0
-  ## Gaussian_Thinning is having problems with the LETKF, try again alter
-  #- filter: Gaussian_Thinning
-  #  horizontal_mesh:  1111.949266 #km
+  - filter: Domain Check
+    where:
+    - variable: { name: sea_ice_area_fraction@GeoVaLs}
+      maxvalue: 0.00001
+  - filter: Domain Check
+    where:
+    - variable: {name: distance_from_coast@GeoVaLs}
+      minvalue: 100e3
