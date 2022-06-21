@@ -71,11 +71,11 @@ cost function:
     state variables: [__DA_VARIABLES__, mld, layer_depth]
 
   background error:
-    #covariance model: SABER
-    #saber blocks:
-    #- saber block name: ID
-    #  input variables: *soca_vars
-    #  output variables: *soca_vars
+#    covariance model: SABER
+#    saber blocks:
+#    - saber block name: ID
+#      input variables: *soca_vars
+#      output variables: *soca_vars
 
     covariance model: SocaError
     analysis variables: [__DA_VARIABLES__]
@@ -91,6 +91,10 @@ cost function:
       input variables: *soca_vars
       output variables: *soca_vars
       linear variable changes:
+
+#      - linear variable change name: HorizFiltSOCA
+#        niter: 6
+#        filter variables: *soca_vars
 
       - linear variable change name: VertConvSOCA
         Lz_min: 0.0
@@ -113,8 +117,8 @@ cost function:
         ssh_min: 0.0   # value at EQ
         ssh_max: 0.0   # value in Extratropics
         ssh_phi_ex: 20 # lat of transition from extratropics
-        cicen_min: 0.1
-        cicen_max: 0.1
+        cicen_min: 0.05
+        cicen_max: 0.05
         hicen_min: 0.1
         hicen_max: 0.1
 
@@ -124,4 +128,5 @@ cost function:
         dtdzmin: 1.0e-6
         nlayers: 10
 
-  observations: *observations
+  observations:
+    observers: *observations
