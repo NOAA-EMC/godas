@@ -83,7 +83,6 @@ def plothor(x, y, z, map, varname='',
         ax.add_feature(cartopy.feature.LAND, edgecolor='black')
         ax.add_feature(cartopy.feature.LAKES, edgecolor='black')
         ax.coastlines()
-        #ax.background_img(name='BM', resolution='high')
 
 class Grid:
     def __init__(self,fname):
@@ -227,10 +226,6 @@ if __name__ == '__main__':
         x=np.tile(grid.lon[index,:],(nlev,1))
         fig = plt.figure(figsize=(18,6))
         ax = fig.add_subplot(1, 1, 1)
-        #print(np.shape(x))
-        #print(np.shape(y))
-        #print(np.shape(var))
-        #p = ax.contourf(x, y, var, clevs, cmap=plt.get_cmap(args.color), extend='both')
         p = ax.pcolormesh(x, y, var,
                           cmap=plt.get_cmap(args.color),
                           vmin=args.clim[0], vmax=args.clim[1],
