@@ -12,7 +12,8 @@ _corr:
     name: ocn
     rossby mult: 1.0
     min grid mult: 1.0
-    min value: 50.0e3
+    min value: 0.0e3
+    max value: 150.0e3
     variables: [__DA_VARIABLES_OCN__]
   - &corr_ice
     name: ice
@@ -46,6 +47,6 @@ background error:
     new_nicas: true
     write_nicas_local: true
     mask_check: true
-    resol: 10.0
+    resol: 20.0
     nc1max: 88000
   correlation: *corr_list___DOMAINS__
