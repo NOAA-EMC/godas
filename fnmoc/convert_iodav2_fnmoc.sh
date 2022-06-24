@@ -10,7 +10,7 @@ fi
 
 date=$1
 year=${date:0:4}
-input_path=$1
+input_path=$2
 output_path=$3
 
 export MACHINE_ID=gaea
