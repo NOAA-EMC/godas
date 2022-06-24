@@ -24,6 +24,6 @@ wget --ftp-user=anonymous ${source}/south/daily/${year}/seaice_conc_daily_sh_${d
 if [ ! -f $output_path/G02202-cdr-ancillary-nh.nc ]; then 
    wget --ftp-user=anonymous ${source}/ancillary/G02202-cdr-ancillary-nh.nc
 elif [ ! -f $output_path/G02202-cdr-ancillary-sh.nc ]; then
-   wget --ftp-user=anonymous ${source}/ancillary/G02202-cdr-ancillary-nh.nc
+   wget --ftp-user=anonymous ${source}/ancillary/G02202-cdr-ancillary-sh.nc
 fi
 
