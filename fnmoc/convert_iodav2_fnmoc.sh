@@ -9,16 +9,17 @@ if [[ $# != 3 ]]; then
 fi
 
 date=$1
-year=${dtg:0:4}
+year=${date:0:4}
 input_path=$1
 output_path=$3
 
-source /work/noaa/ng-godas/spaturi/nggodas_realtime_ext/forCPC/soca-science/configs/machine/machine.hera.intel
-module unload anaconda/3.15.1
-module load nco/4.9.3
+export MACHINE_ID=gaea
 
-export pySRC=/work/noaa/ng-godas/spaturi/nggodas_realtime_ext/forCPC/build
-export PYTHONPATH=${pySRC}/lib/python3.9/pyioda:$PYTHONPATH
+if [[ $MACHINE_ID == gaea ]]; then
+   source /lustre/f2/scratch/Shastri.Paturi/sandbox/20220613/soca-science/configs/machine/machine.${MACHINE_ID}.intel
+export pySRC=/lustre/f2/scratch/Shastri.Paturi/sandbox/20220613/build
+export PYTHONPATH=${pySRC}/lib/python3.7/pyioda:$PYTHONPATH
+fi
 
 cd $output_path
 if [ -d $input_path/${date} ]; then
@@ -36,4 +37,4 @@ if [ -d $input_path/${date} ]; then
       done 
    fi
    echo " "
-echo $dtg DONE
+echo $date DONE
