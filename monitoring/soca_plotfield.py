@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 import cartopy.crs as ccrs
 import cartopy
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from cmocean import cm as cmo
 import os
@@ -37,7 +38,7 @@ def plothor(x, y, z, map, varname='',
     b=float(clim[1])
     #print('limit', a, b)
     if  proj_type == 'global' or proj_type == 'hat10':
-        proj = ccrs.Robinson()
+        proj = ccrs.Robinson(central_longitude=210)
     if proj_type == 'north':
         proj = ccrs.NorthPolarStereo()
     if proj_type == 'south':
@@ -77,7 +78,7 @@ def plothor(x, y, z, map, varname='',
                           transform=ccrs.PlateCarree(),
                           cmap=colormap )
     ax.gridlines()
-    plt.colorbar(p, ax=ax, shrink=0.5)
+    plt.colorbar(p, ax=ax, shrink=0.5, pad=.01)
     plt.title(varname)
     if pretty == True:
         ax.add_feature(cartopy.feature.LAND, edgecolor='black')

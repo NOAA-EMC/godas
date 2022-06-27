@@ -17,3 +17,5 @@ This will use a python script named godas_plotobs.py
 
 To check if plots are missing for some dates, one can use: check_plots.sh
 
+Or to submit the job:
+bash job_card_socaplot.sh EMC1 bkg 20220101 20220104
