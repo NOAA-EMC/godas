@@ -1,18 +1,18 @@
 #!/bin/bash
 # Convert OSTIA L4 SST data to IODA-v2
 
-set -e
-set -u
-
-usage="usage: $0 yyyymmdd input_path output_path"
-if [[ $# != 3 ]]; then
-    echo $usage
-    exit 1
-fi
-
-date=$1
-input_path=$2
-output_path=$3
+#set -e
+#set -u
+#
+#usage="usage: $0 yyyymmdd input_path output_path"
+#if [[ $# != 3 ]]; then
+#    echo $usage
+#    exit 1
+#fi
+#
+#date=$1
+#input_path=$2
+#output_path=$3
 
 export SOCA_SCIENCE_RUNTIME=T
 export IODA=/work/noaa/ng-godas/spaturi/nggodas_realtime_ext/forCPC/build/bin

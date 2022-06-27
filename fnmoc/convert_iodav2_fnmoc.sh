@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -eu 
 
 usage="usage: $0 yyyymmdd input_path output_path"
@@ -17,19 +16,19 @@ export MACHINE_ID=gaea
 
 if [[ $MACHINE_ID == gaea ]]; then
    source /lustre/f2/scratch/Shastri.Paturi/sandbox/20220613/soca-science/configs/machine/machine.${MACHINE_ID}.intel
-export pySRC=/lustre/f2/scratch/Shastri.Paturi/sandbox/20220613/build
-export PYTHONPATH=${pySRC}/lib/python3.7/pyioda:$PYTHONPATH
+   export pySRC=/lustre/f2/scratch/Shastri.Paturi/sandbox/20220623/build
+   export PYTHONPATH=${pySRC}/lib/python3.7/pyioda:$PYTHONPATH
 fi
 
-cd $output_path
-if [ -d $input_path/${date} ]; then
-   mkdir -p $date
+mkdir -p ${output_path}/ioda-v2/${year}/${date}
+echo $input_path/${year}/${date}
+if [ -d $input_path/${year}/${date} ]; then
    for typ in profile ship trak; do
-       if [ -f $input_path/${date}/${date}'00'.${typ} ]; then
-             echo $input_path/${date}/${date}'00'.${typ}
+       if [ -f $input_path/${year}/${date}/${date}'00'.${typ} ]; then
+             echo $input_path/${year}/${date}/${date}'00'.${typ}
              python ${pySRC}/bin/godae_${typ}2ioda.py               \
-                    -i ${input_path}/${date}/${date}'00'.${typ}              \
-                    -o ${output_path}/${date}/insitu_${typ}_fnmoc_${date}.nc \
+                    -i ${input_path}/${year}/${date}/${date}'00'.${typ}              \
+                    -o ${output_path}/ioda-v2/${year}/${date}/insitu_${typ}_fnmoc_${date}.nc \
                     -d ${date}'12'
           echo " "
           echo $typ DONE
