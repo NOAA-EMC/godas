@@ -10,8 +10,8 @@ _: &bkg_files *bkg_files___DOMAINS__
 _corr:
   - &corr_ocn
     name: ocn
-    rossby mult: 1.0
-    min grid mult: 1.0
+    rossby mult: 0.28
+    min grid mult: 0.28
     min value: 0.0
     max value: 42.0e3
     variables: [__DA_VARIABLES_OCN__]
