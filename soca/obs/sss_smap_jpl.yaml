@@ -1,0 +1,31 @@
+- obs space:
+    name: sss_smap_jpl  
+    obsdatain:
+      obsfile: $(experiment_dir)/{{current_cycle}}/sss_smap_jpl.{{window_begin}}.nc4
+    obsdataout:
+      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sss_smap_jpl.{{window_begin}}.nc4
+    simulated variables: [sea_surface_salinity]
+  obs operator:
+    name: Identity
+  obs error:
+    covariance model: diagonal
+  _letkf: &letkf
+    # note, this is only used for LETKF. If running with LETKF, the workflow
+    # will append "<< : *letkf" to the end of this file
+    obs localizations:
+    - localization method: Horizontal Gaspari-Cohn
+      lengthscale: 500e3
+  obs filters:
+  - *obs_land_mask
+  - filter: Bounds Check
+    minvalue: 0.1
+    maxvalue: 40.0
+  - filter: Background Check
+    threshold: 5.0
+  ## Gaussian_Thinning is having problems with LETKF, try again later
+  # - filter: Gaussian_Thinning
+  #   horizontal_mesh:   25.0 #km
+  - filter: Domain Check
+    where:
+    - variable: {name: distance_from_coast@GeoVaLs}
+      minvalue: 100e3
