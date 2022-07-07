@@ -26,14 +26,16 @@ while ($ymd <= $eymd)
     set ymdh = ${ymd}${hh}
     echo ${ymdh}
     rm gfs_input*.nc
+    #-- convert input grib2 files to netcdf format
     ${grb2} ${sdir}/gfs.${ymd}.t${hh}z.sfcanl.grib2 -netcdf gfs_input1.nc
     ${grb2} ${sdir}/gfs.${ymd}.t${hh}z.puvflx.grib2 -netcdf gfs_input2.nc
     cp ${sdir}/gfs.${ymd}.t${hh}z.atmf000.delz1.nc gfs_input3.nc
+    #-- concartnate nc files to an input file of gfs_input.nc
     cdo merge gfs_input1.nc gfs_input2.nc gfs_input3.nc gfs_input.nc
 
     echo ${ymdh}
      ./conv_gfs2datm_long_beta4
-
+    #-- 
 ncdump gfs_output.nc | sed -e "5s#^.time = 1 ;#time = UNLIMITED ; // (1 currently)#" | ncgen -o gfs_output2.nc
     mv gfs_output2.nc gfs_output.nc
     /bin/mv gfs_output.nc ${tdir}/gfs.${ymdh}.nc

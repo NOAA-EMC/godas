@@ -71,36 +71,29 @@ cost function:
     state variables: [__DA_VARIABLES__, mld, layer_depth]
 
   background error:
-#    covariance model: SABER
-#    saber blocks:
-#    - saber block name: ID
-#      input variables: *soca_vars
-#      output variables: *soca_vars
 
-    covariance model: SocaError
-    analysis variables: [__DA_VARIABLES__]
-    date: *bkg_date
-    bump:
-      verbosity: main
-      datadir: ./bump
-      strategy: specific_univariate
-      load_nicas_local: true
-    correlation: *corr_list___DOMAINS__
+    covariance model: SABER
+    saber blocks:
+    - saber block name: BUMP_NICAS
+      saber central block: true
+      iterative inverse: true
+      input variables: *soca_vars
+      output variables: *soca_vars
+      bump:
+        verbosity: main
+        datadir: ./bump
+        strategy: specific_univariate
+        load_nicas_local: true
+        grids:
+        - prefix: bump3d
+          variables: [hocn, socn, tocn]
+        - prefix: bump2d
+          variables: [ssh, cicen, hicen, hsnon]
 
     linear variable change:
       input variables: *soca_vars
       output variables: *soca_vars
       linear variable changes:
-
-#      - linear variable change name: HorizFiltSOCA
-#        niter: 6
-#        filter variables: *soca_vars
-
-      - linear variable change name: VertConvSOCA
-        Lz_min: 0.0
-        Lz_mld: 0
-        Lz_mld_max: 1.0
-        scale_layer_thick: 5
 
       - linear variable change name: BkgErrFILT
         ocean_depth_min: 0    # [m]

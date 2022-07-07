@@ -129,10 +129,9 @@ def plotobs(args):
     ax.coastlines()
     ax.set_extent([lonmin, lonmax, latmin, latmax], ccrs.PlateCarree())
     plt.colorbar(obsax, shrink=0.5).set_label(args.group)
-    plt.title(args.title, fontsize=24, fontweight='bold')
+    plt.title(args.title, fontsize=14, fontweight='bold')
     if ( args.save == 'none' ): plt.show()
-    if ( args.save != 'none' ): plt.savefig(args.save)
-
+    if ( args.save != 'none' ): plt.savefig(args.save,  bbox_inches='tight', pad_inches = 0.02)
 
 if __name__ == '__main__':
     description = """ Ex: soca_plotobs.py -f /obs_out/2019/20190417*/ctrl/adt_*
