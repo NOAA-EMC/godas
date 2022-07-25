@@ -1,9 +1,9 @@
 - obs space:
-    name: sss_smap_jpl  
+    name: sss_smos_esa  
     obsdatain:
-      obsfile: $(experiment_dir)/{{current_cycle}}/sss_smap_jpl.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/sss_smos_esa.{{window_begin}}.nc4
     obsdataout:
-      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sss_smap_jpl.{{window_begin}}.nc4
+      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sss_smos_esa.{{window_begin}}.nc4
     simulated variables: [sea_surface_salinity]
   obs operator:
     name: Identity
