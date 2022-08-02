@@ -1,0 +1,12 @@
+variable: hicen
+clim:
+  min: -0.1
+  max: 0.1
+time: 50
+level: surface
+latitude: 0.0
+aggregate: False
+projection: south #'global'
+experiment: incr 
+plot_dir: /work/noaa/marine/Hyun-Chul.Lee/emc4/monitoring/2020/20200813/incr
+color: seismic  # Spectral  #seismic #jet 
