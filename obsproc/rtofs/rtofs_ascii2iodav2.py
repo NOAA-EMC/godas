@@ -56,36 +56,39 @@ class marine(object):
         lines = len(obs_line.readlines())
         #print(lines)
 
-        age=np.ndarray(shape=(lines), dtype=np.float32, order='F')
         lat=np.ndarray(shape=(lines), dtype=np.float32, order='F')
         lon=np.ndarray(shape=(lines), dtype=np.float32, order='F')
+        val=np.ndarray(shape=(lines), dtype=np.float32, order='F')
         err=np.ndarray(shape=(lines), dtype=np.float32, order='F')
-        var=np.ndarray(shape=(lines), dtype=np.float32, order='F')
-        qc=np.ndarray(shape=(lines), dtype=np.int32, order='F')
+        qc =np.ndarray(shape=(lines), dtype=np.int32, order='F')
+         
+        if ( self.varname == 'sea_water_temperature' ):
+           sws_val=np.ndarray(shape=(lines), dtype=np.float32, order='F')
+           sws_err=np.ndarray(shape=(lines), dtype=np.float32, order='F')
+           sws_qc =np.ndarray(shape=(lines), dtype=np.int32, order='F')
+           depth  =np.ndarray(shape=(lines), dtype=np.float32, order='F')
+       
         dates = []
 
         obs_txt = open(self.filename, "r")
         i=0
         for line in obs_txt:
-            a = float(line.split()[0])
-            b = str(line.split()[1])
-            c = float(line.split()[2])
-            d = float(line.split()[3])
-            e = float(line.split()[4])
-            f = float(line.split()[5])
-            g = float(line.split()[6])
-
-            age[i]=a
-            
+            b = str(line.split()[0])
             ss = str(datetime.strptime(b, '%Y%m%d%H%M'))
             s2 = ss[0:10]+"T"+ss[11:19]+"Z"
             dates.append(s2)
 
-            err[i]=c
-            lat[i]=d
-            lon[i]=e
-            qc[i]=f
-            var[i]=g
+            lat[i] = float(line.split()[1])
+            lon[i] = float(line.split()[2])
+            val[i] = float(line.split()[3])
+            err[i] = float(line.split()[4])
+            qc[i]  = float(line.split()[5])
+
+            if ( self.varname == 'sea_water_temperature' ):
+               sws_val[i] = float(line.split()[6])
+               sws_err[i] = float(line.split()[7])
+               sws_qc[i]  = float(line.split()[8])
+               depth[i]   = float(line.split()[9])
             #print(i)
             i=i+1
         obs_txt.close()
@@ -93,18 +96,21 @@ class marine(object):
         self.outdata[('datetime', 'MetaData')]=np.empty(len(dates), dtype=object)
         self.outdata[('datetime', 'MetaData')][:] = dates
 
-        self.outdata[('latitude', 'MetaData')]=lat
-        self.outdata[('longitude', 'MetaData')]=lon
+        self.outdata[('latitude', 'MetaData')]  =lat
+        self.outdata[('longitude', 'MetaData')] =lon
         self.outdata[(self.varname, 'ObsError')]=err
-        self.outdata[(self.varname, 'ObsValue')]=var
-        self.outdata[(self.varname, 'PreQC')]=qc
+        self.outdata[(self.varname, 'ObsValue')]=val
+        self.outdata[(self.varname, 'PreQC')]   =qc
 
-        #self.outdata[('sea_surface_temperature', 'ObsError')]=err
-        #self.outdata[('sea_surface_temperature', 'ObsValue')]=var
-        #self.outdata[('sea_surface_temperature', 'PreQC')]=qc
+        if ( self.varname == 'sea_water_temperature' ):
+           print('sea_water_salinity')
+           self.outdata[('sea_water_salinity', 'ObsError')]=sws_err
+           self.outdata[('sea_water_salinity', 'ObsValue')]=sws_val
+           self.outdata[('sea_water_salinity', 'PreQC')]   =sws_qc
+           self.outdata[('depth', 'MetaData')]=depth
 
         # get global attributes
-        DimDict['nlocs'] = len(var)
+        DimDict['nlocs'] = len(val)
         AttrData['nlocs'] = np.int32(DimDict['nlocs'])
 
 def main():
