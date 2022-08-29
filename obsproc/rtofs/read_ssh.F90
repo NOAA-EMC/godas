@@ -17,7 +17,7 @@
       real,     allocatable :: ob_ssh (:)
       integer,  allocatable :: ob_trck (:) 
         
-      character winstart *14, winend *14
+      character winstart *12, winend *12
 
       open(10,file='ssh.bin',form='unformatted')
 
@@ -54,8 +54,8 @@
       read (10) ob_rcpt(1:n_read)
 
       open(21,file='window.txt',status='old')
-      read(21,'(a14)') winstart
-      read(21,'(a14)') winend
+      read(21,'(a12)') winstart
+      read(21,'(a12)') winend
       close(21)
 
       open(20,file='ssh.txt',status='unknown')
@@ -67,7 +67,8 @@
      6   ob_lon(i).ge.-100.0.and.ob_lon(i).le.-7.0) then
 
 !     time window
-      if(ob_dtg(i).ge.winstart.and.ob_dtg(i).le.winend) then
+      if(ob_dtg(i)(1:12).ge.winstart.and.ob_dtg(i)(1:12).le.
+     6   winend) then
 
       if(ob_dtg(i)(13:14).gt."59") ob_dtg(i)(13:14)="59"
       if(ob_dtg(i)(11:12).gt."59") ob_dtg(i)(11:12)="59"
