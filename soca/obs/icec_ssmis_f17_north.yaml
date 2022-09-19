@@ -5,11 +5,11 @@
     obsdatain:
       engine:
         type: H5File
-        obsfile: $(experiment_dir)/{{current_cycle}}/icec_ssmis_f17_north.window_begin.nc4
+        obsfile: $(experiment_dir)/{{current_cycle}}/icec_ssmis_f17_north.{{window_begin}}.nc4
     obsdataout:
       engine:
         type: H5File
-        obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_ssmis_f17_north.window_begin.nc4
+        obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_ssmis_f17_north.{{window_begin}}.nc4
     simulated variables: [sea_ice_area_fraction]
   obs operator:
     name: Identity
