@@ -3,9 +3,13 @@
     distribution:
       name: *obs_distribution
     obsdatain:
-      obsfile: $(experiment_dir)/{{current_cycle}}/icec_nsidc_nh.{{window_begin}}.nc4
+      engine:
+        type: H5File
+        obsfile: $(experiment_dir)/current_cycle/icec_nsidc_nh.window_begin.nc4
     obsdataout:
-      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_nsidc_nh.{{window_begin}}.nc4
+      engine:
+        type: H5File
+        obsfile: $(experiment_dir)/current_cycle/$(experiment).icec_nsidc_nh.window_begin.nc4
     simulated variables: [sea_ice_area_fraction]
   obs operator:
     name: Identity
