@@ -3,11 +3,11 @@
     obsdatain:
       engine:
         type: H5File
-        obsfile: $(experiment_dir)/current_cycle/icefb_GDR.window_begin.nc4
+        obsfile: $(experiment_dir)/{{current_cycle}}/icefb_GDR.window_begin.nc4
     obsdataout:
       engine:
         type: H5File
-        obsfile: $(experiment_dir)/current_cycle/$(experiment).icefb_GDR.window_begin.nc4
+        obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icefb_GDR.window_begin.nc4
     simulated variables:  [sea_ice_freeboard]
   obs operator:
     name: SeaIceThickness
