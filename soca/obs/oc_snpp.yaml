@@ -3,9 +3,13 @@
     distribution:
       name: *obs_distribution
     obsdatain:
-      obsfile: $(experiment_dir)/{{current_cycle}}/oc_snpp.{{window_begin}}.nc4
+      engine:
+        type: H5File
+        obsfile: $(experiment_dir)/{{current_cycle}}/oc_snpp.{{window_begin}}.nc4
     obsdataout:
-      obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).oc_snpp.{{window_begin}}.nc4
+      engine:
+        type: H5File
+        obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).oc_snpp.{{window_begin}}.nc4
     simulated variables: [sea_surface_chlorophyll]
   obs operator:
     name: Identity
