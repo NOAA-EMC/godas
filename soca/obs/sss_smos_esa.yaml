@@ -32,13 +32,12 @@
     where:
     - variable: {name: sea_surface_temperature@GeoVaLs}
       minvalue: 10.0
-  # Passivate obs where ocean fraction is > 90%
   - filter: Domain Check
     action:
-      name: passivate
+      name: reject
     where:
-    - variable: {name: sea_area_fraction@GeoVaLs}
-      maxvalue: 0.9
+    - variable: {name: sea_surface_salinity@ObsError}
+      maxvalue: 0.87
   - filter: Domain Check
     where:
     - variable: {name: distance_from_coast@GeoVaLs}
