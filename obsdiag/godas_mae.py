@@ -84,7 +84,10 @@ def main():
         '-y', '--year', help='Year, can include wild cards',
         type=str, nargs="*", required=False, default='*')
   parser.add_argument(
-        '-m', '--month', help='Month, can include wild cards',
+        '-ms', '--startmonth', help='Start Month, can include wild cards',
+        type=str, nargs="*", required=False, default='*')
+  parser.add_argument(
+        '-me', '--endmonth', help='End Month, can include wild cards',
         type=str, nargs="*", required=False, default='*')
   parser.add_argument(
         '-f', '--filter', help='Gaussian filtering',
@@ -105,7 +108,8 @@ def main():
   args = parser.parse_args()
 
   yyyy = args.year[0]
-  mm = args.month[0]
+  ms = args.startmonth[0]
+  me = args.endmonth[0]
   loe = args.experiments
   listofnames = args.names
 
@@ -122,10 +126,29 @@ def main():
       expname=listofnames[expindex]
       print('--- '+expname, end='\n', flush=True)
       expindex+=1
-      lod=glob.glob(exp+'/obs_out/'+yyyy+'/'+yyyy+mm+'*')
-      print(exp+'/obs_out/'+yyyy+'/'+yyyy+mm+'*')
-      if not lod:
-          lod=glob.glob(exp+'/'+yyyy+mm+'*')
+      im=int(ms)
+      files=[]
+ 
+      while im <= int(me):
+         #lod=glob.glob(exp+'/obs_out/'+yyyy+'/'+yyyy+mm+'*')
+          if im == int(ms):
+              if im < 10:
+                  mm="0"+str(im)
+              else:
+                  mm=str(im)
+              print(mm)
+              lod=glob.glob(exp+'/obs_out/'+yyyy+'/'+yyyy+mm+'*')
+              im=im+1
+          else:
+              if im < 10:
+                  mm="0"+str(im)
+              else:
+                  mm=str(im)
+              lod.extend(glob.glob(exp+'/obs_out/'+yyyy+'/'+yyyy+mm+'*'))
+              im=im+1
+         #print(exp+'/obs_out/'+yyyy+'/'+yyyy+mm+'*')
+         #if not lod:
+         #    lod=glob.glob(exp+'/'+yyyy+mm+'*')
       lod.sort()
 
       # Try to read previously computed stats from pickle file
@@ -198,7 +221,7 @@ def main():
         axr.set_ylabel('% total obs')
         ax.set_ylabel('<|Obs-bkg|>')
         #axr.plot_date(time,ts_cntall,'--',color=color[t],alpha=0.1)
-        axr.plot_date(time,ts_cntqc/ts_cntall,'-',color=color[t],alpha=0.1,)
+        axr.plot_date(time,ts_cntqc/ts_cntall,'-',color=color[t],alpha=0.2,)
       if (t<10):
           t+=1
       else:
