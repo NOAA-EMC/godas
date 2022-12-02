@@ -1,100 +1,84 @@
-SCRATCH_DIR=${EXP_DIR}/SCRATCH   # Temporary files, deleted after each cycle
-#SOCA_BIN_DIR=/lustre/f2/dev/ncep/Xiao.Liu/sandbox/27jun2022/build-intel/bin
-#SOCA_DEFAULT_CFGS_DIR=/lustre/f2/dev/ncep/Xiao.Liu/sandbox/21jun2022/godas/soca
+SCRATCH_DIR=${EXP_DIR}/SCRATCH   # Temporary files, deleted after each cycl
 SOCA_BIN_DIR=/lustre/f2/dev/ncep/Xiao.Liu/sandbox/30sep2022/build/bin
 SOCA_DEFAULT_CFGS_DIR=/lustre/f2/dev/ncep/Xiao.Liu/sandbox/30sep2022/godas/soca
 
 #-------------------------------------------------------------------------------
 # Experiment Cycle
 #-------------------------------------------------------------------------------
-EXP_START_DATE=20190516Z00       # exp start date in YYYYMMDDZHH format
-EXP_END_DATE=20190716Z00         # exp end date in YYYYMMDDZHH format
-FCST_LEN=24                    # the length (in hours) of each cycle
+EXP_START_DATE=20190101Z00       # exp start date in YYYYMMDDZHH format
+EXP_END_DATE=20190228Z00         # exp end date in YYYYMMDDZHH format
+FCST_LEN=24                       # the length (in hours) of each cycle
 
 # how many extra restart files to save
-SAVE_RST_CYCLES=365 #0           # if 0, only most recent restarts are saved
+SAVE_RST_CYCLES=3650 #365           # if 0, only most recent restarts are saved
 SAVE_RST_REGEX="^......01.."     # a regular expression allowing for specific
                                  # extra restart files to be saved. (e.g. This
                                  # will save the 1st of each month.)
-
 # to save the diagnostic files
-SAVE_DIAG_ENABLED=F           # depending on diag_table these files can be
+SAVE_DIAG_ENABLED=F              # depending on diag_table these files can be
                                  # very large, be careful!
 
 #-------------------------------------------------------------------------------
 # Workload manager
 #-------------------------------------------------------------------------------
 WORKLOAD_MANAGER=slurm
-JOB_NAME=000_BGC_ens2019051600             # the name of your job
+JOB_NAME=PHYS_EnVAR
 JOB_ACCT=nggps_emc
 JOB_TIME=16:00:00
 JOB_QOS=urgent
-JOB_NPES=576
-JOB_NODES=39
+JOB_NPES=1440
 JOB_PARTITION=batch
-JOB_OPTS="--ntasks-per-node=15 --clusters=c3"
+JOB_OPTS="--clusters=c3"
 
 MPIRUN=/usr/bin/srun
-DA_NPES=576
+DA_NPES=480
 MPIRUN="$MPIRUN -n $DA_NPES"
-
 #-------------------------------------------------------------------------------
 # Data Assimilation Configuration
 #-------------------------------------------------------------------------------
-DA_MODE=noda
+DA_MODE=3dvar
 DA_ENS_SIZE=1
-DA_PERTURBATION_MODEL="none" 
 DA_NODA_FCST_ENABLED=T
+DA_REGIONAL_ENABLED=F
 DA_SEAICE_ENABLED=T
-DA_OBGC_ENABLED=T
-CHL_CLIM_WEIGHT=0.2 # only used when DA_OBGC_ENABLED=F and CHL_FROM_FILE=T in MOM_input
-DA_LETKF_WINDOW=24
-DA_LETKF_OBS_LIST="adt"
-DA_VARIABLES="socn, tocn, hocn, ssh, chl" 
-DA_VARIABLES_OCN="socn, tocn, hocn, ssh, chl"
-DA_ATMHOFX_ENABLED=F
+DA_OBGC_ENABLED=F
+DA_OBGC_CHKPT=F #T
+DA_LETKF_WINDOW=4
+DA_VARIABLES_OCN='hocn, tocn, socn, ssh'
+DA_VARIABLES_ICE='hsnon, hicen, cicen'
+DA_VARIABLES="hsnon, hicen, cicen, hocn, socn, tocn, ssh"
+DA_CHKPT_WITH_MODEL=T
 DA_DIAGB_ENABLED=F
-DA_SAVE_INC=T                   # If DA_SAVE_INC=T, the variational outer loop increments
-                                # are saved.
-DA_DART=T
-DA_OCN_IAU=F 
-DA_REGIONAL_ENABLED=F           # Triggers the regional hack.
-                                # TODO investigate building soca with MOM6 regional ("symetric memory")
-DA_CHKPT_WITH_MODEL=T           # Dump analysis in restarts.
-                                #  T - Uses the soca checkpoint application which initializes
-                                #      MOM6 to create the new restarts. Does not work with the
-                                #      regional case
-                                #  F - Uses a simple python script to dump the analysis in MOM6's
-                                #      restarts. Works for global and regional only if the IO layout
-                                #      is 1,1
-DA_ENSBDIAG_ENABLED=F           # T - Compute the standard deviation of an ensemble of (K^-1 X) and store
-                                #     it to be used as a proxi of the background error
+DA_DIAGB_DIRAC_STEP=40
 DA_DUALRES_ENABLE=F
-
+DA_OCN_IAU=F
+DA_DART=F
+DA_BUMP3D=F
+DA_STATIC_PERT=T # only works for 3dvar mode
 #-------------------------------------------------------------------------------
-# Model Configuration
-# variables other than MODEL in this section vary based on which model is used
+# model configuration
 #-------------------------------------------------------------------------------
-MODEL=ufscpld                  # which model, <geos|godas|mom6sis2>
-UFS_SRC_DIR=/lustre/f2/dev/ncep/Xiao.Liu/ufs_cpld_config_bgc_v2
-MODEL_EXE=$UFS_SRC_DIR/fv3_001_cpld.exe
-MODEL_RES=0.25deg 
-MODEL_CFG_DIR=$UFS_SRC_DIR/CFG_DIR/$MODEL_RES 
+MODEL=ufs
+UFS_SRC_DIR=/lustre/f2/dev/ncep/Xiao.Liu/ufs_config_bgc
+MODEL_EXE=$UFS_SRC_DIR/ufs_model_28jun22.exe
+MODEL_RES=0.25deg
+MODEL_CFG_DIR=$UFS_SRC_DIR/CFG_DIR/$MODEL_RES
 MODEL_DATA_DIR=$UFS_SRC_DIR/INPUT/$MODEL_RES
 
 # UFS specific variables
 UFS_SCRATCH="$UFS_SRC_DIR/SCRATCH/$MODEL_RES"
 UFS_INSTALL="$UFS_SRC_DIR/INSTALL"
-UFS_ATMPETS=384 #312 
-UFS_OCNPETS=144 #120 
+UFS_ATMPETS=72
+UFS_OCNPETS=360
 UFS_ICEPETS=48
-UFS_MEDPETS=384 
-DT_CICE=300
+UFS_MEDPETS=72 #96
+DT_CICE=900
 
 #-------------------------------------------------------------------------------
-# Initial Conditions (background restart files)
+# initial conditions (background restart files)
 #-------------------------------------------------------------------------------
-BKGRST_SRC=${EXP_DIR}/RESTART/
+#BKGRST_SRC="/lustre/f2/dev/ncep/Xiao.Liu/sandbox/30sep2022/PSL_BGC_spinup/RESTART_2019020100/ctrl"
+BKGRST_SRC="/lustre/f2/dev/ncep/Xiao.Liu/initials/2019010100/ctrl"
 BKGRST_COLDSTART_ENABLED=F
 
 #-------------------------------------------------------------------------------
@@ -104,13 +88,12 @@ FORC_ENABLED=F                   # If =T, forcing files are required by the mode
 FORC_SRC="/lustre/f2/dev/ncep/Xiao.Liu/forcing/DATM_INPUT"  # Forcing files will be obtained from here if possible
 FORC_GEN_ENABLED=F               # If forcing files can't be found, regenerate them
 FORC_GEN_SOURCE=GEFS             # only gfs is available currently
+CFSR_BIAS_CORR=F
 DATM_START_TYPE="continue"
-#DATM_START_TYPE="startup" 
 ICE_START_TYPE="continue"
-#ICE_START_TYPE="initial"
-DATM_NAME="FV3"
-#FV3_RST=F
-FV3_RST=T
+#DATM_START_TYPE="startup"
+#ICE_START_TYPE="initial" 
+DATM_NAME="cdeps"
 
 #-------------------------------------------------------------------------------
 # Observations
@@ -124,7 +107,7 @@ OBS_ENABLED=T
 OBS_TOLERATE_FAIL=T
 OBS_GEN_ENABLED=F
 
-OBS_LIST_OCN="temp salt adt sst sss oc"
+OBS_LIST_OCN="temp salt adt sst sss icec" 
 OBS_ADT_LIST="3a_egm2008 3b_egm2008 6a_egm2008b j2_egm2008 j3_egm2008 c2_egm2008 sa_egm2008 coperl4"
 #OBS_SST_LIST="metopa_l3u_so025 metopb_l3u_so025 metopc_l3u_so025 noaa18_l3u_so025 noaa19_l3u_so025 viirs_npp_l3u_so025 viirs_n20_l3u_so025 drifter trak_fnmoc" #ship_fnmoc trak_fnmoc"
 OBS_SST_LIST="gmi_l3u amsr2_l3u ostia drifter trak_fnmoc ship_fnmoc"
