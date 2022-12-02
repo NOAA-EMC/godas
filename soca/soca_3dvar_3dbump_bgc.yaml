@@ -86,7 +86,7 @@ cost function:
         load_nicas_local: true
         grids:
         - prefix: bump3d
-          variables: [hocn, socn, tocn]
+          variables: [hocn, socn, tocn, chl]
         - prefix: bump2d
           variables: [ssh, cicen, hicen, hsnon]
 
@@ -110,14 +110,12 @@ cost function:
         ssh_min: 0.0   # value at EQ
         ssh_max: 0.0   # value in Extratropics
         ssh_phi_ex: 20 # lat of transition from extratropics
-        chl_min: 0.003
-        chl_max: 10.0
-        biop_min: 0.0
-        biop_max: 1.0e-6
         cicen_min: 0.05
         cicen_max: 0.05
         hicen_min: 0.1
         hicen_max: 0.1
+        chl_min: 0.003
+        chl_max: 10.0
 
       - linear variable change name: BalanceSOCA
         dsdtmax: 0.1

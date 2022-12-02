@@ -133,6 +133,13 @@
   io name: biomass_p
   property: positive_definite
 
+- name: po4
+  levels: full_ocn
+  getval name: molar_concentration_of_phosphate_in_sea_water
+  getval name surface: sea_surface_phosphate
+  io file: ocn
+  io name: po4
+  property: positive_definite
 # --------------------------------------------------------------------------------------------------
 # built-in derived variables that you don't need to worry about
 # --------------------------------------------------------------------------------------------------

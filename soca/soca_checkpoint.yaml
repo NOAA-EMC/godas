@@ -23,7 +23,7 @@ model:
   tstep: PT6H
   advance_mom6: 0
   model variables: &soca_vars [__DA_VARIABLES__, mld, layer_depth]
-  tocn_minmax: [-1.9, 33.0]
+  tocn_minmax: [-1.9, 36.0]
   socn_minmax: [0.1, 41.0]
 
 background:

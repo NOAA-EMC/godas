@@ -4,7 +4,7 @@ resolution:
 
 date: 2019-08-31T12:00:00Z
 
-corr variables: [socn, tocn, ssh, hocn, cicen, hicen, hsnon]
+corr variables: [socn, tocn, ssh, hocn, cicen, hicen, hsnon, chl, po4, biop, uocn, vocn]
 
 scales:
   vert layers: 5 # in units of layer
@@ -12,6 +12,21 @@ scales:
     rossby mult: 0.28
     min grid mult: 0.28
   tocn:
+    rossby mult: 0.28
+    min grid mult: 0.28
+  uocn:
+    rossby mult: 0.28
+    min grid mult: 0.28
+  vocn:
+    rossby mult: 0.28
+    min grid mult: 0.28
+  chl:
+    rossby mult: 0.28
+    min grid mult: 0.28
+  po4:
+    rossby mult: 0.28
+    min grid mult: 0.28
+  biop:
     rossby mult: 0.28
     min grid mult: 0.28
   hocn:

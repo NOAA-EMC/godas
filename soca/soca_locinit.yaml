@@ -1,23 +1,24 @@
 # BUMP Variables
 _: &bump_vars_ocn
-    [hocn, socn, tocn, ssh, uocn, vocn]
+    [hocn, socn, tocn, ssh, chl, po4, biop]
 _: &bump_vars_ocn_ice
-    [cicen, hicen, hsnon, hocn, socn, tocn, ssh, uocn, vocn]
+    [cicen, hicen, hsnon, hocn, socn, tocn, ssh, chl, po4, biop]
 
 # GRID Variables
 _: &grid_vars_ocn
-    [socn, tocn, ssh, uocn, vocn]
+    [hocn, socn, tocn, ssh, chl, po4, biop]
 _: &grid_vars_ocn_ice
-    [cicen, hicen, hsnon, socn, tocn, ssh, uocn, vocn]
+    [cicen, hicen, hsnon, hocn, socn, tocn, ssh, chl, po4, biop]
 
 
 # Horizontal Localization scales
 _: &rh_ocn
     socn:   [750e3]
     tocn:   [750e3]
-    uocn:   [750e3]
-    vocn:   [750e3]
     ssh:    [750e3]
+    chl:    [750e3]
+    po4:    [750e3]
+    biop:   [750e3]
 _: &rh_ocn_ice
     cicen:  [250e3]
     hicen:  [250e3]
@@ -28,9 +29,10 @@ _: &rh_ocn_ice
 _: &rv_ocn
     socn:   [250]
     tocn:   [250]
-    uocn:   [250]
-    vocn:   [250]
     ssh:    [250]
+    chl:    [250]
+    biop:   [250]
+    po4:    [250]
 _: &rv_ocn_ice
     cicen:  [250]
     hicen:  [250]
@@ -56,16 +58,32 @@ bump:
   prefix: soca_bump_loc
   datadir: ./bump
   method: loc
-  strategy: common
+  strategy: specific_univariate #common
   new_nicas: true
   write_nicas_local: true
-  resol: 6.0
-  forced_radii: true
-  rh:
-    common: [750e3]
-    << : *rh___DOMAINS__
-  rv:
-    common: [250]
-    << : *rv_ocn_ice
-  grids:
-  - variables:  *grid_vars___DOMAINS__
+  resol: 8.0 #6.0
+  #  forced_radii: true
+  #  rh:
+  #    common: [750e3]
+  #    << : *rh___DOMAINS__
+  #  rv:
+  #    common: [250]
+  #    << : *rv___DOMAINS__ #*rv_ocn_ice 
+  #  grids:
+  #  - variables:  *grid_vars___DOMAINS__
+
+  input:
+  - parameter: rh
+    read_from_file: 1
+    date: *date
+    basename: ./
+    ocn_filename: ocn.cor_rh.incr.2019-08-31T12:00:00Z.nc
+    ice_filename: ice.cor_rh.incr.2019-08-31T12:00:00Z.nc
+    state variables: [chl, po4, biop, socn, tocn, ssh, hocn, hsnon, hicen, cicen]
+  - parameter: rv
+    read_from_file: 1
+    date: *date
+    basename: ./
+    ocn_filename: ocn.cor_rv.incr.2019-08-31T12:00:00Z.nc
+    ice_filename: ice.cor_rv.incr.2019-08-31T12:00:00Z.nc
+    state variables: [chl, po4, biop, socn, tocn, ssh, hocn, hsnon, hicen, cicen]
