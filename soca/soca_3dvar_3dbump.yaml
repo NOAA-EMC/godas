@@ -16,6 +16,7 @@ _corr:
 # placeholders used by the obs yaml files that will be placed
 #  where _OBSERVATIONS_ token is
 _: &obs_distribution RoundRobin
+_: &obs_distribution_opt {}
 _: &obs_land_mask
   filter: Domain Check
   where:
@@ -73,12 +74,9 @@ cost function:
   background error:
 
     covariance model: SABER
-    saber blocks:
-    - saber block name: BUMP_NICAS
-      saber central block: true
-      iterative inverse: true
-      input variables: *soca_vars
-      output variables: *soca_vars
+    saber central block:
+      saber block name: BUMP_NICAS
+      active variables: *soca_vars
       bump:
         verbosity: main
         datadir: ./bump
