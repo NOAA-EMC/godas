@@ -1,0 +1,26 @@
+- obs space:
+    name: icethk_coperl4
+    distribution:
+      name: *obs_distribution
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: $(experiment_dir)/{{current_cycle}}/icethk_coperl4.{{window_begin}}.nc4
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icethk_coperl4.{{window_begin}}.nc4
+    simulated variables: [sea_ice_category_thickness]
+  obs operator:
+    name: Identity
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - *obs_land_mask
+  # Passivate obs where ocean fraction is > 90%
+  - filter: Domain Check
+    action:
+      name: passivate
+    where:
+    - variable: {name: sea_area_fraction@GeoVaLs}
+      maxvalue: 0.9
