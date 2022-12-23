@@ -75,41 +75,31 @@ def plotobs(args):
         var=np.append(var, var_tmp)
         qc=np.append(qc, qc_tmp)
 
-    plt.figure(figsize=(16, 12))
     print(np.shape(qc))
     print(np.shape(var))
-    #I=np.where( (qc<=1) )
-    #print('qc:',np.shape(qc))
-    #I=np.where(qc==int(args.qc))
     I=np.where(qc==0)
     Iq=np.where(qc>0)
+    proj_type=args.domain
+    if  proj_type == 'global' or proj_type == 'hat10':
+        proj = ccrs.Robinson(central_longitude=210)
+    if proj_type == 'north':
+        proj = ccrs.NorthPolarStereo()
+    if proj_type == 'south':
+        proj = ccrs.SouthPolarStereo()
 
-    if ( args.domain == 'global' ):
-        proj=ccrs.Robinson()
-        lonmin=-180
-        lonmax=180
-        latmin=-90
-        latmax=90
-    if ( args.domain == 'hat10' ):
-        proj=ccrs.Robinson()
-        lonmin=-100
-        lonmax=10
-        latmin=-5
-        latmax=50
-    if ( args.domain == 'north' ):
-        proj=ccrs.NorthPolarStereo()
-        lonmin=-180
-        lonmax=180
-        latmin=50
-        latmax=90
-    if ( args.domain == 'south' ):
-        proj=ccrs.SouthPolarStereo()
-        lonmin=-180
-        lonmax=180
-        latmin=-90
-        latmax=-50
-
-    ax = plt.axes(projection=proj)
+    fig = plt.figure(figsize=(13,8))
+    #fig = plt.figure(figsize=(10,6))
+    ax = fig.add_subplot(1, 1, 1, projection=proj)
+    if  proj_type == 'global':
+        ax.set_global()
+    if  proj_type == 'hat10':
+        ax.set_extent([-100, 10, -5, 50], ccrs.PlateCarree())
+    if proj_type == 'north':
+        ax.set_extent([-180, 180, 50, 90], ccrs.PlateCarree())
+    if proj_type == 'south':
+        ax.set_extent([-180, 180, -90, -50], ccrs.PlateCarree())
+    if proj_type=='local':
+        ax.set_extent([-80, 30, 50, 87], crs=ccrs.PlateCarree())
 
     obsax=plt.scatter(
         lon[I],
@@ -127,8 +117,7 @@ def plotobs(args):
     ax.add_feature(cartopy.feature.LAND, edgecolor='black')
     ax.add_feature(cartopy.feature.LAKES, edgecolor='black')
     ax.coastlines()
-    ax.set_extent([lonmin, lonmax, latmin, latmax], ccrs.PlateCarree())
-    plt.colorbar(obsax, shrink=0.5).set_label(args.group)
+    plt.colorbar(obsax, shrink=0.5, pad=0.01).set_label(args.group)
     plt.title(args.title, fontsize=14, fontweight='bold')
     if ( args.save == 'none' ): plt.show()
     if ( args.save != 'none' ): plt.savefig(args.save,  bbox_inches='tight', pad_inches = 0.02)

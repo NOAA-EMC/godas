@@ -2,18 +2,17 @@
 
 #Command:
 #   bash godas_obsplot.sh -p path/to/exp -x exp_name -t obs_type -s start_date -e end_datei -l fct_length
-if [[ $# != 12 ]]; then
-    echo "usage: <command> options:<p|x|v|s|e|l>"
+if [[ $# != 10 ]]; then
+    echo "usage: <command> options:<p|v|s|e|l>"
     exit 1
 fi
 
-while getopts x:v:s:e:p:l: flag
+while getopts v:s:e:p:l: flag
 do
     case "${flag}" in
-        x) exp=${OPTARG};;  # experiment
         v) stv=${OPTARG};;  #variable name
         p) cycle_dir=${OPTARG};;  #path/to/exp
-        s) start_date=${OPTARG}Z00;;
+        s) start_date=${OPTARG}Z12;;
         e) end_date=${OPTARG}00;;
         l) fctl=${OPTARG};;     # forecast length
         *) 
@@ -41,7 +40,7 @@ while [ "$YMDH" -le "$end_date" ]; do
         echo plotting $obs_type ...
         case $obs_type in
         sst)
-        python godas_plotobs.py -f $datadir/sst*_l3u_so025.*.nc -g ombg -v sea_surface_temperature -b -2 2 -c $clmp -q 0 -s $plotdir/sst_superobs_${YMDH}.png -t "sst superobs ${YMDH}"
+        python godas_plotobs.py -f $datadir/sst*.nc -g ombg -v sea_surface_temperature -b -2 2 -c $clmp -q 0 -s $plotdir/sst_superobs_${YMDH}.png -t "sst superobs ${YMDH}"
         ;;
         adt)
         python godas_plotobs.py -f $datadir/adt*.nc -g ombg -v absolute_dynamic_topography -b -.2 .2 -c $clmp -q 0 -s $plotdir/adt_${YMDH}.png -t "adt ${YMDH}"
