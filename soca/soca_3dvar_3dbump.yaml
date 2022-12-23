@@ -78,7 +78,6 @@ cost function:
       saber block name: BUMP_NICAS
       active variables: *soca_vars
       bump:
-        #verbosity: main
         datadir: ./bump
         strategy: specific_univariate
         load_nicas_local: true
