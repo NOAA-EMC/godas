@@ -1,15 +1,15 @@
 - obs space:
-    name: icec_nsidc_sh
+    name: icec_amsr2_south
     distribution:
       name: *obs_distribution
     obsdatain:
       engine:
         type: H5File
-        obsfile: $(experiment_dir)/{{current_cycle}}/icec_nsidc_sh.{{window_begin}}.nc4
+        obsfile: $(experiment_dir)/{{current_cycle}}/icec_amsr2_south.{{window_begin}}.nc4
     obsdataout:
       engine:
         type: H5File
-        obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_nsidc_sh.{{window_begin}}.nc4
+        obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).icec_amsr2_south.{{window_begin}}.nc4
     simulated variables: [sea_ice_area_fraction]
   obs operator:
     name: Identity
@@ -29,7 +29,7 @@
       name: passivate
     where:
     - variable: {name: sea_area_fraction@GeoVaLs}
-    maxvalue: 0.9
+      maxvalue: 0.9
   - filter: Domain Check
     where:
     - variable: { name: sea_surface_temperature@GeoVaLs}
