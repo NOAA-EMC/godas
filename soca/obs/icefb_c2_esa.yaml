@@ -13,14 +13,15 @@
     name: SeaIceThickness
   obs error:
     covariance model: diagonal
-  #_letkf: &letkf
-  #  # note, this is only used for LETKF. If running with LETKF, the workflow
-  #  # will append "<< : *letkf" to the end of this file
-  #  obs localizations:
-  #  - localization method: Horizontal Gaspari-Cohn
-  #    lengthscale: 500e3
   obs filters:
   - *obs_land_mask
+  # Remove obs in the Southerm Hemisphere
+  - filter: BlackList
+    where:
+    - variable:
+        name: latitude@MetaData
+      minvalue: -5
+      maxvalue: -90
   - filter: Bounds Check
     minvalue: -0.1
     maxvalue: 1.0
@@ -38,3 +39,4 @@
         name: sea_ice_category_thickness@GeoVaLs
       minvalue: 0.5
       maxvalue: 5.0
+
