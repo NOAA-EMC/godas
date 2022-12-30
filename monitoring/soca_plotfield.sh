@@ -96,29 +96,21 @@ while [ "$YMDH" -le "$end_date" ]; do
                     fi 
                     ;;
                     aicen)  # bound [0 1]
-                    if [ $proj != 'global' ] ; then
-                        if [ $stv == incr ]; then
-                            FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
-                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-                        else
-                            FNAME=ice.${stv}.${YMDH}.nc
-                            prepsurfyaml $varname 0 1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-                        fi
+                    if [ $stv == incr ]; then
+                       FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
+                       prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
-                        continue
+                       FNAME=ice.${stv}.${YMDH}.nc
+                       prepsurfyaml $varname 0 1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     fi
                     ;;
                     hicen)  # bound [0 5]
-                    if [ $proj != 'global' ]; then
-                        if [ $stv == incr ]; then
-                            FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
-                            prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-                        else
-                            FNAME=ice.${stv}.${YMDH}.nc
-                            prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
-                        fi
+                    if [ $stv == incr ]; then
+                       FNAME=ice.var.iter1.${stv}.${YMDH_i}Z.nc
+                       prepsurfyaml $varname -0.1 0.1 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     else
-                        continue
+                       FNAME=ice.${stv}.${YMDH}.nc
+                       prepsurfyaml $varname 0 4 $tindex surface $proj $stv $plotdir $clmp > ${exp}_${stv}.yaml
                     fi
                     ;;
                 esac
