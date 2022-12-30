@@ -43,7 +43,7 @@ def spatial_plot(lon, lat, var, varname='ice_thickness', \
     else:
         vmin = bound[0]
         vmax = bound[1]
-    var=np.ma.masked_less_equal(var, 0)
+    var=np.ma.masked_less_equal(var, 0.1)
     obsax=plt.scatter( lon, lat, c=var, s=.1,
         cmap='jet', transform=ccrs.PlateCarree(),
         vmin=vmin, vmax=vmax)
@@ -172,9 +172,9 @@ def main():
         ithk_max_nh = []
         ithk_max_sh = []
         # for sea ice thickness over 2d grid
-        ithk_2dmax = []
-        ithk_2dmax_nh = []
-        ithk_2dmax_sh = []
+        ithk2dmax = []
+        ithk2dmax_nh = []
+        ithk2dmax_sh = []
 
         for path2ioda in lod:
             yyyy=path2ioda.split('/')[7]
@@ -185,8 +185,8 @@ def main():
             ice2dsh_sum=0
             # for storing max ice thickness in a year 
             ice2dmax=[]
-            ice2dnh_max=[]
-            ice2dsh_max=[]
+            ice2dmax_nh=[]
+            ice2dmax_sh=[]
             for fname in lof:
                 #print(fname)
                 lat, lon = icethk.readfiles(fname)
@@ -199,8 +199,8 @@ def main():
                 # max over 12 months on 2d grid
                 ice2d, ice2d_nh, ice2d_sh = icethk.max2d_ice()
                 ice2dmax.append(ice2d)
-                ice2dnh_max.append(ice2d_nh)
-                ice2dsh_max.append(ice2d_sh)
+                ice2dmax_nh.append(ice2d_nh)
+                ice2dmax_sh.append(ice2d_sh)
                 # monthly ice volume, summing up over the whole region
                 ice_1d, ice1d_nh, ice1d_sh = icethk.monthly_icevol()
                 ts_vol.extend(ice_1d)
@@ -222,7 +222,11 @@ def main():
             # adding max as a list
             if ice2dmax != []:
                 ice2dmax=np.max(ice2dmax, axis=0)
-                ithk_2dmax.append(ice2dmax)
+                ithk2dmax.append(ice2dmax)
+                ice2dmax_nh=np.max(ice2dmax_nh, axis=0)
+                ithk2dmax_nh.append(ice2dmax_nh)
+                ice2dmax_sh=np.max(ice2dmax_sh, axis=0)
+                ithk2dmax_sh.append(ice2dmax_sh)
                 # the followings are for yearly 
                 #spatial_plot(lon, lat, ice2dsum, varname='total-ice-vol-%s'%yyyy,\
                 #         title='total sea-ice volume [$km^3$] in '+yyyy, bound=[0, 50])
@@ -233,9 +237,17 @@ def main():
         spatial_plot(lon, lat, tvol, varname='total-ice-vol', title='total ice volume [$km^3$] (GIOMAS)', bound=[0,1500])
         spatial_plot(lon, lat, tvol_nh, varname='total-ice-vol', title='total ice volume [$km^3$] (GIOMAS)', domain='north', bound=[0, 1500])
         spatial_plot(lon, lat, tvol_sh, varname='total-ice-vol', title='total ice volume [$km^3$] (GIOMAS)', domain='south', bound=[0, 1500])
-        ithk_max=np.max(ithk_2dmax, axis=0) 
-        ithk_max=np.ma.masked_greater_equal(ithk_max, 9999.)
-        spatial_plot(lon, lat, ithk_max, varname='max_icethk', title='Max ice thickness [m] (GIOMAS)', bound=[0,5])
+        ithk2d_max=np.max(ithk2dmax, axis=0) 
+        ithk2d_max=np.ma.masked_greater_equal(ithk2d_max, 9999.)
+        spatial_plot(lon, lat, ithk2d_max, varname='max_icethk', title='Max ice thickness [m] (GIOMAS)', bound=[0,5])
+        ithk2d_max=np.max(ithk2dmax_nh, axis=0) 
+        ithk2dmax_nh=np.ma.masked_greater_equal(ithk2d_max, 9999.)
+        spatial_plot(lon, lat, ithk2dmax_nh, varname='max_icethk_nh', domain='north', \
+                 title='Max ice thickness [m] north (GIOMAS)', bound=[0,5])
+        ithk2d_max=np.max(ithk2dmax_sh, axis=0) 
+        ithk2dmax_sh=np.ma.masked_greater_equal(ithk2d_max, 9999.)
+        spatial_plot(lon, lat, ithk2dmax_sh, varname='max_icethk_sh', domain='south', \
+                 title='Max ice thickness [m] south (GIOMAS)', bound=[0,5])
         timeseries_plot(y0, t, ts_vol_nh, ts_vol_sh, figname='timeseries_tvol', \
                 title='total ice volume [$km^3$]', ylabel='ice volume [$km^3$]')        
         timeseries_plot(y0, t, ithk_max_nh, ithk_max_sh, figname='timeseries_ithk_max', \
