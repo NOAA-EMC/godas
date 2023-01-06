@@ -10,9 +10,9 @@ import xarray as xr
 import glob
 import datetime
 from dateutil.relativedelta import relativedelta
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-
-def spatial_plot(lon, lat, var, varname='ice_thickness', \
+def spatial_plot(lon, lat, var, varname='ice_thickness', gridplot=True, \
      title='total_icethickness', domain='global', bound=None):
     plt.clf()
     plt.figure(figsize=(10, 8))
@@ -44,10 +44,22 @@ def spatial_plot(lon, lat, var, varname='ice_thickness', \
         vmin = bound[0]
         vmax = bound[1]
     var=np.ma.masked_less_equal(var, 0.1)
-    obsax=plt.scatter( lon, lat, c=var, s=.1,
-        cmap='jet', transform=ccrs.PlateCarree(),
-        vmin=vmin, vmax=vmax)
-
+    if gridplot:
+        levels=np.linspace(vmin, vmax, 10)
+        levels=[round(xx, 1) for xx in levels]
+        obsax = ax.contourf(lon, lat, var,\
+                   vmin=vmin, vmax=vmax, \
+                   transform=ccrs.PlateCarree(),\
+                   levels=levels,\
+                   cmap='jet' )
+        ax.contour(lon, lat, var,
+                          levels = levels,
+                          colors='k',
+                          transform = ccrs.PlateCarree())
+    else:
+        obsax=plt.scatter( lon, lat, c=var, s=.1,
+            cmap='jet', transform=ccrs.PlateCarree(),
+            vmin=vmin, vmax=vmax)
     ax.add_feature(cartopy.feature.LAND, edgecolor='black')
     ax.add_feature(cartopy.feature.LAKES, edgecolor='black')
     ax.coastlines()
@@ -149,7 +161,7 @@ class Icethk_validation:
             ice1d_sh.append(ice_sh.max())
         return ice1d, ice1d_nh, ice1d_sh
 
-def main():
+def main_ice_volume(bound=[0, 1500], title='total ice volume [$km^3$] (GIOMAS)'):
     t=0
     ################################################
     var = 'heff'
@@ -167,6 +179,61 @@ def main():
         ts_vol=[]
         ts_vol_nh=[]
         ts_vol_sh=[]
+
+        for path2ioda in lod:
+            yyyy=path2ioda.split('/')[7]
+            lof=glob.glob(path2ioda+'heff.H'+'*.nc')
+            # storing ice volume in each grids after summing over months
+            ice2dsum=0
+            ice2dnh_sum=0
+            ice2dsh_sum=0
+            for fname in lof:
+                #print(fname)
+                lat, lon = icethk.readfiles(fname)
+                #print(ice.shape)
+                # sum over 12 months
+                ice2d, ice2d_nh, ice2d_sh = icethk.sum2d_icevol()
+                ice2dsum = ice2dsum + ice2d
+                ice2dnh_sum = ice2dnh_sum + ice2d_nh
+                ice2dsh_sum = ice2dsh_sum + ice2d_sh
+                # monthly ice volume, summing up over the whole region
+                ice_1d, ice1d_nh, ice1d_sh = icethk.monthly_icevol()
+                ts_vol.extend(ice_1d)
+                ts_vol_nh.extend(ice1d_nh)
+                ts_vol_sh.extend(ice1d_sh)
+
+                t = t + 12  # this is for creating datetime in x-axis
+
+            # total ice  volume cumulated over the years
+            tvol=tvol+ice2dsum
+            tvol_nh=tvol_nh+ice2dnh_sum
+            tvol_sh=tvol_sh+ice2dsh_sum
+            
+            # adding max as a list
+            #if ice2dmax != []:
+                # the followings are for yearly 
+                #spatial_plot(lon, lat, ice2dsum, varname='total-ice-vol-%s'%yyyy,\
+                #         title='total sea-ice volume [$km^3$] in '+yyyy, bound=[0, 50])
+                #spatial_plot(lon, lat, ice2dnh_sum, varname='total_vol_%s'%yyyy, title='total_vol', domain='north')
+                #spatial_plot(lon, lat, ice2dsh_sum, varname='total_vol_%s'%yyyy, title='total_vol', domain='south')
+   
+        # ploting total ice volume accumulated during the period
+        spatial_plot(lon, lat, tvol, varname='total-ice-vol', title=title, bound=bound)
+        spatial_plot(lon, lat, tvol_nh, varname='total-ice-vol', title=title, domain='north', bound=bound)
+        spatial_plot(lon, lat, tvol_sh, varname='total-ice-vol', title=title, domain='south', bound=bound)
+        timeseries_plot(y0, t, ts_vol_nh, ts_vol_sh, figname='timeseries_tvol', \
+                title=title, ylabel='ice volume [$km^3$]')        
+
+def main_max_ice_thickness():
+    t=0
+    ################################################
+    var = 'heff'
+    icethk=Icethk_validation(var) 
+    for exp in ['/work/noaa/ng-godas/marineda/validation/GIOMAS']:
+        lod=glob.glob(exp+'/'+'*'+'/')
+        #lod=glob.glob(exp+'/'+'2000'+'/')
+        lod.sort()
+        y0=lod[0].split('/')[7]
         # for sea ice thickness as a timeseries
         ithk_max = []
         ithk_max_nh = []
@@ -179,10 +246,6 @@ def main():
         for path2ioda in lod:
             yyyy=path2ioda.split('/')[7]
             lof=glob.glob(path2ioda+'heff.H'+'*.nc')
-            # storing ice volume in each grids after summing over months
-            ice2dsum=0
-            ice2dnh_sum=0
-            ice2dsh_sum=0
             # for storing max ice thickness in a year 
             ice2dmax=[]
             ice2dmax_nh=[]
@@ -191,21 +254,11 @@ def main():
                 #print(fname)
                 lat, lon = icethk.readfiles(fname)
                 #print(ice.shape)
-                # sum over 12 months
-                ice2d, ice2d_nh, ice2d_sh = icethk.sum2d_icevol()
-                ice2dsum = ice2dsum + ice2d
-                ice2dnh_sum = ice2dnh_sum + ice2d_nh
-                ice2dsh_sum = ice2dsh_sum + ice2d_sh
                 # max over 12 months on 2d grid
                 ice2d, ice2d_nh, ice2d_sh = icethk.max2d_ice()
                 ice2dmax.append(ice2d)
                 ice2dmax_nh.append(ice2d_nh)
                 ice2dmax_sh.append(ice2d_sh)
-                # monthly ice volume, summing up over the whole region
-                ice_1d, ice1d_nh, ice1d_sh = icethk.monthly_icevol()
-                ts_vol.extend(ice_1d)
-                ts_vol_nh.extend(ice1d_nh)
-                ts_vol_sh.extend(ice1d_sh)
                 # monthly ice max, over the whole region
                 ice_1d, ice1d_nh, ice1d_sh = icethk.monthly_icemax()
                 ithk_max.extend(ice_1d)
@@ -214,11 +267,6 @@ def main():
 
                 t = t + 12  # this is for creating datetime in x-axis
 
-            # total ice  volume cumulated over the years
-            tvol=tvol+ice2dsum
-            tvol_nh=tvol_nh+ice2dnh_sum
-            tvol_sh=tvol_sh+ice2dsh_sum
-            
             # adding max as a list
             if ice2dmax != []:
                 ice2dmax=np.max(ice2dmax, axis=0)
@@ -233,10 +281,6 @@ def main():
                 #spatial_plot(lon, lat, ice2dnh_sum, varname='total_vol_%s'%yyyy, title='total_vol', domain='north')
                 #spatial_plot(lon, lat, ice2dsh_sum, varname='total_vol_%s'%yyyy, title='total_vol', domain='south')
    
-        # ploting total ice volume accumulated during the period
-        spatial_plot(lon, lat, tvol, varname='total-ice-vol', title='total ice volume [$km^3$] (GIOMAS)', bound=[0,1500])
-        spatial_plot(lon, lat, tvol_nh, varname='total-ice-vol', title='total ice volume [$km^3$] (GIOMAS)', domain='north', bound=[0, 1500])
-        spatial_plot(lon, lat, tvol_sh, varname='total-ice-vol', title='total ice volume [$km^3$] (GIOMAS)', domain='south', bound=[0, 1500])
         ithk2d_max=np.max(ithk2dmax, axis=0) 
         ithk2d_max=np.ma.masked_greater_equal(ithk2d_max, 9999.)
         spatial_plot(lon, lat, ithk2d_max, varname='max_icethk', title='Max ice thickness [m] (GIOMAS)', bound=[0,5])
@@ -248,11 +292,30 @@ def main():
         ithk2dmax_sh=np.ma.masked_greater_equal(ithk2d_max, 9999.)
         spatial_plot(lon, lat, ithk2dmax_sh, varname='max_icethk_sh', domain='south', \
                  title='Max ice thickness [m] south (GIOMAS)', bound=[0,5])
-        timeseries_plot(y0, t, ts_vol_nh, ts_vol_sh, figname='timeseries_tvol', \
-                title='total ice volume [$km^3$]', ylabel='ice volume [$km^3$]')        
         timeseries_plot(y0, t, ithk_max_nh, ithk_max_sh, figname='timeseries_ithk_max', \
                 title='maximum ice thickness [m]', ylabel='max ice thickness [m]' )        
 
 if __name__=='__main__':
-    main()
+    description = """ Ex. plot_ts_vol_giomas.py -o volume 
+                                          -b 0 5
+                  """
+
+    # Command line argument
+    parser = ArgumentParser(
+        description=description,
+        formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument(
+        '-o',
+        '--option',
+        type=str, required=True)
+    parser.add_argument(
+        '-b',
+        '--bound',
+        help="bound [min, max]",
+        type=str, nargs='+',  default=[0, 5], required=False)
+    args = parser.parse_args() 
+    if args.option == "thickness":
+        main_max_ice_thickness()
+    if args.option == "volume":
+        main_ice_volume()
 
