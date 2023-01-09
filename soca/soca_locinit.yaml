@@ -58,10 +58,10 @@ bump:
   prefix: soca_bump_loc
   datadir: ./bump
   method: loc
-  strategy: specific_univariate #common
+  strategy: specific_multivariate #also tried specific_univariate and common
   new_nicas: true
   write_nicas_local: true
-  resol: 8.0 #6.0
+  resol: 20.0
   #  forced_radii: true
   #  rh:
   #    common: [750e3]
