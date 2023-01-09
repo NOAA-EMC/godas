@@ -62,6 +62,9 @@ class Grid():
         self.srclat = source.variables['lat_scaler'][:]
         self.srclon = source.variables['lon_scaler'][:]
         self.ice = source.variables['heff'][:]
+        self.ice= self.ice[1]
+        #self.ice= np.max(self.ice, axis=0)
+        #self.ice = np.ma.masked_greater_equal(self.ice, 9999.)
         print(self.srclat.shape)
 
     def target_grid(self):
@@ -71,14 +74,21 @@ class Grid():
         print(self.tglat2d.shape)
 
     def kdtree_interp(self):
+        import time
+        starttime=time.time()
         self.source_grid()
         xs, ys, zs = self.lon_lat_to_cartesian(self.srclon.values.flatten(), self.srclat.values.flatten())
         self.target_grid()
         xt, yt, zt = self.lon_lat_to_cartesian(self.tglon2d.values.flatten(), self.tglat2d.values.flatten())
         tree = cKDTree(np.column_stack((xs, ys, zs)))
         d, inds = tree.query(np.column_stack((xt, yt, zt)), k = 1) #nterpolated 2d field
+        #self.ice[self.ice.mask]=0
+        #ice = self.ice.data[0]
+        #print(ice.shape)
         ice_target = self.ice.values.flatten()[inds].reshape(self.tglon2d.shape)
         ice_target = np.ma.masked_greater_equal(ice_target, 9999.)
+        endtime=time.time()
+        print("time for interpolation: ", endtime-starttime)
         return self.tglon2d, self.tglat2d, ice_target 
 if __name__=="__main__":
     from plot_ts_vol_giomas import spatial_plot
