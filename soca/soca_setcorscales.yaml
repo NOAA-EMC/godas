@@ -9,32 +9,32 @@ corr variables: [socn, tocn, ssh, hocn, cicen, hicen, hsnon, chl, po4, biop, uoc
 scales:
   vert layers: 5 # in units of layer
   socn:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   tocn:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   uocn:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   vocn:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   chl:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   po4:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   biop:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   hocn:
-    rossby mult: 100.0
-    min grid mult: 100.0
+    rossby mult: 1.0
+    min grid mult: 1.0
   ssh:
-    rossby mult: 0.28
-    min grid mult: 0.28
+    rossby mult: 1.0
+    min grid mult: 1.0
   cicen:
     rossby mult: 0.0
     min grid mult: 1.0
