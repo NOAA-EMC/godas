@@ -12,7 +12,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-def spatial_plot(lon, lat, var, varname='ice_thickness', gridplot=True, \
+def spatial_plot(lon, lat, var, varname='ice_thickness', gridplot=False, \
      title='total_icethickness', domain='global', bound=None):
     plt.clf()
     plt.figure(figsize=(10, 8))
@@ -45,6 +45,9 @@ def spatial_plot(lon, lat, var, varname='ice_thickness', gridplot=True, \
         vmax = bound[1]
     var=np.ma.masked_less_equal(var, 0.1)
     if gridplot:
+        lon=lon[0,:]
+        lat=lat[:, 0]
+        print(lon.shape, lat.shape, var.shape)
         levels=np.linspace(vmin, vmax, 10)
         obsax = ax.contourf(lon, lat, var,\
                    vmin=vmin, vmax=vmax, \
@@ -91,17 +94,17 @@ class Icethk_validation:
     def __init__(self, var):
         self.var=var
         
-    def readfiles(self, fname):
-        ncd=xr.open_dataset(fname,decode_times=True)
-        ncd = ncd.assign_coords({"geolon":ncd["lon_scaler"],"geolat":ncd["lat_scaler"]})
-        geolat=ncd['geolat']
-        geolon=ncd['geolon']
-        self.lat=geolat
-        dx=ncd['dxt']
-        dy=ncd['dyt']
+    def readfiles(self, srcFile):
+        source = xr.open_dataset(srcFile)
+        geolat = source.variables['lat_scaler'][:]
+        geolon = source.variables['lon_scaler'][:]
+        self.ice = source.variables['heff'][:]
+        print("initial shape", geolon.shape, self.ice.shape)
+        dx = source.variables['dxt'][:]
+        dy = source.variables['dyt'][:]
+        self.lat = geolat
         area=(dx*dy)*1000*1000
-        ice=ncd[self.var]
-        self.ice=np.ma.masked_greater_equal(ice, 9999.)
+        self.ice=np.ma.masked_greater_equal(self.ice, 9999.)
         self.ice_vol=self.ice*area/(10**9)
         return geolat, geolon
 
@@ -230,8 +233,8 @@ def main_max_ice_thickness():
     var = 'heff'
     icethk=Icethk_validation(var) 
     for exp in ['/work/noaa/ng-godas/marineda/validation/GIOMAS']:
-        lod=glob.glob(exp+'/'+'*'+'/')
-        #lod=glob.glob(exp+'/'+'2000'+'/')
+        #lod=glob.glob(exp+'/'+'*'+'/')
+        lod=glob.glob(exp+'/'+'2000'+'/')
         lod.sort()
         y0=lod[0].split('/')[7]
         # for sea ice thickness as a timeseries
@@ -283,14 +286,14 @@ def main_max_ice_thickness():
    
         ithk2d_max=np.max(ithk2dmax, axis=0) 
         ithk2d_max=np.ma.masked_greater_equal(ithk2d_max, 9999.)
-        spatial_plot(lon, lat, ithk2d_max, varname='max_icethk', gridplot=False, title='Max ice thickness [m] (GIOMAS)', bound=[0,5])
+        spatial_plot(lon, lat, ithk2d_max, varname='max_icethk', title='Max ice thickness [m] (GIOMAS)', bound=[0,5])
         ithk2d_max=np.max(ithk2dmax_nh, axis=0) 
         ithk2dmax_nh=np.ma.masked_greater_equal(ithk2d_max, 9999.)
-        spatial_plot(lon, lat, ithk2dmax_nh, varname='max_icethk_nh', gridplot=False,  domain='north', \
+        spatial_plot(lon, lat, ithk2dmax_nh, varname='max_icethk_nh', domain='north', \
                  title='Max ice thickness [m] north (GIOMAS)', bound=[0,5])
         ithk2d_max=np.max(ithk2dmax_sh, axis=0) 
         ithk2dmax_sh=np.ma.masked_greater_equal(ithk2d_max, 9999.)
-        spatial_plot(lon, lat, ithk2dmax_sh, varname='max_icethk_sh', gridplot=False, domain='south', \
+        spatial_plot(lon, lat, ithk2dmax_sh, varname='max_icethk_sh', domain='south', \
                  title='Max ice thickness [m] south (GIOMAS)', bound=[0,5])
         timeseries_plot(y0, t, ithk_max_nh, ithk_max_sh, figname='timeseries_ithk_max', \
                 title='maximum ice thickness [m]', ylabel='max ice thickness [m]' )        

@@ -57,12 +57,13 @@ class Grid():
         z = r_n * (1 - E2) * np.sin(lat_rad)
         return x,y,z
 
-    def source_grid(self):
+    def source_grid(self, mm=1):
+        print('month', mm)
         source = xr.open_dataset(self.srcFile)
         self.srclat = source.variables['lat_scaler'][:]
         self.srclon = source.variables['lon_scaler'][:]
         self.ice = source.variables['heff'][:]
-        self.ice= self.ice[1]
+        self.ice= self.ice[mm]
         #self.ice= np.max(self.ice, axis=0)
         #self.ice = np.ma.masked_greater_equal(self.ice, 9999.)
         print(self.srclat.shape)
@@ -73,10 +74,10 @@ class Grid():
         self.tglon2d=target.lon[0]
         print(self.tglat2d.shape)
 
-    def kdtree_interp(self):
+    def kdtree_interp(self, mm=1):
         import time
         starttime=time.time()
-        self.source_grid()
+        self.source_grid(mm=mm)
         xs, ys, zs = self.lon_lat_to_cartesian(self.srclon.values.flatten(), self.srclat.values.flatten())
         self.target_grid()
         xt, yt, zt = self.lon_lat_to_cartesian(self.tglon2d.values.flatten(), self.tglat2d.values.flatten())
@@ -97,7 +98,7 @@ if __name__=="__main__":
     grid = Grid(srcFile=srcFile, trgFile=trgFile)
     print(trgFile)
     #grid.source_grid()
-    lon, lat, ice=grid.kdtree_interp()
+    lon, lat, ice=grid.kdtree_interp(mm=6)
     spatial_plot(lon, lat, ice, varname='total-ice-thickness_north', domain='north', title='total ice thickness', bound=[0, 5]) 
     '''
     fig = plt.figure(figsize=(28,12))
