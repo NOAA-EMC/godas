@@ -70,8 +70,6 @@ def timeseries_plot(y0, t, seaice_nh, seaice_sh, title='time series', figname='t
     plt.figure(figsize=(10, 5))
     date=datetime.datetime(int(y0),1,1,12,0)
     ndate=[ date + relativedelta(months=mm) for mm in range(t) ]
-    # Total Volume
-    #fig,ax = plt.subplots(figsize=(1024./100, 576./100))
     plt.plot(ndate, seaice_nh, '-', color=color[0],label='north')
     plt.plot(ndate, seaice_sh, '--', color=color[1],label='south')
     plt.legend(loc='best')
@@ -181,8 +179,6 @@ class Icethk_validation(Common_grid):
             ice2d=ice2d+ ice
         icevol = ice2d * self.area/(10**9)
         lon, lat, icevol = self.kdtree_interp(self.lon, self.lat, icevol)
-        #ice2d_nh  = np.ma.masked_where(self.lat < 0., ice2d)
-        #ice2d_sh  = np.ma.masked_where(self.lat > 0., ice2d)
         return lon, lat, icevol # ice2d, ice2d_nh, ice2d_sh
 
     def monthly_icevol(self):
@@ -291,11 +287,8 @@ def main_max_ice_thickness(gridFile, yearly_plot=False):
             ice2dmax_nh=[]
             ice2dmax_sh=[]
             for fname in lof:
-                #print(fname)
                 icethk.readfiles(fname)
-                #print(ice.shape)
                 # max over 12 months on 2d grid
-                #ice2d, ice2d_nh, ice2d_sh = icethk.max2d_ice()
                 lon, lat, ice2d = icethk.max2d_ice()
                 if yearly_plot:
                     spatial_plot(lon, lat, ice2d, varname='max-ice-thickness-%s'%yyyy,\
@@ -304,10 +297,7 @@ def main_max_ice_thickness(gridFile, yearly_plot=False):
                         title='Max ice thickness [m] (GIOMAS) '+yyyy, bound=[0,5])
                     spatial_plot(lon, lat, ice2d, domain='south', varname='max_icethk-'+yyyy, \
                         title='Max ice thickness [m] (GIOMAS) '+yyyy, bound=[0,5])
-                #spatial_plot(lon, lat, ice2dnh_sum, varname='total_vol_%s'%yyyy, title='total_vol', domain='north')
                 ice2dmax.append(ice2d)
-                #ice2dmax_nh.append(ice2d_nh)
-                #ice2dmax_sh.append(ice2d_sh)
                 # monthly ice max, over the whole region
                 ice_1d, ice1d_nh, ice1d_sh = icethk.monthly_icemax()
                 ithk_max.extend(ice_1d)
@@ -320,10 +310,6 @@ def main_max_ice_thickness(gridFile, yearly_plot=False):
             if ice2dmax != []:
                 ice2dmax=np.max(ice2dmax, axis=0)
                 ithk2dmax.append(ice2dmax)
-                #ice2dmax_nh=np.max(ice2dmax_nh, axis=0)
-                #ithk2dmax_nh.append(ice2dmax_nh)
-                #ice2dmax_sh=np.max(ice2dmax_sh, axis=0)
-                #ithk2dmax_sh.append(ice2dmax_sh)
    
         ithk2d_max=np.max(ithk2dmax, axis=0) 
         spatial_plot(lon, lat, ithk2d_max, varname='max_icethk', title='Max ice thickness [m] (GIOMAS)', bound=[0,5])
@@ -343,11 +329,16 @@ if __name__=='__main__':
     parser.add_argument(
         '-o',
         '--option',
+        help='volume or thickness',
         type=str, required=True)
     parser.add_argument(
         '-g',
         '--gridFile',
         type=str, required=True)
+    parser.add_argument(
+        '-p',
+        '--plots',
+        type=bool, default=False, required=False)
     parser.add_argument(
         '-b',
         '--bound',
@@ -355,7 +346,7 @@ if __name__=='__main__':
         type=str, nargs='+',  default=[0, 5], required=False)
     args = parser.parse_args() 
     if args.option == "thickness":
-        main_max_ice_thickness(args.gridFile)
+        main_max_ice_thickness(args.gridFile, yearly_plot=args.plots)
     if args.option == "volume":
         main_ice_volume(args.gridFile)
 

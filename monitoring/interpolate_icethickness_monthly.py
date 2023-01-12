@@ -25,7 +25,7 @@ varAttrs = {
                      'units': 'none'},
            }
 
-def spatial_plot(lon, lat, var, varname='ice_thickness', gridplot=False, \
+def spatial_plot(lon, lat, var, varname='ice_thickness', regrid_plot=False, \
      title='total_icethickness', domain='global', bound=None):
     plt.clf()
     plt.figure(figsize=(10, 8))
@@ -59,23 +59,36 @@ def spatial_plot(lon, lat, var, varname='ice_thickness', gridplot=False, \
     var=np.ma.masked_less_equal(var, 0.1)
     levels=np.linspace(vmin, vmax, 10)
     levels = [round(xx, 1) for xx in levels]
-    obsax = ax.contourf(lon, lat, var,\
+    if regrid_plot:
+        obsax = ax.contourf(lon, lat, var,\
                    vmin=vmin, vmax=vmax, \
                    transform=ccrs.PlateCarree(),\
                    levels=levels,\
                    cmap='jet' )
-    ax.contour(lon, lat, var,
+        ax.contour(lon, lat, var,
                           levels = levels,
                           linewidths=1,
                           colors='k',
                           transform = ccrs.PlateCarree())
+    else:
+        obsax=plt.scatter( lon, lat, c=var, s=.1,
+           cmap='jet', transform=ccrs.PlateCarree(),
+            vmin=vmin, vmax=vmax)
+        lon=lon.values.flatten()
+        lat=lat.values.flatten()
+        var=var.data.flatten()
+
+        ax.tricontour(lon, lat, var,\
+                   levels=levels,\
+                   colors='k',
+                   transform=ccrs.PlateCarree())
     ax.add_feature(cartopy.feature.LAND, edgecolor='black')
     ax.add_feature(cartopy.feature.LAKES, edgecolor='black')
     ax.coastlines()
     ax.set_extent([lonmin, lonmax, latmin, latmax], ccrs.PlateCarree())
     plt.colorbar(obsax, shrink=0.5) #.set_label(varname)
     plt.title(title, fontsize=14, fontweight='bold')
-    plt.savefig('figures/Fig_%s_%s.png'%(domain, varname),  bbox_inches='tight', pad_inches = 0.02)
+    plt.savefig('plots/Fig_%s_%s.png'%(domain, varname),  bbox_inches='tight', pad_inches = 0.02)
 
 class Grid():
     def __init__(self, srcFile=None, trgFile=None):
@@ -109,7 +122,7 @@ class Grid():
         self.tglat2d=target.lat[0]
         self.tglon2d=target.lon[0]
 
-    def kdtree_interp(self, mm=1):
+    def kdtree_interp(self, mm=1, orig_plot=False, regrid_plot=False):
         import time
         starttime=time.time()
         self.source_grid(mm=mm)
@@ -120,6 +133,17 @@ class Grid():
         d, inds = tree.query(np.column_stack((xt, yt, zt)), k = 1) #nterpolated 2d field
         ice_target = self.ice.values.flatten()[inds].reshape(self.tglon2d.shape)
         ice_target[ice_target>9999.]=0
+        if orig_plot:
+            ice=self.ice
+            ice=np.ma.masked_greater_equal(ice, 9999.)
+            ice[ice.mask]=0
+            spatial_plot(self.srclon, self.srclat, ice, \
+                 varname='max-ice-thickness_%sm_orig'%(mm), regrid_plot=False,\
+                 domain='north', title='Max ice thickness %02d m'%(mm), bound=[0, 5])
+        if regrid_plot:
+            spatial_plot(self.tglon2d, self.tglat2d, ice_target, \
+            varname='max-ice-thickness_%sm_regrid'%(mm), regrid_plot=True, \
+            domain='north', title='Max ice thickness %02d m'%(mm), bound=[0, 5])
         endtime=time.time()
         print("time for interpolation: ", endtime-starttime)
         return self.tglon2d, self.tglat2d, ice_target 
@@ -197,7 +221,11 @@ if __name__=="__main__":
         type=str, required=True)
     parser.add_argument(
         '-p',
-        '--gridplot',
+        '--orig_plot',
+        type=bool, default=False, required=False)
+    parser.add_argument(
+        '-r',
+        '--regrid_plot',
         type=bool, default=False, required=False)
     parser.add_argument(
         '-m',
@@ -221,12 +249,7 @@ if __name__=="__main__":
 
     dstData=[]
     for i in month:
-        dstlon, dstlat, ice=grid.kdtree_interp(mm=i-1)
-        if args.gridplot:
-            spatial_plot(dstlon, dstlat, ice, varname='max-ice-thickness_%s_%sm'%(yyyy,i), \
-                 domain='north', title='Max ice thickness %s-%02d'%(yyyy,i), bound=[0, 5]) 
+        dstlon, dstlat, ice=grid.kdtree_interp(mm=i-1, orig_plot=args.orig_plot, regrid_plot=args.orig_plot)
         dstData.append(ice)
     dstData=np.array(dstData)
-    print(np.array(dstData).shape)
     write_to_netcdf(dstlon, dstlat, dstData, filo, months=month, variable=variable, attributes=varAttrs[variable])
-    #spatial_plot(lon, lat, ice, varname='total-ice-thickness_north', domain='north', title='total ice thickness', bound=[0, 5]) 
