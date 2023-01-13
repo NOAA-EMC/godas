@@ -12,7 +12,8 @@ import cartopy.crs as ccrs
 import cartopy
 import cartopy.feature as cfeature
 import matplotlib.pylab as plt
-
+from mpl_toolkits.basemap import Basemap
+import cmocean
 #for interpolation
 from scipy.spatial import cKDTree
 from matplotlib.gridspec import GridSpec
@@ -31,66 +32,22 @@ class Plot():
     def spatial_plot(self, lon, lat, var, varname='ice_thickness', regrid_plot=False, \
         title='total_icethickness', domain='global', bound=None):
         plt.clf()
-        plt.figure(figsize=(10, 8))
-
-        if ( domain == 'global' ):
-            proj=ccrs.Robinson()
-            lonmin=-180
-            lonmax=180
-            latmin=-90
-            latmax=90
-        if ( domain == 'north' ):
-            proj=ccrs.NorthPolarStereo()
-            lonmin=-180
-            lonmax=180
-            latmin=50
-            latmax=90
-        if ( domain == 'south' ):
-            proj=ccrs.SouthPolarStereo()
-            lonmin=-180
-            lonmax=180
-            latmin=-90
-            latmax=-50
-
-        ax = plt.axes(projection=proj)
-        if bound is None:
-            vmin = var.min()
-            vmax = var.max()
-        else:
-            vmin = bound[0]
-            vmax = bound[1]
-        var=np.ma.masked_less_equal(var, 0.1)
-        levels=np.linspace(vmin, vmax, 10)
-        levels = [round(xx, 1) for xx in levels]
-        if regrid_plot:
-            obsax = ax.contourf(lon, lat, var,\
-                   vmin=vmin, vmax=vmax, \
-                   transform=ccrs.PlateCarree(),\
-                   levels=levels,\
-                   cmap='jet' )
-            ax.contour(lon, lat, var,
-                          levels = levels,
-                          linewidths=1,
-                          colors='k',
-                          transform = ccrs.PlateCarree())
-        else:
-            obsax=plt.scatter( lon, lat, c=var, s=.1,
-                cmap='jet', transform=ccrs.PlateCarree(),
-                vmin=vmin, vmax=vmax)
-            lon=lon.values.flatten()
-            lat=lat.values.flatten()
-            var=var.data.flatten()
-
-            ax.tricontour(lon, lat, var,\
-                   levels=levels,\
-                   colors='k',
-                   transform=ccrs.PlateCarree())
-        ax.add_feature(cartopy.feature.LAND, edgecolor='black')
-        ax.add_feature(cartopy.feature.LAKES, edgecolor='black')
-        ax.coastlines()
-        ax.set_extent([lonmin, lonmax, latmin, latmax], ccrs.PlateCarree())
-        plt.colorbar(obsax, shrink=0.5) #.set_label(varname)
+        fig=plt.figure(figsize=(10, 8))
+        m = Basemap(projection='npstere',boundinglat=67,lon_0=290,resolution='l')
+        m.drawmapboundary(fill_color='k')
+        m.drawlsmask(land_color='k', ocean_color='k')
+        m.fillcontinents()
+        var[np.where(var <= 0.1)] = np.nan
+        levels=np.arange(0,5.1,1)
+        cmap = cmocean.cm.thermal
+        obsax = m.contourf(lon,lat, var,
+                levels=levels, extend='max',
+                latlon=True,cmap=cmap)
+        m.contour(lon,lat,var,
+                len(levels), colors='k',
+                latlon=True)
         plt.title(title, fontsize=14, fontweight='bold')
+        plt.colorbar(obsax, shrink=0.5).set_label(varname)
         plt.savefig(self.plotdir+'/Fig_%s_%s.png'%(domain, varname),  bbox_inches='tight', pad_inches = 0.02)
 
 class Grid(Plot):

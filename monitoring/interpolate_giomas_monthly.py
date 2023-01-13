@@ -12,6 +12,8 @@ import cartopy.crs as ccrs
 import cartopy
 import cartopy.feature as cfeature
 import matplotlib.pylab as plt
+from mpl_toolkits.basemap import Basemap
+import cmocean
 
 #for interpolation
 from scipy.spatial import cKDTree
@@ -31,66 +33,22 @@ class Plot():
     def spatial_plot(self, lon, lat, var, varname='ice_thickness', regrid_plot=False, \
         title='total_icethickness', domain='global', bound=None):
         plt.clf()
-        plt.figure(figsize=(10, 8))
-
-        if ( domain == 'global' ):
-            proj=ccrs.Robinson()
-            lonmin=-180
-            lonmax=180
-            latmin=-90
-            latmax=90
-        if ( domain == 'north' ):
-            proj=ccrs.NorthPolarStereo()
-            lonmin=-180
-            lonmax=180
-            latmin=50
-            latmax=90
-        if ( domain == 'south' ):
-            proj=ccrs.SouthPolarStereo()
-            lonmin=-180
-            lonmax=180
-            latmin=-90
-            latmax=-50
-
-        ax = plt.axes(projection=proj)
-        if bound is None:
-            vmin = var.min()
-            vmax = var.max()
-        else:
-            vmin = bound[0]
-            vmax = bound[1]
-        var=np.ma.masked_less_equal(var, 0.1)
-        levels=np.linspace(vmin, vmax, 10)
-        levels = [round(xx, 1) for xx in levels]
-        if regrid_plot:
-            obsax = ax.contourf(lon, lat, var,\
-                   vmin=vmin, vmax=vmax, \
-                   transform=ccrs.PlateCarree(),\
-                   levels=levels,\
-                   cmap='jet' )
-            ax.contour(lon, lat, var,
-                          levels = levels,
-                          linewidths=1,
-                          colors='k',
-                          transform = ccrs.PlateCarree())
-        else:
-            obsax=plt.scatter( lon, lat, c=var, s=.1,
-                cmap='jet', transform=ccrs.PlateCarree(),
-                vmin=vmin, vmax=vmax)
-            lon=lon.values.flatten()
-            lat=lat.values.flatten()
-            var=var.data.flatten()
-
-            ax.tricontour(lon, lat, var,\
-                   levels=levels,\
-                   colors='k',
-                   transform=ccrs.PlateCarree())
-        ax.add_feature(cartopy.feature.LAND, edgecolor='black')
-        ax.add_feature(cartopy.feature.LAKES, edgecolor='black')
-        ax.coastlines()
-        ax.set_extent([lonmin, lonmax, latmin, latmax], ccrs.PlateCarree())
-        plt.colorbar(obsax, shrink=0.5) #.set_label(varname)
+        fig=plt.figure(figsize=(10, 8))
+        m = Basemap(projection='npstere',boundinglat=67,lon_0=290,resolution='l')
+        m.drawmapboundary(fill_color='k')
+        m.drawlsmask(land_color='k', ocean_color='k')
+        m.fillcontinents()
+        var[np.where(var <= 0.1)] = np.nan
+        levels=np.arange(0,5.1,1)
+        cmap = cmocean.cm.thermal
+        obsax = m.contourf(lon,lat, var,
+                levels=levels, extend='max',
+                latlon=True,cmap=cmap)
+        m.contour(lon,lat,var,
+                len(levels), colors='k',
+                latlon=True)
         plt.title(title, fontsize=14, fontweight='bold')
+        plt.colorbar(obsax, shrink=0.5).set_label(varname)
         plt.savefig(self.plotdir+'/Fig_%s_%s.png'%(domain, varname),  bbox_inches='tight', pad_inches = 0.02)
 
 class Grid(Plot):
@@ -129,29 +87,39 @@ class Grid(Plot):
     def kdtree_interp(self, mm=1, orig_plot=False, regrid_plot=False):
         import time
         starttime=time.time()
-        self.source_grid(mm=mm)
+        self.source_grid(mm=mm-1)
         xs, ys, zs = self.lon_lat_to_cartesian(self.srclon.values.flatten(), self.srclat.values.flatten())
         self.target_grid()
         xt, yt, zt = self.lon_lat_to_cartesian(self.tglon2d.values.flatten(), self.tglat2d.values.flatten())
         tree = cKDTree(np.column_stack((xs, ys, zs)))
         d, inds = tree.query(np.column_stack((xt, yt, zt)), k = 1) #nterpolated 2d field
         ice_target = self.ice.values.flatten()[inds].reshape(self.tglon2d.shape)
-        ice_target[ice_target>9999.]=0
+        #ice_target[np.where(ice_target>999.)] = np.nan
+        ice_target=np.ma.masked_greater_equal(ice_target, 9999.)
         if orig_plot:
             ice=self.ice
             ice=np.ma.masked_greater_equal(ice, 9999.)
-            ice[ice.mask]=0
+            #ice[np.where(ice>999.)]=np.nan
             self.spatial_plot(self.srclon, self.srclat, ice, \
-                 varname='max-ice-thickness_%sm_orig'%(mm), regrid_plot=False,\
+                 varname='max-ice-thickness_%sm_orig'%(mm), \
                  domain='north', title='Max ice thickness %02d m'%(mm), bound=[0, 5])
         if regrid_plot:
             self.spatial_plot(self.tglon2d, self.tglat2d, ice_target, \
-            varname='max-ice-thickness_%sm_regrid'%(mm), regrid_plot=True, \
+            varname='max-ice-thickness_%sm_regrid'%(mm), \
             domain='north', title='Max ice thickness %02d m'%(mm), bound=[0, 5])
         endtime=time.time()
         print("time for interpolation: ", endtime-starttime)
         return self.tglon2d, self.tglat2d, ice_target 
 
+
+
+def write_to_netcdf(lon, lat, data, filo, months=None, fill_value=1e20, variable='heff', attributes=None):
+
+    from netCDF4 import Dataset, date2num
+    import datetime as dt
+    import numpy as np
+    
+    nt, nx, ny = data.shape
 
 def write_to_netcdf(lon, lat, data, filo, months=None, fill_value=1e20, variable='heff', attributes=None):
 
@@ -260,7 +228,8 @@ if __name__=="__main__":
 
     dstData=[]
     for i in month:
-        dstlon, dstlat, ice=grid.kdtree_interp(mm=i-1, orig_plot=args.orig_plot, regrid_plot=args.orig_plot)
+        dstlon, dstlat, ice=grid.kdtree_interp(mm=i, orig_plot=args.orig_plot, regrid_plot=args.orig_plot)
+        #dstlon, dstlat, ice=grid.griddata_interp(mm=i-1, orig_plot=args.orig_plot, regrid_plot=args.orig_plot)
         dstData.append(ice)
     dstData=np.array(dstData)
     write_to_netcdf(dstlon, dstlat, dstData, filo, months=month, variable=variable, attributes=varAttrs[variable])
