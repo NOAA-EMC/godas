@@ -29,20 +29,72 @@ class Plot():
     def __init__(self, plotdir=None):
         self.plotdir=plotdir
 
-    def spatial_plot(self, lon, lat, var, varname='ice_thickness', regrid_plot=False, \
+    def map_plot_cartopy(self, lon, lat, var, domain='global', \
+        title = 'ice freeboard', varname='freeboard', bound=None):
+        print(domain)
+        fig=plt.figure(figsize=(10, 8))
+        if (domain == 'global'):
+            proj=ccrs.Robinson()
+            lonmin, lonmax, latmin, latmax = -180, 180, -90, 90
+        if (domain == 'north'):
+            proj=ccrs.NorthPolarStereo()
+            lonmin, lonmax, latmin, latmax = -180, 180, 60, 90
+        if (domain == 'south'):
+            proj=ccrs.SouthPolarStereo()
+            lonmin, lonmax, latmin, latmax = -180, 180, -90, -50
+
+        ax = plt.axes(projection=proj)
+        var=np.ma.masked_less_equal(var, 0.01)
+        if bound is None:
+            vmin = var.min()
+            vmax = var.max()
+        else:
+            vmin = bound[0]
+            vmax = bound[1]
+        levels=np.linspace(vmin, vmax, 10)
+        levels = [round(xx, 1) for xx in levels]
+
+        obsax = ax.contourf(lon, lat, var,\
+                   vmin=vmin, vmax=vmax, \
+                   transform=ccrs.PlateCarree(),\
+                   levels=levels, extend='max',\
+                   cmap='jet' )
+        ax.contour(lon, lat, var,
+                          levels = levels,
+                          linewidths=1,
+                          colors='k',
+                          transform = ccrs.PlateCarree())
+        ax.add_feature(cartopy.feature.LAND, edgecolor='black')
+        ax.add_feature(cartopy.feature.LAKES, edgecolor='black')
+        ax.coastlines()
+        ax.set_extent([lonmin, lonmax, latmin, latmax], ccrs.PlateCarree())
+        plt.colorbar(obsax, shrink=0.5) #.set_label(varname)
+        plt.title(title, fontsize=14, fontweight='bold')
+        plt.savefig(self.plotdir+'/Fig_%s_%s.png'%(domain, varname),  bbox_inches='tight', pad_inches = 0.02)
+
+    def map_plot(self, lon, lat, var, varname='ice_thickness', regrid_plot=False, \
         title='total_icethickness', domain='global', bound=None):
         plt.clf()
         fig=plt.figure(figsize=(10, 8))
-        m = Basemap(projection='npstere',boundinglat=67,lon_0=290,resolution='l')
+        m = Basemap(projection='npstere',boundinglat=60,lon_0=0,resolution='l')
         m.drawmapboundary(fill_color='k')
         m.drawlsmask(land_color='k', ocean_color='k')
         m.fillcontinents()
-        var[np.where(var <= 0.1)] = np.nan
-        levels=np.arange(0,5.1,1)
-        cmap = cmocean.cm.thermal
+        #var[np.where(var <= 0.1)] = np.nan
+        #levels=np.arange(0,5.1,1)
+        #cmap = cmocean.cm.thermal
+        var=np.ma.masked_less_equal(var, 0.01)
+        if bound is None:
+            vmin = var.min()
+            vmax = var.max()
+        else:
+            vmin = bound[0]
+            vmax = bound[1]
+        levels=np.linspace(vmin, vmax, 10)
+        levels = [round(xx, 1) for xx in levels]
         obsax = m.contourf(lon,lat, var,
                 levels=levels, extend='max',
-                latlon=True,cmap=cmap)
+                latlon=True,cmap='jet')
         m.contour(lon,lat,var,
                 len(levels), colors='k',
                 latlon=True)
@@ -98,12 +150,12 @@ class Grid(Plot):
             ice=self.ice
             ice=np.ma.masked_greater_equal(ice, 9999.)
             ice[ice.mask]=0
-            self.spatial_plot(self.srclon, self.srclat, ice, \
+            self.map_plot(self.srclon, self.srclat, ice, \
                  varname='max-ice-thickness_%sm_orig'%(mm), regrid_plot=False,\
                  domain='north', title='Max ice thickness %02d m'%(mm), bound=[0, 5])
         if regrid_plot:
-            self.spatial_plot(self.tglon2d, self.tglat2d, ice_target, \
-            varname='max-ice-thickness_%sm_regrid'%(mm), regrid_plot=True, \
+            self.map_plot_cartopy(self.tglon2d, self.tglat2d, ice_target, \
+            varname='max-ice-thickness_%sm_regrid'%(mm), \
             domain='north', title='Max ice thickness %02d m'%(mm), bound=[0, 5])
         endtime=time.time()
         print("time for interpolation: ", endtime-starttime)
