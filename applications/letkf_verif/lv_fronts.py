@@ -145,20 +145,26 @@ def load_model_grid(path):
                 mask=mask[rows][:, order] > 0)
 
 
-def model_field(path, grid, var='ave_ssh'):
-    """One surface field of the written analysis on the separable grid;
-    a 3-D variable (Temp, Salt) gives its top level."""
-    with nc.Dataset(path) as dataset:
-        field = np.ma.filled(dataset[var][:], np.nan)
-    while field.ndim > 2:
-        field = field[0]
-    field = field[grid['rows']][:, grid['order']].astype(float)
+def model_field(paths, grid, var='ave_ssh'):
+    """One surface field of the analysis on the separable grid; a 3-D
+    variable (Temp, Salt) gives its top level. ``paths`` is one file or the
+    list Experiment.analysis_parts() returns, summed (prior + increment)."""
+    if isinstance(paths, str):
+        paths = [paths]
+    field = 0.0
+    for path in paths:
+        with nc.Dataset(path) as dataset:
+            part = np.ma.filled(dataset[var][:], np.nan).astype(float)
+        while part.ndim > 2:
+            part = part[0]
+        field = field + part
+    field = field[grid['rows']][:, grid['order']]
     field[~grid['mask']] = np.nan
     return field
 
 
-def model_ssh(path, grid):
-    return model_field(path, grid, 'ave_ssh')
+def model_ssh(paths, grid):
+    return model_field(paths, grid, 'ave_ssh')
 
 
 def ostia_sst(cfg, cycle):
@@ -207,7 +213,7 @@ def check_cycle(cfg, cycle):
             % cycle)
     available, missing = [], []
     for experiment in cfg['experiments']:
-        if experiment.analysis(cycle) is not None:
+        if experiment.analysis_parts(cycle) is not None:
             available.append(experiment.name)
             continue
         # Distinguish the two ways this fails: no pattern configured at
@@ -217,6 +223,8 @@ def check_cycle(cfg, cycle):
                if not experiment.analysis_pattern
                else 'analysis_pattern %r matched nothing'
                     % experiment.analysis_pattern)
+        if experiment.kind == 'letkf':
+            why += ', nor an ensemble-mean prior + increment'
         missing.append('%s (%s)' % (experiment.name, why))
     if not available:
         raise FileNotFoundError(
@@ -328,8 +336,10 @@ def run(cfg, regions, cycle, experiment_names=None):
                    or experiment.name in experiment_names}
     adt, adt_lat, adt_lon = copernicus_adt(LV.product_path(cfg, 'adt', cycle))
     ostia = ostia_sst(cfg, cycle) if 'sst' in LV.configured(cfg) else None
-    model_sst = {key: model_field(experiment.analysis(cycle), grid, 'Temp')
-                 for key, experiment in experiments.items()}
+    parts = {key: experiment.analysis_parts(cycle)
+             for key, experiment in experiments.items()}
+    model_sst = {key: model_field(paths, grid, 'Temp')
+                 for key, paths in parts.items()}
     results = {}
     for name, region in regions.items():
         lat0, lat1 = region['lat']
@@ -340,9 +350,9 @@ def run(cfg, regions, cycle, experiment_names=None):
                             PROFILE_HALFWIDTH_DEG + 1e-9, GRID_STEP_DEG)
         axes, peaks, profiles = {}, {}, {}
         fields = {'copernicus': regrid(adt, adt_lat, adt_lon, tlat, tlon)}
-        fields.update({key: regrid(model_ssh(experiment.analysis(cycle), grid),
+        fields.update({key: regrid(model_ssh(paths, grid),
                                    grid['lat'], grid['lon'], tlat, tlon)
-                       for key, experiment in experiments.items()})
+                       for key, paths in parts.items()})
         speed, strong, components = {}, {}, {}
         ssh, flow = {}, {}
         for key, eta in fields.items():

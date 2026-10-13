@@ -32,6 +32,17 @@ Per experiment with an ocean background and increment:
 
 Regions: global plus the `corr_regions:` boxes. The report shows all three
 figures and the verdict table in section 07.
+
+Then, for every experiment together, the barotropic kinetic energy of the
+background and of the increment against cycle, by depth zone (lv_bke.py):
+
+    figs/cycle_bke.png                       BKE of background and increment,
+                                             background BKE / KE
+    bke_<exp>.csv                            per cycle, source and zone; a cache,
+                                             so only new files are read
+
+--jobs reads the cycles in parallel: the per-cycle files for the series
+(the tendency chain itself stays sequential) and the BKE files.
 """
 
 import argparse
@@ -51,10 +62,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import cartopy.crs as ccrs  # noqa: E402
 import cartopy.feature as cfeature  # noqa: E402
+import matplotlib.dates as mdates  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 from netCDF4 import Dataset  # noqa: E402
+import lv_bke as B  # noqa: E402
 import lv_plot as P  # noqa: E402
-from lv_common import Fresh, Grid, corr_regions, load_config, region_box  # noqa: E402
+from lv_common import (Fresh, Grid, corr_regions, load_config, parse_cycle,  # noqa: E402
+                       region_box)
 
 BLOCK = 20            # 1/4-deg cells per 5-deg block for the low-pass
 STRIP = 4             # cycles in the tendency strip (24 h)
@@ -134,35 +148,64 @@ def wcorr(a, b, w, sel):
     return float(sxy / np.sqrt(sxx * syy)) if sxx > 0 and syy > 0 else np.nan
 
 
-def uv_deep_ratio(path, bkg_path, sel, shallow, deep):
+def uv_deep_ratio(path, bkg_path, regions, shallow, deep):
     """RMS of the u/v increment below ``deep`` m over the RMS above
-    ``shallow`` m, over the region, from a handful of levels each."""
+    ``shallow`` m, from a handful of levels each, as {region: ratio}. Each
+    level is read once for all the regions (it used to be re-read per
+    region, most of this stage's run time)."""
+    nan = {r: np.nan for r in regions}
     if path is None or bkg_path is None or not os.path.exists(bkg_path):
-        return np.nan
+        return nan
     with Dataset(bkg_path) as ds:
         if 'z_l' not in ds.variables:
-            return np.nan
+            return nan
         z = np.asarray(ds['z_l'][:], dtype='f8')
     top = np.where(z <= shallow)[0]
     bot = np.where(z >= deep)[0]
     if top.size == 0 or bot.size == 0:
-        return np.nan
+        return nan
     top = top[::max(1, top.size // 4)][:4]
     bot = bot[::max(1, bot.size // 4)][:4]
     with Dataset(path) as ds:
         if 'u' not in ds.variables or 'v' not in ds.variables:
-            return np.nan
+            return nan
 
         def rms(levels):
-            s, n = 0.0, 0
+            s = dict.fromkeys(regions, 0.0)
             for k in levels:
                 for var in ('u', 'v'):
-                    a = np.ma.filled(ds[var][0, k].astype('f8'), 0.0)
-                    s += float(np.sum(a[sel] ** 2))
-                    n += int(sel.sum())
-            return np.sqrt(s / n) if n else np.nan
+                    a2 = np.ma.filled(ds[var][0, k].astype('f8'), 0.0) ** 2
+                    for r, sel in regions.items():
+                        s[r] += float(np.sum(a2[sel]))
+            out = {}
+            for r, sel in regions.items():
+                n = 2 * len(levels) * int(sel.sum())
+                out[r] = np.sqrt(s[r] / n) if n else np.nan
+            return out
         num, den = rms(bot), rms(top)
-    return num / den if den > 0 else np.nan
+    return {r: num[r] / den[r] if den[r] > 0 else np.nan for r in regions}
+
+
+# Set once per worker by _init_reader(): the region masks are a few MB each,
+# too big to pickle into every task.
+_REGIONS = {}
+
+
+def _init_reader(regions):
+    _REGIONS.clear()
+    _REGIONS.update(regions)
+
+
+def _read_cycle(task):
+    """Worker: what one cycle contributes on its own -- surface background
+    and increment, and the u/v ratio per region. Independent across cycles;
+    only the tendency chain built from them in analyse() is sequential."""
+    bkg_path, inc_path, field, shallow, deep = task
+    bkg = read_level0(bkg_path, field)
+    incr = read_level0(inc_path, field)
+    if bkg is None or incr is None:
+        return None
+    return bkg, incr, uv_deep_ratio(inc_path, bkg_path, _REGIONS, shallow, deep)
 
 
 def trend(y, hours_per_step=6.0):
@@ -188,51 +231,71 @@ def trend(y, hours_per_step=6.0):
 
 
 def analyse(cfg, exp, cycles, grid, regions, field='ave_ssh', shallow=50.0,
-            deep=1000.0, verbose=True):
+            deep=1000.0, verbose=True, jobs=1):
     """Every metric for every cycle and region, plus the fields of the last
     STRIP cycles for the maps: (rows, maps) where maps is a list of
-    (cycle, bkg, incr, chg, chg_ls)."""
+    (cycle, bkg, incr, chg, chg_ls). With jobs > 1 the per-cycle reads run
+    in a process pool, in cycle order."""
     w = grid.area
     rows, maps = [], []
     prev_ana = prev_ls = None
-    for cycle in cycles:
-        bkg_path = exp.background(cycle, 'ocean')
-        inc_path = mom6_increment(exp, cycle)
-        bkg = read_level0(bkg_path, field)
-        incr = read_level0(inc_path, field)
-        if bkg is None or incr is None:
-            prev_ana = prev_ls = None
-            continue
-        ana = bkg + incr
-        chg = None if prev_ana is None else np.where(grid.mask, bkg - prev_ana, np.nan)
-        ls = None if chg is None else block_mean(chg)
-        for rname, sel in regions.items():
-            r = {'cycle': cycle, 'region': rname}
-            r['incr_rms'] = wstats(incr, w, sel)
-            r['chg_rms'] = wstats(chg, w, sel) if chg is not None else np.nan
-            if ls is not None:
-                sel_ls = block_mean(sel.astype('f8')) > 0.5
-                r['chg_ls_rms'] = wstats(ls, np.ones(ls.shape), sel_ls)
-                r['lag1'] = (wcorr(ls, prev_ls, np.ones(ls.shape), sel_ls)
-                             if prev_ls is not None else np.nan)
-            else:
-                r['chg_ls_rms'] = r['lag1'] = np.nan
-            r['uv_deep_ratio'] = uv_deep_ratio(inc_path, bkg_path, sel, shallow, deep)
-            rows.append(r)
-        maps.append((cycle, bkg, incr, chg, ls))
-        maps = maps[-STRIP:]
-        if verbose:
-            g = rows[-len(regions)]
-            print('    %s  incr rms %.4f  chg rms %s  low-pass %s  lag1 %s  '
-                  'uv deep/surf %s'
-                  % (cycle, g['incr_rms'],
-                     '%.4f' % g['chg_rms'] if np.isfinite(g['chg_rms']) else '-',
-                     '%.4f' % g['chg_ls_rms'] if np.isfinite(g['chg_ls_rms']) else '-',
-                     '%+.2f' % g['lag1'] if np.isfinite(g['lag1']) else '-',
-                     '%.2f' % g['uv_deep_ratio'] if np.isfinite(g['uv_deep_ratio']) else '-'),
-                  flush=True)
-        prev_ana, prev_ls = ana, ls
+    tasks = [(exp.background(c, 'ocean'), mom6_increment(exp, c), field, shallow, deep)
+             for c in cycles]
+    pool = None
+    if jobs > 1 and len(tasks) > 1:
+        from concurrent.futures import ProcessPoolExecutor
+        pool = ProcessPoolExecutor(max_workers=min(jobs, len(tasks)),
+                                   initializer=_init_reader, initargs=(regions,))
+        reads = pool.map(_read_cycle, tasks)
+    else:
+        _init_reader(regions)
+        reads = map(_read_cycle, tasks)
+    try:
+        for cycle, got in zip(cycles, reads):
+            prev_ana, prev_ls = _chain(cycle, got, prev_ana, prev_ls, grid, w, regions,
+                                       rows, maps, verbose)
+            maps = maps[-STRIP:]
+    finally:
+        if pool is not None:
+            pool.shutdown()
     return rows, maps
+
+
+def _chain(cycle, got, prev_ana, prev_ls, grid, w, regions, rows, maps, verbose):
+    """One link of the tendency chain: this cycle's metrics from its own
+    reads and the previous analysis; appends to rows and maps, returns the
+    new (prev_ana, prev_ls)."""
+    if got is None:
+        return None, None
+    bkg, incr, uv = got
+    ana = bkg + incr
+    chg = None if prev_ana is None else np.where(grid.mask, bkg - prev_ana, np.nan)
+    ls = None if chg is None else block_mean(chg)
+    for rname, sel in regions.items():
+        r = {'cycle': cycle, 'region': rname}
+        r['incr_rms'] = wstats(incr, w, sel)
+        r['chg_rms'] = wstats(chg, w, sel) if chg is not None else np.nan
+        if ls is not None:
+            sel_ls = block_mean(sel.astype('f8')) > 0.5
+            r['chg_ls_rms'] = wstats(ls, np.ones(ls.shape), sel_ls)
+            r['lag1'] = (wcorr(ls, prev_ls, np.ones(ls.shape), sel_ls)
+                         if prev_ls is not None else np.nan)
+        else:
+            r['chg_ls_rms'] = r['lag1'] = np.nan
+        r['uv_deep_ratio'] = uv[rname]
+        rows.append(r)
+    maps.append((cycle, bkg, incr, chg, ls))
+    if verbose:
+        g = rows[-len(regions)]
+        print('    %s  incr rms %.4f  chg rms %s  low-pass %s  lag1 %s  '
+              'uv deep/surf %s'
+              % (cycle, g['incr_rms'],
+                 '%.4f' % g['chg_rms'] if np.isfinite(g['chg_rms']) else '-',
+                 '%.4f' % g['chg_ls_rms'] if np.isfinite(g['chg_ls_rms']) else '-',
+                 '%+.2f' % g['lag1'] if np.isfinite(g['lag1']) else '-',
+                 '%.2f' % g['uv_deep_ratio'] if np.isfinite(g['uv_deep_ratio']) else '-'),
+              flush=True)
+    return ana, ls
 
 
 def verdict(rows, regions):
@@ -364,6 +427,98 @@ def tendency_strip(maps, grid, exp_name, cfg, fname, vmax):
     return P.save(fig, cfg, fname, dpi=100, quiet=True)
 
 
+BKE_ZONES = {'shelf': 'shelf (< %g m)' % B.SHELF,
+             'slope': 'slope (%g-%g m)' % (B.SHELF, B.SLOPE),
+             'deep': 'deep (> %g m)' % B.SLOPE, 'global': 'global'}
+BKE_ROWS = [('background', 'bke', 'background BKE (PJ)'),
+            ('increment', 'bke', 'increment BKE (PJ)'),
+            ('background', 'frac', 'background BKE / KE')]
+
+
+def bke_figure(cfg, caches, zones, coast_km, fname='cycle_bke.png'):
+    """Rows: background BKE, increment BKE, background BKE/KE; columns: the
+    zones; one line per experiment."""
+    col = P.color_map([e.name for e in cfg['experiments']])
+    labels = dict(BKE_ZONES, coast='within %g km of the coast' % coast_km)
+    fig, axes = plt.subplots(len(BKE_ROWS), len(zones), squeeze=False, sharex=True,
+                             figsize=(3.2 * len(zones), 2.5 * len(BKE_ROWS) + 0.5))
+    for i, (source, what, ylabel) in enumerate(BKE_ROWS):
+        for j, z in enumerate(zones):
+            ax = axes[i][j]
+            for name, cache in caches.items():
+                pts = sorted((c, v['zones'][z]) for (c, s), v in cache.items()
+                             if s == source and z in v['zones'])
+                if not pts:
+                    continue
+                y = [b if what == 'bke' else (b / k if k > 0 else np.nan)
+                     for _c, (b, k) in pts]
+                ax.plot([parse_cycle(c) for c, _v in pts], y, '-', lw=1.1,
+                        color=col.get(name, P.INK2), label=name)
+            if i == 0:
+                ax.set_title(labels[z], fontsize=9.5, color=P.INK)
+            if j == 0:
+                ax.set_ylabel(ylabel, fontsize=8.5, color=P.INK2)
+            ax.tick_params(labelsize=7.5)
+            P.tidy(ax)
+    for ax in axes[-1]:
+        loc = mdates.AutoDateLocator(minticks=3, maxticks=6)
+        ax.xaxis.set_major_locator(loc)
+        ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(loc))
+    # one legend for the figure: a panel can miss an experiment (no history,
+    # so no background rows)
+    seen = {}
+    for ax in axes.ravel():
+        for h, lab in zip(*ax.get_legend_handles_labels()):
+            seen.setdefault(lab, h)
+    names = [n for n in col if n in seen]          # registry order
+    if names:
+        fig.legend([seen[n] for n in names], names, loc='upper right', ncol=len(names),
+                   fontsize=8.5, frameon=False)
+    fig.suptitle('Barotropic kinetic energy against cycle: the background valid at '
+                 'the cycle and the increment MOM6 ingests', fontsize=12, color=P.INK,
+                 x=0.01, ha='left')
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    return P.save(fig, cfg, fname, dpi=110, quiet=True)
+
+
+def bke_stage(cfg, exps, cycles, grid, fresh, jobs=1, coast_km=100.0, force=False):
+    """Barotropic KE of every experiment's background and increment: bring the
+    per-experiment caches up to date (only new or changed files are read,
+    --jobs-way), then redraw the figure if any of them moved."""
+    t = time.time()
+    plan = {}
+    for e in exps:
+        files = {}
+        for c in cycles:
+            for source, path in (('background', e.background(c, 'ocean')),
+                                 ('increment', mom6_increment(e, c))):
+                if path and os.path.exists(path):
+                    files[(c, source)] = path
+        if files:
+            plan[e.name] = (P.slug(e.name), files)
+    if not plan:
+        print('  barotropic KE: no ocean background or increment on disk -- skipped')
+        return None
+    coast = None
+    if coast_km:
+        coast, src = B.coast_distance(exps, cycles, grid.shape)
+        print('  barotropic KE: coastal band from %s' % src if src else
+              '  barotropic KE: no gridspec with distance_from_coast -- no coastal zone')
+    caches = B.update(cfg, plan, grid.area, grid.mask, coast, coast_km, jobs=jobs,
+                      force=force, log=lambda s: print(s, flush=True))
+    inputs = [B.cache_path(cfg, slug) for slug, _f in plan.values()] + [B.__file__]
+    params = {'cycles': cycles, 'experiments': list(plan),
+              'coast_km': coast_km if coast is not None else None}
+    if fresh.ok('bke', inputs, params):
+        print('  barotropic KE: figure up to date, skipped')
+        return None
+    out = bke_figure(cfg, caches, B.zone_names(coast), coast_km)
+    fresh.record('bke', inputs, params, [out])
+    print('  barotropic KE: %s in %.0fs' % (os.path.basename(out), time.time() - t),
+          flush=True)
+    return out
+
+
 def stability_regions(cfg, grid):
     """global + the corr_regions boxes (small, fixed, made for this)."""
     regions = {'global': grid.mask.copy()}
@@ -396,7 +551,14 @@ def main(argv=None):
                     help='top of the column for the u/v ratio (m)')
     ap.add_argument('--deep', type=float, default=1000.0,
                     help='below this depth is "deep" for the u/v ratio (m)')
-    ap.add_argument('--force', action='store_true')
+    ap.add_argument('--jobs', type=int, default=1,
+                    help='processes for the per-cycle reads, and for the '
+                         'barotropic-KE files (default 1)')
+    ap.add_argument('--coast-km', type=float, default=100.0,
+                    help='width of the coastal zone of the barotropic KE, km; '
+                         '0 for none (default 100)')
+    ap.add_argument('--force', action='store_true',
+                    help='redraw everything and re-read every barotropic-KE file')
     a = ap.parse_args(argv)
     a.config = a.config or a.config_opt
     t_all = time.time()
@@ -432,7 +594,8 @@ def main(argv=None):
             continue
         t = time.time()
         print('  %s: %d cycle(s)' % (e.name, len(have)), flush=True)
-        rows, maps = analyse(cfg, e, have, grid, regions, a.field, a.shallow, a.deep)
+        rows, maps = analyse(cfg, e, have, grid, regions, a.field, a.shallow, a.deep,
+                             jobs=a.jobs)
         if not rows:
             fresh.record('exp:%s' % e.name, inputs, params, [])
             continue
@@ -460,6 +623,8 @@ def main(argv=None):
                  ' (%s)' % ', '.join('%s/%s' % (x['region'], x['metric'])
                                      for x in flagged[:6]) if flagged else '',
                  time.time() - t), flush=True)
+    bke_stage(cfg, exps, cycles, grid, fresh, jobs=a.jobs, coast_km=a.coast_km,
+              force=a.force)
     fresh.save()
     print('done in %.0fs' % (time.time() - t_all), flush=True)
     return 0
