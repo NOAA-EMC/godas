@@ -5,7 +5,8 @@ This is the odd one out among the plot_ stages: every other one reads only the
 per-cycle reductions written by compute_cycle.py, while this reads two full
 fields -- each experiment's written ocean analysis and the Copernicus L4 ADT
 grid -- for a single cycle. That is why it needs `analysis_pattern:` on every
-experiment, and why it is optional.
+var experiment (an LETKF falls back to its ensemble-mean prior + increment),
+and why it is optional.
 
 Writes straight into cfg['figs'], the way the other stages do:
 
@@ -510,7 +511,8 @@ def _cycle_key(cfg, regions, present_c, cycle, tag):
     """The Fresh inputs and params of one cycle's figures."""
     inputs = [LV.product_path(cfg, 'adt', cycle),
               LV.product_path(cfg, 'sst', cycle), cfg['grid']] + [
-        e.analysis(cycle) for e in cfg['experiments'] if e.name in present_c]
+        path for e in cfg['experiments'] if e.name in present_c
+        for path in e.analysis_parts(cycle)]
     return inputs, {'regions': sorted(regions), 'tag': tag}
 
 

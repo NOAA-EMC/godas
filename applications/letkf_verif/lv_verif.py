@@ -36,6 +36,15 @@ import os
 import numpy as np
 from netCDF4 import Dataset
 
+# SST and sea ice come out of the same OSTIA file. The last entry is for
+# Jan-Jun 2022, which the shared archive holds loose in the year directory
+# rather than under its month.
+OSTIA_PATTERN = [
+    '{Y}/{m}/{Ymd}*-UKMO-L4_GHRSST-SSTfnd-OSTIA-GLOB_REP-*.nc',
+    '{Y}/{m}/{Ymd}*-UKMO-L4_GHRSST-SSTfnd-OSTIA-GLOB-*.nc',
+    '{Y}/{Ymd}*-UKMO-L4_GHRSST-SSTfnd-OSTIA-GLOB*.nc',
+]
+
 # Per product: what to read and how it differs from the model. The base
 # directory is NOT here -- the three products come from unrelated archives, so
 # each one's path is given in the config (see `product_path`).
@@ -43,6 +52,13 @@ from netCDF4 import Dataset
 #   pattern       date-templated glob BELOW the configured path; the filenames
 #                 carry a production date that cannot be predicted, hence a
 #                 glob rather than a format string. Overridable per product.
+#                 A list is tried in order, first match wins: every archive
+#                 here switched from its reprocessed stream to its NRT one
+#                 (ADT dt_global_twosat -> nrt_global_allsat on 2024-07-01,
+#                 OSTIA GLOB_REP -> GLOB on 2024-10-01, SSS rep -> nrt on
+#                 2024-12-01), so no single glob resolves at every date. The
+#                 reprocessed name comes first, so it wins wherever an archive
+#                 later back-fills it over days it already holds as NRT.
 #   idx           leading index into the variable (time, or time+depth)
 #   offset        added to the product to reach the model's units
 #   ice/ice_max   product's own ice field, and the value above which a point
@@ -53,17 +69,19 @@ from netCDF4 import Dataset
 #                 constant offset that says nothing about the ocean
 PRODUCTS = {
     'adt': dict(
-        pattern='{Y}/{m}/nrt_global_allsat_phy_l4_{Ymd}_*.nc',
+        pattern=['{Y}/{m}/dt_global_*_phy_l4_{Ymd}_*.nc',
+                 '{Y}/{m}/nrt_global_*_phy_l4_{Ymd}_*.nc'],
         var='adt', lat='latitude', lon='longitude', idx=(0,),
         model_var='ave_ssh', units='m', label='ADT (CMEMS)',
         ice='flag_ice', ice_max=0.5, err='err_sla', remove_mean=True),
     'sss': dict(
-        pattern='{Y}/{m}/dataset-sss-ssd-nrt-daily_{Ymd}T*.nc',
+        pattern=['{Y}/{m}/dataset-sss-ssd-rep-daily_{Ymd}T*.nc',
+                 '{Y}/{m}/dataset-sss-ssd-nrt-daily_{Ymd}T*.nc'],
         var='sos', lat='lat', lon='lon', idx=(0, 0),
         model_var='Salt', units='psu', label='SSS (CMEMS)',
         ice='sea_ice_fraction', ice_max=15.0, err='sos_error'),
     'sst': dict(
-        pattern='{Y}/{m}/{Ymd}*-UKMO-L4_GHRSST-SSTfnd-OSTIA-GLOB-*.nc',
+        pattern=OSTIA_PATTERN,
         var='analysed_sst', lat='lat', lon='lon', idx=(0,),
         model_var='Temp', units='degC', label='SST (OSTIA)',
         offset=-273.15, mask='mask', err='analysis_error',
@@ -81,7 +99,7 @@ PRODUCTS = {
     # analysis is a fair reference at any hour. Both water and ice points
     # are kept (keep_ice): open water is a real zero, not a missing value.
     'icec': dict(
-        pattern='{Y}/{m}/{Ymd}*-UKMO-L4_GHRSST-SSTfnd-OSTIA-GLOB-*.nc',
+        pattern=OSTIA_PATTERN,
         var='sea_ice_fraction', lat='lat', lon='lon', idx=(0,),
         model_var='aice_h', units='fraction',
         label='Sea-ice concentration (OSTIA)', mask='mask', keep_ice=True,
@@ -102,8 +120,9 @@ def configured(cfg):
     `products:` maps a product name to the directory holding it -- everything
     above the YYYY/MM/file layout -- because the three come from unrelated
     archives and share no common root. A product may instead give a mapping
-    with `path` and an optional `pattern`, for an archive that names its files
-    differently from the default in PRODUCTS.
+    with `path` and an optional `pattern` (one glob or a list tried in
+    order), for an archive that names its files differently from the default
+    in PRODUCTS.
     """
     out = {}
     for name, entry in ((cfg.get('verification') or {}).get('products')
@@ -126,9 +145,13 @@ def product_path(cfg, name, cycle):
     e = configured(cfg).get(name)
     if e is None:
         return None
-    pat = e['pattern'].format(Y=cycle[:4], m=cycle[4:6], Ymd=cycle[:8])
-    hits = sorted(glob.glob(os.path.join(e['path'], pat)))
-    return hits[0] if hits else None
+    pats = e['pattern']
+    for pat in pats if isinstance(pats, (list, tuple)) else [pats]:
+        pat = pat.format(Y=cycle[:4], m=cycle[4:6], Ymd=cycle[:8])
+        hits = sorted(glob.glob(os.path.join(e['path'], pat)))
+        if hits:
+            return hits[0]
+    return None
 
 
 def product_paths_in_time(cfg, name, cycle):

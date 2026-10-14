@@ -69,7 +69,8 @@ def main(argv=None):
     ap.add_argument('--jobs', type=int, default=1,
                     help='cycles to process in parallel: passed to the '
                          'rejoin (compute_cycle.py --rejoin) and to the '
-                         'binned, state-space and frontal figure stages; '
+                         'binned, state-space, frontal and SSH-stability '
+                         'figure stages; '
                          'the other figure, scorecard and report stages '
                          'have no --jobs option')
     ap.add_argument('--hours', default='00',
@@ -136,7 +137,7 @@ def main(argv=None):
          lambda: plot_fronts.main(
              common + ['--hours', a.hours, '--jobs', str(a.jobs)] + force)),
         ('stability', 'SSH cycling-stability diagnostics',
-         lambda: plot_stability.main(common + force)),
+         lambda: plot_stability.main(common + ['--jobs', str(a.jobs)] + force)),
         # No-ops without a `grep:` block, and skips any month outside GREP's
         # 2020-2024 range, so it costs nothing on a realtime config.
         ('grep', 'monthly means against the GREP reanalysis ensemble',

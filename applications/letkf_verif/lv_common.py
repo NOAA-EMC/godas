@@ -311,6 +311,25 @@ class Experiment:
                 return hit
         return None
 
+    def analysis_parts(self, cycle, realm='ocean'):
+        """The files whose sum is the analysis state, or None.
+
+        The written analysis when ``analysis_pattern`` finds one. An LETKF
+        archive (letkf3) keeps only the ensemble-mean prior and its
+        increment, so for kind letkf the analysis falls back to
+        prior + increment -- the same two files the rest of the suite
+        reads, on the same grid and levels.
+        """
+        ana = self.analysis(cycle, realm)
+        if ana is not None:
+            return [ana]
+        if self.kind == 'letkf':
+            bkg = self.background(cycle, realm)
+            incr = self.increment(cycle, realm)
+            if bkg is not None and incr is not None:
+                return [bkg, incr]
+        return None
+
     def ensvar(self, cycle, realm, when):
         """Path to the 'prior' / 'post' / 'an' ensemble variance, or None."""
         pat = self.ensvar_patterns.get(when)

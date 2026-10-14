@@ -666,13 +666,13 @@ def fig_woa_bias_profiles(data, cfg, grid):
             if _is3d(p):
                 p = np.asarray(p, dtype='f8')
                 axL.plot(p, depth_axis(data, grid, len(p))[0], color=col[n],
-                         label=n)
+                         label=bkg_name(data, n, ' '))
             b = P.get(data['state'], n, 'ocean', 'woa_bias_mean', v,
                       default=None)
             if _is3d(b):
                 b = np.asarray(b, dtype='f8')
                 axR.plot(b, depth_axis(data, grid, len(b))[0], color=col[n],
-                         label=n)
+                         label=bkg_name(data, n, ' '))
         w = woa_curve(data, 'woa_region', 'global', v)
         if w is not None:
             w = np.asarray(w, dtype='f8')
@@ -697,6 +697,18 @@ def fig_woa_bias_profiles(data, cfg, grid):
                  y=1.02, fontsize=11.5, color=P.INK)
     fig.tight_layout()
     return _save(fig, cfg, 'woa_bias_profiles.png')
+
+
+def bkg_name(data, n, sep='\n'):
+    """An experiment's name as a background column/legend label: when its
+    background is the nearest restart standing in for missing history, say
+    so and how far it is from the cycle."""
+    st = P.get(data['state'], n, 'ocean', default={}) or {}
+    if st.get('bkg_fallback') != 'restart' or not st.get('bkg_valid'):
+        return n
+    v = str(st['bkg_valid'])
+    return '%s%s(restart %s-%s %sZ, %+.0f h)' % (
+        n, sep, v[4:6], v[6:8], v[8:10], st.get('bkg_offset_hours', 0))
 
 
 def fig_woa_bias_maps(data, cfg, grid, maps):
@@ -726,7 +738,7 @@ def fig_woa_bias_maps(data, cfg, grid, maps):
         limits[key] = fixed
     out = None
     for view in views_for('ocean'):
-        out = map_grid(cfg, grid, rows, names,
+        out = map_grid(cfg, grid, rows, [bkg_name(data, n) for n in names],
                        'Background $-$ WOA23 climatology - ocean %s'
                        % _when(data),
                        'woa_bias_maps_ocean.png', view, limits=limits,
@@ -770,12 +782,12 @@ def fig_background_profiles(data, cfg, grid):
             y, dsrc = depth_axis(data, grid, len(p))
             # The two mean states can coincide to plotting precision; dashing
             # the non-reference runs stops that reading as a missing series.
-            axL.plot(p, y, color=col[n], label=n,
+            axL.plot(p, y, color=col[n], label=bkg_name(data, n, ' '),
                      ls='-' if n == ref else (0, (4, 2)),
                      lw=2.4 if n == ref else 1.6)
             if n != ref and base.size == p.size:
                 axR.plot(p - base, y, color=col[n],
-                         label='%s - %s' % (n, ref))
+                         label='%s - %s' % (bkg_name(data, n, ' '), ref))
         # Left panel only: axR already means "difference from the reference
         # experiment", and it cannot also mean "difference from WOA". That
         # comparison has its own figure.
@@ -973,7 +985,9 @@ def fig_background_maps(data, cfg, grid, maps, realm='ocean'):
             else:
                 limits[key] = (float(np.percentile(allv, 1)),
                                float(np.percentile(allv, 99)), _field_cmap(key))
-        out = map_grid(cfg, grid, rows, names,
+        out = map_grid(cfg, grid, rows,
+                       [bkg_name(data, n) if realm == 'ocean' else n
+                        for n in names],
                        'Background state - %s %s' % (realm, _when(data)),
                        'bkg_maps_%s.png' % realm, view, limits=limits,
                        row_label=lambda k: _map_row_label(data, k)) or out
@@ -1336,7 +1350,8 @@ def fig_sections(data, cfg, grid, maps, kind='incr'):
         if not keep:
             continue
         kept = [(k, [f[i] for i in keep]) for k, f in rows]
-        cols = [names[i] for i in keep]
+        cols = [names[i] if kind == 'incr' else bkg_name(data, names[i])
+                for i in keep]
         # One scale across every view as well as every line: the shallow cut
         # is a zoom on the same field, so recolouring it would break the
         # comparison with the full-column figure beside it.

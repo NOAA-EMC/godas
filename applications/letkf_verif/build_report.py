@@ -352,7 +352,8 @@ def stability_widget(cfg, figs):
                 + table(['metric'] + [r.replace('_', ' ') for r in regions],
                         cells))
         entries.append((e.name, block))
-    if not entries:
+    bke = bke_block(figs)
+    if not entries and not bke:
         return ''
     lede = (
         '<section class="subsection"><h3>SSH cycling</h3>'
@@ -369,7 +370,36 @@ def stability_widget(cfg, figs):
         'last four cycles side by side, then four series with their trend; '
         'the definitions are under <i>How this is computed</i> at the top of '
         'this section.</p>')
-    return lede + figure_menu('stability', 'experiment', entries) + '</section>'
+    return (lede + figure_menu('stability', 'experiment', entries) + bke
+            + '</section>')
+
+
+def bke_block(figs):
+    """Barotropic kinetic energy of background and increment, every
+    experiment on one figure (plot_stability.py: figs/cycle_bke.png)."""
+    fig = img(os.path.join(figs, 'cycle_bke.png'),
+              'Barotropic kinetic energy of the background and the increment '
+              'against cycle, by depth zone', optional=True)
+    if not fig:
+        return ''
+    return (
+        '<h3>Barotropic kinetic energy</h3>'
+        '<p class="lede">The SSH series above follow the surface; this follows '
+        'the depth-integrated flow. Barotropic energy the analysis keeps '
+        'adding &mdash; coastally trapped waves re-excited by the altimetry, '
+        'the start of a linear instability &mdash; builds up over many cycles '
+        'with nothing to show in any one of them, but it shows in the '
+        'integral. Top row: the barotropic KE of the <b>background</b> valid '
+        'at each cycle, per depth zone; a level that keeps rising, or steps '
+        'up at the cycles where the increment spikes and decays only slowly, '
+        'is energy the model is not getting rid of. Middle row: the barotropic '
+        'KE of the <b>increment</b> MOM6 ingests &mdash; what each analysis '
+        'hands the model in depth-integrated flow (not the energy it adds, '
+        'which also has a cross term with the background of either sign). '
+        'Bottom row: the barotropic share of the background KE. Experiments '
+        'that archive no ocean history (3dvar-rt) have the increment row '
+        'only, and an analysis that updates no velocity (3dvar-rt again) sits '
+        'at zero there.</p>' + fig)
 
 
 def frontal_widget(cfg, figs):
@@ -2018,6 +2048,18 @@ correlation).</li>
 <p>The maps are the latest cycle's background, increment, tendency and
 low-pass tendency, and the low-pass tendency of the last four cycles
 (24 h) side by side, all on &plusmn;0.1 m except the background.</p>
+<p>The <b>barotropic kinetic energy</b> is computed from u, v and the layer
+thicknesses h on MOM6's C grid, with h averaged to each velocity face:
+U = &Sigma;<sub>k</sub> h<sub>k</sub>u<sub>k</sub>, H = &Sigma;<sub>k</sub>
+h<sub>k</sub>, BKE = &frac12;&rho;<sub>0</sub>(U<sup>2</sup> +
+V<sup>2</sup>)/H and KE = &frac12;&rho;<sub>0</sub>&Sigma;<sub>k</sub>
+h<sub>k</sub>(u<sub>k</sub><sup>2</sup> + v<sub>k</sub><sup>2</sup>) per unit
+area, &rho;<sub>0</sub> = 1035 kg&nbsp;m<sup>&minus;3</sup>, integrated over
+each zone in PJ (10<sup>15</sup>&nbsp;J). Zones are by model depth H: shelf
+(&lt; 200 m), slope (200&ndash;1000 m), deep (&gt; 1000 m), global, and a
+band within 100 km of the coast. The background is the history file valid at
+the cycle; the increment is the one MOM6 ingests, with that file&rsquo;s own
+h.</p>
 """,
     '08': """
 <p>All on the common sample, per obs type and cycle. <b>Consistency
