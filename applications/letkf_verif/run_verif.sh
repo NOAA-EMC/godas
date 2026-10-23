@@ -143,14 +143,34 @@ if [ -n "${SLURM_JOB_ID:-}" ] && command -v srun >/dev/null; then
             CPUS+=("$p")
         fi
     done
-    for c in "${CPUS[@]}"; do
+    # Not every site exports SLURM_MEM_PER_NODE for --mem=0 (Ursa does not);
+    # then the job's memory is read back from Slurm: the job's allocated
+    # memory (AllocTRES mem=, all nodes together, e.g. "mem=1500G"), or
+    # failing that each node's RealMemory
+    job_mem=
+    if [ -z "${SLURM_MEM_PER_NODE:-}${SLURM_MEM_PER_CPU:-}" ]; then
+        job_mem=$(scontrol show job "$SLURM_JOB_ID" | tr ' ' '\n' |
+            sed -n 's/^AllocTRES=//p' | tr ',' '\n' | awk -F= '$1 == "mem" {
+                v = $2; u = substr(v, length(v))
+                if (u ~ /[0-9]/) u = "M"; else v = substr(v, 1, length(v) - 1)
+                f = (u == "K") ? 1 / 1024 : (u == "G") ? 1024 : (u == "T") ? 1048576 : 1
+                printf "%d\n", v * f }')
+    fi
+    for ((i = 0; i < ${#CPUS[@]}; i++)); do
         if [ -n "${SLURM_MEM_PER_NODE:-}" ]; then
             MEM_MB+=("$SLURM_MEM_PER_NODE")
         elif [ -n "${SLURM_MEM_PER_CPU:-}" ]; then
-            MEM_MB+=("$(( SLURM_MEM_PER_CPU * c ))")
+            MEM_MB+=("$(( SLURM_MEM_PER_CPU * CPUS[i] ))")
+        elif [ -n "$job_mem" ]; then
+            MEM_MB+=("$(( job_mem / ${#CPUS[@]} ))")
         else
-            echo "!! no SLURM_MEM_PER_NODE or SLURM_MEM_PER_CPU; give the job --mem" >&2
-            exit 1
+            m=$(scontrol show node "${NODES[i]}" | tr ' ' '\n' | sed -n 's/^RealMemory=//p')
+            if [ -z "$m" ]; then
+                echo "!! cannot tell this job's memory (no SLURM_MEM_PER_NODE," \
+                     "SLURM_MEM_PER_CPU, AllocTRES mem or RealMemory); give the job --mem" >&2
+                exit 1
+            fi
+            MEM_MB+=("$m")
         fi
     done
 else
